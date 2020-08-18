@@ -1,5 +1,11 @@
-﻿using System;
+﻿using FrostySdk.Ebx;
+using System;
 using System.Reflection;
+
+// <summary>
+// Authors: Daniel Elam and Kyle Won
+// Helper for getting and setting field values via Reflection
+// </summary>
 
 namespace FrostyResChunkImporter
 {
@@ -40,6 +46,54 @@ namespace FrostyResChunkImporter
                 throw new ArgumentOutOfRangeException("fieldName",
                     string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
             fieldInfo.SetValue(obj, val);
+        }
+
+        private static MethodInfo GetMethodInfo(Type type, string methodName)
+        {
+            MethodInfo methodInfo;
+            do
+            {
+                methodInfo = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                type = type.BaseType;
+            }
+            while (methodInfo == null && type != null);
+            return methodInfo;
+        }
+
+        public static void InvokeMethod(this object obj, string methodName, object[] parameters)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+            Type objType = obj.GetType();
+            MethodInfo mi = GetMethodInfo(objType, methodName);
+            if (mi == null)
+                throw new ArgumentOutOfRangeException(nameof(methodName),
+                    $"Couldn't invoke method {methodName} in type {objType.FullName}");
+            mi.Invoke(obj, parameters);
+        }
+
+        private static PropertyInfo GetPropertyInfo(Type type, string propertyName)
+        {
+            PropertyInfo propInfo;
+            do
+            {
+                propInfo = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                type = type.BaseType;
+            }
+            while (propInfo == null && type != null);
+            return propInfo;
+        }
+
+        public static T GetPropertyValue<T>(this object obj, string propertyName)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+            Type objType = obj.GetType();
+            PropertyInfo propInfo = GetPropertyInfo(objType, propertyName);
+            if (propInfo == null)
+                throw new ArgumentOutOfRangeException(nameof(propertyName),
+                    $"Couldn't find property {propertyName} in type {objType.FullName}");
+            return (T)propInfo.GetValue(obj);
         }
     }
 }
