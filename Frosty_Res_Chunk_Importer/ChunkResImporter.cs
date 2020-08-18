@@ -29,15 +29,17 @@ namespace FrostyResChunkImporter
 {
     class ChunkResImporter
     {
+        private static MainWindow _mainWindow;
         private FrostyChunkResExplorer _chunkResExplorer;
         private static List<ChunkAssetEntry> _allChunks;
-        private static List<object> _allResFiles;
+        private static List<ResAssetEntry> _allResFiles;
         private List<ChunkResFile> _chunkFiles;
         private List<ChunkResFile> _resFiles;
         private string _searchName;
 
-        public ChunkResImporter(FrostyChunkResExplorer chunkResExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles)
+        public ChunkResImporter(MainWindow mainWindow, FrostyChunkResExplorer chunkResExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles)
         {
+            _mainWindow = mainWindow;
             _chunkResExplorer = chunkResExplorer;
             _chunkFiles = chunkFiles;
             _resFiles = resFiles;
@@ -47,7 +49,7 @@ namespace FrostyResChunkImporter
         // Facilitates chunk imports from chunk files list. Takes boolean which denotes whether to import or revert files
         public void Import(bool revert)
         {
-            // Checks if chunks have been indexed
+            // Checks if chunk and res explorer have been indexed
             if (_allChunks == null || _allResFiles == null)
             {
                 InitResChunkLists(_chunkResExplorer);
@@ -61,7 +63,7 @@ namespace FrostyResChunkImporter
                 ChunkAssetEntry oldChunk = _allChunks.Find(predicate);
                 if (revert) 
                 { 
-                    RevertAsset(oldChunk); 
+                    RevertAsset(oldChunk, true); 
                 }
                 else 
                 { 
@@ -71,23 +73,24 @@ namespace FrostyResChunkImporter
 
             // Find and import res files in Frosty res explorer
 
-
         }
 
         // Imports a single chunk. Takes chunk to replace and path to new chunk
         private int ImportChunk(ChunkAssetEntry oldChunk, ChunkResFile newChunk)
-        {
+        {        
             using (NativeReader nativeReader = new NativeReader(new FileStream(newChunk.absolutePath, FileMode.Open, FileAccess.Read)))
             {
                 byte[] end = nativeReader.ReadToEnd();
                 App.AssetManager.ModifyChunk(oldChunk.Id, end, (Texture)null);
             }
+            App.Logger.Log($"Imported chunk file: {newChunk.fileName}");
             return 0;
         }
 
         // Import res file from res files list
-        public int ImportResFiles()
+        public int ImportResFiles(ResAssetEntry oldRes, ChunkResFile newRes)
         {
+            App.Logger.Log($"Imported res file: {newRes.fileName}");
             return 0;
         }
 
@@ -95,9 +98,6 @@ namespace FrostyResChunkImporter
         {
             ListBox chunksListBox = ReflectionHelper.GetFieldValue<ListBox>(chunkResExplorer, "chunksListBox");
             FrostyDataExplorer resExplorer = ReflectionHelper.GetFieldValue<FrostyDataExplorer>(chunkResExplorer, "resExplorer");
-            TreeView resTreeList = ReflectionHelper.GetFieldValue<TreeView>(resExplorer, "assetTreeView");
-            IEnumerable<object> curResExplorerItems = ReflectionHelper.GetPropertyValue<IEnumerable<object>>(resTreeList, "ItemsSource");
-           
 
             // Add all chunks to a list 
             _allChunks = new List<ChunkAssetEntry>();
@@ -107,31 +107,16 @@ namespace FrostyResChunkImporter
             }
 
 
-            // Recursively add all res files to a list
-            _allResFiles = new List<object>();
-            foreach (object res in curResExplorerItems)
+            // Add all res files to a list
+            // use dispatcher to access resExplorer element in the UI thread
+            _allResFiles = new List<ResAssetEntry>();
+            _mainWindow.Dispatcher.Invoke((Action) (()=>
             {
-                _allResFiles.Add(res);
-                IEnumerable<object> nextResExplorerItems = ReflectionHelper.GetPropertyValue<IEnumerable<object>>(res, "Children");
-                if (nextResExplorerItems.Count() > 0)
+                foreach (AssetEntry res in resExplorer.ItemsSource)
                 {
-                    traverseRecursive(nextResExplorerItems);
+                    _allResFiles.Add(res as ResAssetEntry);
                 }
-            }
-            return;
-        }
-
-        private static void traverseRecursive(IEnumerable<object> children)
-        {
-            foreach(object res in children)
-            {
-                _allResFiles.Add(res);
-                IEnumerable<object> nextResExplorerItems = ReflectionHelper.GetPropertyValue<IEnumerable<object>>(res, "Children");
-                if (nextResExplorerItems.Count() > 0)
-                {
-                    traverseRecursive(nextResExplorerItems);
-                }
-            }
+            }));
         }
 
         private bool compareChunks(ChunkAssetEntry oldChunk)
@@ -139,12 +124,14 @@ namespace FrostyResChunkImporter
             return oldChunk.Name == _searchName;
         }
 
-        // Revert given chunk
-        public void RevertAsset(AssetEntry chunk)
+        // Revert given asset
+        public void RevertAsset(AssetEntry asset, bool chunk)
         {
-            if (chunk == null || !chunk.IsModified)
+            string assetType = chunk ? "chunk file" : "res file";
+            if (asset == null || !asset.IsModified)
                 return;
-            App.AssetManager.RevertAsset(chunk, false, false);
+            App.AssetManager.RevertAsset(asset, false, false);
+            App.Logger.Log($"Reverted {assetType}: {asset.Name}");
         }
     }
 }

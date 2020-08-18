@@ -90,7 +90,6 @@ namespace FrostyResChunkImporter
                         };
                     }
                 };
-
                 _app.Activated -= OnAppActivated;
             }
         }
@@ -228,10 +227,10 @@ namespace FrostyResChunkImporter
                             return;
                     }
                 }
-                App.Logger.Log($"Chunk Files: \n{String.Join("\n", chunkFiles)}");
-                App.Logger.Log($"Res Files: \n{String.Join("\n", resFiles)}");
+                //App.Logger.Log($"Chunk Files: \n{String.Join("\n", chunkFiles)}");
+                //App.Logger.Log($"Res Files: \n{String.Join("\n", resFiles)}");
 
-                ChunkResImporter importer = new ChunkResImporter(_chunkResExplorer, chunkFiles, resFiles);
+                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, chunkFiles, resFiles);
                 importer.Import(revert);
             });
             FrostyTask.End();
