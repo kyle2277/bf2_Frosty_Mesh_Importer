@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FrostyTest")]
+[assembly: AssemblyTitle("FrostyResChunkImporter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FrostyTest")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyProduct("FrostyResChunkImporter")]
+[assembly: AssemblyCopyright("Copyright ©  2020  Kyle Won")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,4 +1,9 @@
-﻿using System;
+﻿// ChunkResImporter.cs - FrostyResChunkImporter
+// Contributors:
+//      Copyright (C) 2020  Kyle Won
+// This file is subject to the terms and conditions defined in the 'LICENSE' file.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +26,6 @@ using System.Collections.ObjectModel;
 using System.CodeDom;
 
 // <summary>
-// Author: Kyle Won
 // Facilitates res/chunk file imports within the Frosty res/chunk explorer window.
 // </summary>
 

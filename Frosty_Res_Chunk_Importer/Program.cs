@@ -1,4 +1,11 @@
-﻿using System;
+﻿// Program.cs - FrostyResChunkImporter
+// Contributors:
+//      Copyright (C) 2020  Kyle Won
+//      Copyright (C) 2020  Daniel Elam <dan@dandev.uk>
+// This file is subject to the terms and conditions defined in the 'LICENSE' file.
+// The following code is derived from Daniel Elam's bf2-sound-import project
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +27,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 
 // <summary>
-// Author: Kyle Won
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
 // </summary>
 
