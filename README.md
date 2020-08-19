@@ -34,11 +34,11 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 
 Log Message | Explanation
 ----------- | -------------
-ERROR: Selected file is not a folder | User has selected a file, not a folder. Select a folder that contains the files you want to import/revert, not any of the files inside
-ERROR: Non-chunk or res file found | User has selected a folder that contains files other than .chunk and .res files. Output folders from Frost Meshy will only contain .chunk and .res files
+ERROR: SelectedFileIsNotFolder | User has selected a file in the open file dialog, not a folder. Select a folder that contains the files you want to import/revert, not any of the files inside
+ERROR: NonChunkResFileFound | User has selected a folder that contains files other than .chunk and .res files. Output folders from Frost Meshy will only contain .chunk and .res files
 ERROR: NoResFileSelected | User has clicked "Export Res" button without selecting a file in the Res Explorer
+ERROR: CannotOverwriteExistingFile | User has attempted to export a .res to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them.
 ERROR: ResFileNotFound | The import could not be completed because no .res file in the Frosty Res Explorer matches the identifier of the .res file to be imported/reverted
-ERROR: 
 WARNING: NonCriticalResImportError. Could not refresh the Res Explorer. Missing reference | Internal error denoting communication failure with the Res Explorer. Does not affect import/export/revert functions
 WARNING: NonCriticalResImportError. Res file located at {path} must be {imported/reverted} manually. Unable to located res file data | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the Frost Meshy output folder
 
