@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using Newtonsoft.Json;
 using System.Windows.Media;
 using Frosty.Controls;
 using FrostyEditor;
@@ -31,7 +30,7 @@ namespace FrostyResChunkImporter
     class ChunkResImporter
     {
         private static MainWindow _mainWindow;
-        private static FrostyDataExplorer _resExplorer;
+        private FrostyDataExplorer _resExplorer;
         private FrostyChunkResExplorer _chunkResExplorer;
         private static List<ChunkAssetEntry> _allChunks;
         private static List<ResAssetEntry> _allResFiles;
@@ -39,38 +38,38 @@ namespace FrostyResChunkImporter
         private List<ChunkResFile> _chunkFiles;
         private List<ChunkResFile> _resFiles;
         private string _searchTerm;
-        private readonly string RES_DATA_PATH = Path.GetFullPath("./resdata.json");
+        private string _searchTerm2;
 
-        public ChunkResImporter(MainWindow mainWindow, FrostyChunkResExplorer chunkResExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles)
+        public ChunkResImporter(MainWindow mainWindow, FrostyChunkResExplorer chunkResExplorer, FrostyDataExplorer resExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles)
         {
             _mainWindow = mainWindow;
             _chunkResExplorer = chunkResExplorer;
+            _resExplorer = resExplorer;
             _chunkFiles = chunkFiles;
             _resFiles = resFiles;
-            _resExplorer = ReflectionHelper.GetFieldValue<FrostyDataExplorer>(chunkResExplorer, "resExplorer");
-            if(_exportedResFiles == null)
-            {
-                _exportedResFiles = new List<ChunkResFile>();
-            }
+            
             // Index chunk/res explorer asset entries
-            InitResChunkLists(_chunkResExplorer);
+            InitResChunkLists(_chunkResExplorer, _resExplorer);
         }
 
         // Facilitates chunk imports from chunk files list. Takes boolean which denotes whether to import or revert files
-        public FrostyDataExplorer Import(bool revert)
+        public FrostyDataExplorer Import(bool revert, string parentDir)
         {
             // Checks if chunk and res explorer need to be re-indexed
             if (_allChunks == null || _allResFiles == null)
             {
-                InitResChunkLists(_chunkResExplorer);
+                InitResChunkLists(_chunkResExplorer, _resExplorer);
             }
-            Predicate<AssetEntry> predicate = CompareAssets;
+            // Instantiate predicate delegates
+            Predicate<AssetEntry> namePredicate = CompareAssets;
+            Predicate<ChunkResFile> absPathPredicate = CompareByAbsolutePath;
+            Predicate<ResAssetEntry> resRidPredicate = CompareByRid;
 
             // Find and import chunks in Frosty chunk explorer
             foreach (ChunkResFile newChunk in _chunkFiles)
             {
                 _searchTerm = newChunk.fileName;
-                ChunkAssetEntry oldChunk = _allChunks.Find(predicate);
+                ChunkAssetEntry oldChunk = _allChunks.Find(namePredicate);
                 if(revert) 
                 { 
                     RevertAsset(oldChunk, true); 
@@ -84,8 +83,16 @@ namespace FrostyResChunkImporter
             // Find and import res files in Frosty res explorer
             foreach(ChunkResFile newRes in _resFiles)
             {
-                _searchTerm = newRes.fileName;
-                ResAssetEntry oldRes = _allResFiles.Find(predicate);
+                // Check if res file is documented in exported res files list, if not, log warning and exit operation
+                _searchTerm = newRes.absolutePath;
+                ChunkResFile intermediate = _exportedResFiles.Find(absPathPredicate);
+                if(intermediate == null)
+                {
+                    App.Logger.Log($"WARNING: Res file located at {newRes.absolutePath} must be imported manually. Unable to locate res file data. ");
+                    return _resExplorer;
+                }
+                _searchTerm = intermediate.resRid;
+                ResAssetEntry oldRes = _allResFiles.Find(resRidPredicate);
                 if(revert)
                 {
                     RevertAsset(oldRes, false);
@@ -139,10 +146,10 @@ namespace FrostyResChunkImporter
                     App.AssetManager.ModifyRes(oldRes.Name, end, meta);
             }
             App.Logger.Log($"Imported res file: {newRes.fileName}");
-            return 0;
+            return (int)errorState.Success;
         }
 
-        private static void InitResChunkLists(FrostyChunkResExplorer chunkResExplorer)
+        private static void InitResChunkLists(FrostyChunkResExplorer chunkResExplorer, FrostyDataExplorer resExplorer)
         {
             ListBox chunksListBox = ReflectionHelper.GetFieldValue<ListBox>(chunkResExplorer, "chunksListBox");
 
@@ -158,40 +165,16 @@ namespace FrostyResChunkImporter
             _allResFiles = new List<ResAssetEntry>();
             _mainWindow.Dispatcher.Invoke((Action) (()=>
             {
-                foreach (AssetEntry res in _resExplorer.ItemsSource)
+                foreach (AssetEntry res in resExplorer.ItemsSource)
                 {
                     _allResFiles.Add(res as ResAssetEntry);
                 }
             }));
         }
 
-        public int ExportResFile()
+        public int ExportResFile(ResAssetEntry selectedAsset, string selectedFile)
         {
-            ResAssetEntry selectedAsset = null;
-            // Use dispatcher to get access to UI element selected asset
-            _mainWindow.Dispatcher.Invoke((Action)(() =>
-            {
-                selectedAsset = _resExplorer.SelectedAsset as ResAssetEntry;
-            }));
-            if(selectedAsset == null)
-            {
-                return (int)errorState.NoResFileSelected;
-            }
-
-            FrostySaveFileDialog sfd = new FrostySaveFileDialog("Save Resource", "*.res (Resource Files)|*.res", "Res", selectedAsset.Filename, true);
-            System.IO.Stream resStream = App.AssetManager.GetRes(selectedAsset);
-            if (resStream == null || !sfd.ShowDialog())
-            {
-                return (int)errorState.ResFileNotFound;
-            }
-            // Check if file already exists, if so, exit operation
-            string selectedFile = sfd.FileName;
-            if(File.Exists(selectedFile))
-            {
-                return (int)errorState.CannotOverwriteExistingFile;
-            }
-
-            // Hard encode res id into data.json file
+            // Hard encode res id into exported res file list
             ChunkResFile curFile;
             string resRid = selectedAsset.ResRid.ToString();
             string parentDir = Path.GetDirectoryName(selectedFile);
@@ -199,19 +182,17 @@ namespace FrostyResChunkImporter
             string extension = ".res";
             string justFileName = tempFileName.Substring(0, tempFileName.Length - extension.Length);
             curFile = new ChunkResFile(selectedFile, parentDir, justFileName, extension, resRid);
-            string jsonStr = JsonConvert.SerializeObject(curFile);
-            // Check if res file has already been exported, if not, add to list and json
+
+            // Check if res file has already been exported, if not, add to list
             ChunkResFile searchFile;
             if ((searchFile = IsAlreadyInList(resRid)) == null)
             {
                 _exportedResFiles.Add(curFile);
-                File.AppendAllText(RES_DATA_PATH, "\n" + jsonStr);
             }
             else if(searchFile != null && searchFile.parentDir != curFile.parentDir)  // Check if file location has changed, if so, replace in list, rewrite json
             {
                 _exportedResFiles.Remove(searchFile);
                 _exportedResFiles.Add(curFile);
-                SerializeToJson();
             }
 
             using (NativeWriter nativeWriter = new NativeWriter(new FileStream(selectedFile, FileMode.Create), false, false))
@@ -224,65 +205,35 @@ namespace FrostyResChunkImporter
             return (int)errorState.Success;
         }
 
-        private static byte[] Initialize(byte b, byte[] arr)
-        {
-            for(int i = 0; i < arr.Length; i++)
-            {
-                arr[i] = (byte)b;
-            }
-            return arr;
-        }
-
         private bool CompareAssets(AssetEntry f)
         {
             return f.Name == _searchTerm;
         }
 
-        private bool CompareByRid(ChunkResFile f)
+        private bool CompareByRid(ResAssetEntry f)
         {
             
-            return f.resRid == _searchTerm;
+            return f.ResRid.ToString() == _searchTerm;
             
         }
 
-        private bool CompareByParentDir(ChunkResFile f)
+        private bool CompareByRidGeneric(ChunkResFile f)
         {
-            return f.parentDir == _searchTerm;
+            return f.resRid == _searchTerm;
+        }
+
+        private bool CompareByAbsolutePath(ChunkResFile f)
+        {
+            return f.absolutePath == _searchTerm;
         }
 
         private ChunkResFile IsAlreadyInList(string resRid)
         {
-            Predicate<ChunkResFile> predicate = CompareByRid;
+            Predicate<ChunkResFile> predicate = CompareByRidGeneric;
             _searchTerm = resRid;
             ChunkResFile search;
             search = _exportedResFiles.Find(predicate);
             return search;
-        }
-
-        private void SerializeToJson()
-        {
-            File.Delete(RES_DATA_PATH);
-            foreach (ChunkResFile f in _exportedResFiles)
-            {
-                string jsonStr = JsonConvert.SerializeObject(f);
-                File.AppendAllText(RES_DATA_PATH, "\n" + jsonStr);
-            }
-            //File.SetAttributes(dataPath, FileAttributes.Hidden);
-        }
-
-        private void DeserializeFromJson()
-        {
-            _exportedResFiles = new List<ChunkResFile>();
-            if (!File.Exists(RES_DATA_PATH))
-            {
-                return;
-            }
-            string[] allLines = File.ReadAllLines(RES_DATA_PATH);
-            for(int i = 1; i < allLines.Length; i++)
-            {
-                ChunkResFile f = JsonConvert.DeserializeObject<ChunkResFile>(allLines[i]);
-                _exportedResFiles.Add(f);
-            }
         }
 
         // Revert given asset
