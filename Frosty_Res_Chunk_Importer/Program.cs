@@ -16,15 +16,34 @@ using FrostySdk.IO;
 using FrostySdk.Managers;
 using FrostySdk.Resources;
 using Microsoft.Win32;
+using System.IO;
+using System.Runtime.CompilerServices;
 
+// <summary>
+// Author: Kyle Won
+// Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
+// </summary>
 
 namespace FrostyResChunkImporter
 {
+    public enum errorState
+    {
+        Success = 0,
+        ChunkFileNotFound = -1,
+        ResFileNotFound = -2,
+        UnableToRefreshExplorer = -3,
+        NoResFileSelected = -4,
+        CannotOverwriteExistingFile = -5,
+        NonCriticalResImportError = -6,
+        NonNominalReturn = -7
+    };
+
     class Program
     {
         private static MainWindow _mainWindow;
         private static FrostyAssetEditor _currentAssetEditor;
         private static FrostyChunkResExplorer _chunkResExplorer;
+        private static FrostyDataExplorer _resExplorer;
         private static FrostyTabControl _tabControl;
         private static App _app;
         private static string _version;
@@ -62,7 +81,6 @@ namespace FrostyResChunkImporter
                         };
                     }
                 };
-
                 _app.Activated -= OnAppActivated;
             }
         }
@@ -92,11 +110,12 @@ namespace FrostyResChunkImporter
                 return;
             }
             _currentAssetEditor = assetEditorContent;
-
             // Inject new functions into asset viewer toolbar
             var control = FindChild<ItemsControl>(_mainWindow, "editorToolbarItems");
             var items = _currentAssetEditor.RegisterToolbarItems();
-            items.Add(new ToolbarItem("Mesh Chunk Import", "Auto import mesh asset chunk files", "Images/Import.png", new RelayCommand(_ => OnImportChunkCommand(),_ => true)));
+            items.Add(new ToolbarItem("Import Mesh", "Import mesh or cloth asset's res/chunk files", "Images/Import.png", new RelayCommand(_ => OnImporterCommand(false),_ => true)));
+            items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
+            items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
             control.ItemsSource = items;
         }
 
@@ -115,27 +134,172 @@ namespace FrostyResChunkImporter
 
             if (_chunkResExplorer == null)
             {
-                App.Logger.Log("ERROR: No active Res/Chunk Explorer found. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute.");
+                App.Logger.Log("ERROR: No active Res/Chunk Explorer found. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.");
                 return false;
             }
             else
             {
+                _resExplorer = ReflectionHelper.GetFieldValue<FrostyDataExplorer>(_chunkResExplorer, "resExplorer");
                 return true;
             }
         }
 
-        private static void OnImportChunkCommand()
+        private static async void OnImporterCommand(bool revert)
+        {
+            string operation = revert ? "revert" : "import";
+            // Check if there is an open res/chunk explorer. If not, exit operation
+            if (!hasChunkResExplorer())
+            {
+                return;
+            }
+            App.Logger.Log($"{operation.Substring(0,1).ToUpper()}{operation.Substring(1, operation.Length - 1)} will commence shortly.");
+
+            // Get path to res/chunk data directory
+            OpenFileDialog ofd = new OpenFileDialog();
+            // Config dialog
+            ofd.Title = "Navigate to Res/Chunk folder";
+            ofd.Filter = "Folder|*.*";
+            ofd.RestoreDirectory = true;
+            ofd.AddExtension = false;
+            ofd.ValidateNames = false;
+            ofd.CheckFileExists = false;
+            ofd.CheckPathExists = true;
+            ofd.DereferenceLinks = true;
+            ofd.Multiselect = false;
+            ofd.FilterIndex = 2;
+            string ofdPrompt = "Folder";
+            ofd.FileName = ofdPrompt;
+
+            // Open dialog
+            // If user cancels file dialog, log and exit operation
+            if (ofd.ShowDialog(_mainWindow) != true) 
+            {
+                App.Logger.Log($"Canceled {operation}.");
+                return;
+            }
+            
+            string task = revert ? "Reverting asset" : "Importing res/chunk files";
+            FrostyTask.Begin(task);
+            await Task.Run(() =>
+            {
+                // Remove file name appended by open file dialog
+                string resultName = Path.GetFileName(ofd.FileName);
+                string ofdResult = ofd.FileName.Remove(ofd.FileName.Length - resultName.Length, resultName.Length);
+                App.Logger.Log($"Folder selected: {ofdResult}");
+
+                //Check if the selected file is a directory, if not, log and exit operation
+                FileAttributes attr = File.GetAttributes(ofdResult);
+                if (!attr.HasFlag(FileAttributes.Directory))
+                {
+                    App.Logger.Log("ERROR: Selected file is not a folder.");
+                    return;
+                }
+
+                // Sort res and chunk files into lists, if a file is not a res or chunk file, log and exit operation
+                List<string> allFiles = Directory.EnumerateFiles(ofdResult).ToList();
+                List<ChunkResFile> chunkFiles = new List<ChunkResFile>();
+                List<ChunkResFile> resFiles = new List<ChunkResFile>();
+
+                foreach (string absolutePath in allFiles)
+                {
+                    string extension = Path.GetExtension(absolutePath);
+                    ChunkResFile curFile = new ChunkResFile(absolutePath, null);
+                    switch (extension)
+                    {
+                        case ".chunk":
+                            chunkFiles.Add(curFile);
+                            break;
+                        case ".res":
+                            resFiles.Add(curFile);
+                            break;
+                        default:
+                            App.Logger.Log($"ERROR: Non-chunk or res file found. Canceled {operation}.");
+                            return;
+                    }
+                }
+
+                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, chunkFiles, resFiles);
+                int status = importer.Import(revert, ofdResult);
+                if (status != (int)errorState.Success)
+                {
+                    App.Logger.Log($"ERROR: {(errorState)status}");
+                    return;
+                }
+                // Set importer to null for garbage collection
+                importer = null;
+                // Success
+                App.Logger.Log($"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)} Successful!");
+            });
+            FrostyTask.End();
+            refreshExplorers();
+        }
+
+        private static async void OnExportCommand()
         {
             // Check if there is an open res/chunk explorer. If not, exit operation
             if (!hasChunkResExplorer())
             {
                 return;
             }
+            ResAssetEntry selectedAsset = null;
+            // Use dispatcher to get access to UI element selected asset
+            _mainWindow.Dispatcher.Invoke((Action)(() =>
+            {
+                selectedAsset = _resExplorer.SelectedAsset as ResAssetEntry;
+            }));
+            if (selectedAsset == null)
+            {
+                App.Logger.Log($"ERROR: {errorState.NoResFileSelected}. Cancelling export.");
+                return;
+            }
+            FrostySaveFileDialog sfd = new FrostySaveFileDialog("Save Resource", "*.res (Resource Files)|*.res", "Res", selectedAsset.Filename, true);
             
-            App.Logger.Log("Chunk importing will commence shortly.");
+            if (!sfd.ShowDialog())
+            {
+                App.Logger.Log($"ERROR: {errorState.ResFileNotFound}. Cancelling export.");
+                return;
+            }
+            // Check if file already exists, if so, exit operation
+            string selectedFile = sfd.FileName;
+            if (File.Exists(selectedFile))
+            {
+                App.Logger.Log($"ERROR: {errorState.CannotOverwriteExistingFile}. Cancelling export.");
+                return;
+            }
+
+            FrostyTask.Begin("Exporting res file");
+            await Task.Run(() =>
+            {
+                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, null, null);
+                int status = importer.ExportResFile(selectedAsset, selectedFile);
+                if(status < 0)
+                {
+                    App.Logger.Log($"ERROR: {(errorState)status}. Cancelling export.");
+                    return;
+                }
+                App.Logger.Log("Export successful!");
+                // set importer to null for garbage collection
+                importer = null;
+            });
+            FrostyTask.End();
+            refreshExplorers();
         }
 
-            
+        private static void refreshExplorers()
+        {
+            // Refresh chunk explorer
+            ChunkAssetEntry[] chunkParams = new ChunkAssetEntry[] { null };
+            ReflectionHelper.InvokeMethod(_chunkResExplorer, "RefreshChunksListBox", chunkParams);
+            // Refresh res explorer
+            if (_resExplorer != null)
+            {
+                ReflectionHelper.InvokeMethod(_resExplorer, "RefreshItems", null);
+            }
+            else
+            {
+                App.Logger.Log($"ERROR: {errorState.NonCriticalResImportError}. Could not refresh the Res Explorer. Missing reference.");
+            }
+        }
 
         /// <summary>
         /// Finds a child of a given item in the visual tree. 
