@@ -1,6 +1,6 @@
 <img src=https://github.com/kyle2277/bf2_Frosty_Res_Chunk_Importer/blob/Dev/FrostyResChunkImportIcon.png width="100" height="100"></img>
 ___
-# TigerVenom22's Frosty Res/Chunk Importer for SWBFII
+# TigerVenom22's Frosty Res/Chunk Importer for SWBF2
 ## Overview
 Running this app creates an instance of Frosty Editor and injects the following functions: Import Mesh, Revert Mesh, and Export Res. This application streamlines the modding workflow by making importing and reverting meshes in the Frosty Editor a one-click operation. It automates the handling of chunk and res files outputted by the mesh converter application, FrostMeshy.
 
