@@ -1,4 +1,4 @@
-<img src=https://github.com/kyle2277/bf2_Frosty_Res_Chunk_Importer/blob/Dev/FrostyResChunkImportIcon.png width="125" height="125"></img>
+<img src=https://github.com/kyle2277/bf2_Frosty_Res_Chunk_Importer/blob/Dev/FrostyResChunkImportIcon.png width="100" height="100"></img>
 ___
 # TigerVenom22's Frosty Res/Chunk Importer for SWBFII
 ## Overview
