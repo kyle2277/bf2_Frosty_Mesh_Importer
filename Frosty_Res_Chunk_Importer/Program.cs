@@ -177,9 +177,6 @@ namespace FrostyResChunkImporter
                 App.Logger.Log($"Canceled {operation}.");
                 return;
             }
-
-            // UI reference used to refresh the res explorer
-            FrostyDataExplorer resExplorer = null;
             
             string task = revert ? "Reverting asset" : "Importing res/chunk files";
             FrostyTask.Begin(task);
