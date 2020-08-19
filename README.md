@@ -39,6 +39,6 @@ ERROR: NonChunkResFileFound | User has selected a folder that contains files oth
 ERROR: NoResFileSelected | User has clicked "Export Res" button without selecting a file in the Res Explorer
 ERROR: CannotOverwriteExistingFile | User has attempted to export a .res to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them.
 ERROR: ResFileNotFound | The import could not be completed because no .res file in the Frosty Res Explorer matches the identifier of the .res file to be imported/reverted
-WARNING: NonCriticalResImportError. Could not refresh the Res Explorer. Missing reference | Internal error denoting communication failure with the Res Explorer. Does not affect import/export/revert functions
-WARNING: NonCriticalResImportError. Res file located at {path} must be {imported/reverted} manually. Unable to located res file data | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the Frost Meshy output folder
-
+WARNING: NonCriticalResImportError | Denotes application state which is non-nominal but does not interrupt any core operations
+WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the Frost Meshy output folder. The file must be imported manually
+WARNING: NonCriticalResImportError: UnableToRefreshExplorer | Internal error denoting communication failure with the Res Explorer UI element
