@@ -91,7 +91,7 @@ namespace FrostyResChunkImporter
                 ChunkResFile intermediate = _exportedResFiles.Find(dirPredicate);
                 if(intermediate == null)
                 {
-                    App.Logger.Log($"WARNING: {errorState.NonCriticalResImportError}. Res file located at {newRes.absolutePath} must be {operation} manually. Unable to locate res file data.");
+                    App.Logger.Log($"WARNING: {errorState.NonCriticalResFileError}: {errorState.MissingResID}. Res file located at {newRes.absolutePath} must be {operation} manually. Unable to locate res file data.");
                 } 
                 else
                 {

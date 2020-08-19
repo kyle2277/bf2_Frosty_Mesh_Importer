@@ -34,8 +34,12 @@ namespace FrostyResChunkImporter
         UnableToRefreshExplorer = -3,
         NoResFileSelected = -4,
         CannotOverwriteExistingFile = -5,
-        NonCriticalResImportError = -6,
-        NonNominalReturn = -7
+        NonCriticalResFileError = -6,
+        NonNominalReturn = -7,
+        NoActiveResChunkExplorer = -8,
+        SelectedFileIsNotFolder = -9,
+        NonChunkResFileFound = -10,
+        MissingResID = -11
     };
 
     class Program
@@ -134,7 +138,7 @@ namespace FrostyResChunkImporter
 
             if (_chunkResExplorer == null)
             {
-                App.Logger.Log("ERROR: No active Res/Chunk Explorer found. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.");
+                App.Logger.Log($"ERROR: {errorState.NoActiveResChunkExplorer}. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.");
                 return false;
             }
             else
@@ -191,7 +195,7 @@ namespace FrostyResChunkImporter
                 FileAttributes attr = File.GetAttributes(ofdResult);
                 if (!attr.HasFlag(FileAttributes.Directory))
                 {
-                    App.Logger.Log("ERROR: Selected file is not a folder.");
+                    App.Logger.Log($"ERROR: {errorState.SelectedFileIsNotFolder}");
                     return;
                 }
 
@@ -213,7 +217,7 @@ namespace FrostyResChunkImporter
                             resFiles.Add(curFile);
                             break;
                         default:
-                            App.Logger.Log($"ERROR: Non-chunk or res file found. Canceled {operation}.");
+                            App.Logger.Log($"ERROR: {errorState.NonChunkResFileFound}. Canceled {operation}.");
                             return;
                     }
                 }
@@ -297,7 +301,7 @@ namespace FrostyResChunkImporter
             }
             else
             {
-                App.Logger.Log($"ERROR: {errorState.NonCriticalResImportError}. Could not refresh the Res Explorer. Missing reference.");
+                App.Logger.Log($"WARNING: {errorState.NonCriticalResFileError}: {errorState.UnableToRefreshExplorer}. Missing reference.");
             }
         }
 
