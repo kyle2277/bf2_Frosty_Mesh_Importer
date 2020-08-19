@@ -42,3 +42,6 @@ ERROR: ResFileNotFound | The import could not be completed because no .res file 
 WARNING: NonCriticalResImportError | Denotes application state which is non-nominal but does not interrupt any core operations
 WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the FrostMeshy output folder. The file must be imported manually
 WARNING: NonCriticalResImportError: UnableToRefreshExplorer | Internal error denoting communication failure with the Res Explorer UI element
+
+___
+Licensed under GPL v3.0
