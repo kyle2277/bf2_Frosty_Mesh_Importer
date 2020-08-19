@@ -32,4 +32,4 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 * Chunk files should never fail to automatically import because their file names are unique identnifiers which can always be matched to a chunk file in the Frosty Editor. Res files are not named using unique identifiers, so imported .res files are identified using an ID value noted during export. These ID values are lost when the application is exited, meaning you can only automatically import .res files that you've exported in the same session.
 * Read the Frosty Editor log. All operations by this app, successful or unsuccessful, are written to the log. The only indication that an operation has failed will be in the log. Below is a table explaining each possible log message.
 Log Message | Explanation
-------------|--------------
+----------- | -------------
