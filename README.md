@@ -32,13 +32,13 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 * Chunk files should never fail to automatically import because their file names are unique identnifiers which can always be matched to a chunk file in the Frosty Editor. Res files are not named using unique identifiers, so imported .res files are identified using an ID value noted during export. These ID values are lost when the application is exited, meaning you can only automatically import .res files that you've exported in the same session.
 * Read the Frosty Editor log. All operations by this app, successful or unsuccessful, are written to the log. The only indication that an operation has failed will be in the log. Below is a table for troubleshooting explaining different log messages.
 
-Log Message | Explanation
+Log Message | Explanation/Solution
 ----------- | -------------
 ERROR: SelectedFileIsNotFolder | User has selected a file in the open file dialog, not a folder. Select a folder that contains the files you want to import/revert, not any of the files inside
 ERROR: NonChunkResFileFound | User has selected a folder that contains files other than .chunk and .res files. Output folders from FrostMeshy will only contain .chunk and .res files
 ERROR: NoResFileSelected | User has clicked "Export Res" button without selecting a file in the Res Explorer
-ERROR: CannotOverwriteExistingFile | User has attempted to export a .res to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them.
-ERROR: ResFileNotFound | The import could not be completed because no .res file in the Frosty Res Explorer matches the identifier of the .res file to be imported/reverted
+ERROR: CannotOverwriteExistingFile | User has attempted to export a .res file to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them
+ERROR: CriticalResFileError | The import could not be completed because no .res file in the Frosty Res Explorer matches the identifier of the .res file to be imported/reverted. Internal error, not related to any user actions
 WARNING: NonCriticalResImportError | Denotes application state which is non-nominal but does not interrupt any core operations
 WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the FrostMeshy output folder. The file must be imported manually
 WARNING: NonCriticalResImportError: UnableToRefreshExplorer | Internal error denoting communication failure with the Res Explorer UI element
