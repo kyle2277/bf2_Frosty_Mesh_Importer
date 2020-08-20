@@ -24,7 +24,7 @@ Install by placing Frosty_Res_Chunk_Importer.exe in the same folder as your Fros
 ### How to revert an imported mesh
 The default "revert" function in the Frosty Editor is not designed to revert meshes that have been imported using FrostMeshy. The "Revert Mesh" button restores a mesh by reverting all chunk and res files associated with said mesh. Reverting a mesh requires the output files from FrostMeshy because the names of the output files are used to locate the files to revert in Frosty Editor.
 1. **With an asset tab and the Res/Chunk Explorer open, click the "Revert Mesh" button**. Navigate to the FrostMeshy output folder associated with the mesh you want to revert. Inside the folder, click the "Open" button in the open file pop-up without selecting any of the files inside the folder.
-2. **Check the Frosty Editor log** to determine which files were successfully reverted and whether you need to revert any manyally.
+2. **Check the Frosty Editor log** to determine which files were successfully reverted and whether you need to revert any manually.
 3. **Refresh your mesh tab** to see changes.
 
 ## Troubleshooting Tips
