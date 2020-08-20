@@ -8,22 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using Frosty.Controls;
 using FrostyEditor;
 using FrostyEditor.Controls;
-using FrostySdk.Attributes;
-using FrostySdk.Ebx;
 using FrostySdk.IO;
 using FrostySdk.Managers;
 using FrostySdk.Resources;
-using Microsoft.Win32;
 using System.IO;
-using System.Collections.ObjectModel;
-using System.CodeDom;
 
 // <summary>
 // Facilitates res/chunk file imports within the Frosty res/chunk explorer window.

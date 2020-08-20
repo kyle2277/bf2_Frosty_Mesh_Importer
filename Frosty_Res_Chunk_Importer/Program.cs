@@ -17,14 +17,9 @@ using System.Windows.Media;
 using Frosty.Controls;
 using FrostyEditor;
 using FrostyEditor.Controls;
-using FrostySdk.Attributes;
-using FrostySdk.Ebx;
-using FrostySdk.IO;
 using FrostySdk.Managers;
-using FrostySdk.Resources;
 using Microsoft.Win32;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
