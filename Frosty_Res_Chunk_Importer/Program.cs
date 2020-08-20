@@ -36,7 +36,7 @@ namespace FrostyResChunkImporter
     {
         Success = 0,
         ChunkFileNotFound = -1,
-        ResFileNotFound = -2,
+        CriticalResFileError = -2,
         UnableToRefreshExplorer = -3,
         NoResFileSelected = -4,
         CannotOverwriteExistingFile = -5,
@@ -266,7 +266,7 @@ namespace FrostyResChunkImporter
             
             if (!sfd.ShowDialog())
             {
-                App.Logger.Log($"ERROR: {errorState.ResFileNotFound}. Cancelling export.");
+                App.Logger.Log($"ERROR: {errorState.CriticalResFileError}. Cancelling export.");
                 return;
             }
             // Check if file already exists, if so, exit operation

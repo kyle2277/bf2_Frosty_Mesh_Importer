@@ -37,18 +37,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FrostyControls">
-      <HintPath>..\..\..\..\..\Desktop\FrostySrc\FrostyControls.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostyControls.dll</HintPath>
     </Reference>
     <Reference Include="FrostyEditor">
-      <HintPath>..\..\..\..\..\Desktop\FrostySrc\FrostyEditor.exe</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostyEditor.exe</HintPath>
     </Reference>
     <Reference Include="FrostySdk">
-      <HintPath>..\..\..\..\..\Desktop\FrostySrc\FrostySdk.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostySdk.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="StarWarsIISDK">
-      <HintPath>..\..\..\..\..\Desktop\FrostySrc\Profiles\StarWarsIISDK.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\Profiles\StarWarsIISDK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,24 +67,10 @@
     <Compile Include="ChunkResImporter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="ReflectionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\blocks.res" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FrostyResChunkImportIcon.ico.ico" />

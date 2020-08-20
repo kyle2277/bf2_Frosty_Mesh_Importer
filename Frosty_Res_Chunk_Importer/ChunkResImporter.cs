@@ -104,7 +104,7 @@ namespace FrostyResChunkImporter
                     // Check if res file found, if not log and exit
                     if (oldRes == null)
                     {
-                        return (int)errorState.ResFileNotFound;
+                        return (int)errorState.CriticalResFileError;
                     }
                     if (revert)
                     {
@@ -184,7 +184,7 @@ namespace FrostyResChunkImporter
             Stream resStream = App.AssetManager.GetRes(selectedAsset);
             if(resStream == null)
             {
-                return (int)errorState.ResFileNotFound;
+                return (int)errorState.CriticalResFileError;
             }
             using (NativeWriter nativeWriter = new NativeWriter(new FileStream(selectedFile, FileMode.Create), false, false))
             {
