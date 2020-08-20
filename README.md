@@ -1,6 +1,6 @@
 <img src=https://github.com/kyle2277/bf2_Frosty_Res_Chunk_Importer/blob/Dev/FrostyResChunkImportIcon.png width="100" height="100"></img>
 ___
-# TigerVenom22's Frosty Res/Chunk Importer for SWBFII
+# TigerVenom22's Frosty Res/Chunk Importer for SWBF2
 ## Overview
 Running this app creates an instance of Frosty Editor and injects the following functions: Import Mesh, Revert Mesh, and Export Res. This application streamlines the modding workflow by making importing and reverting meshes in the Frosty Editor a one-click operation. It automates the handling of chunk and res files outputted by the mesh converter application, FrostMeshy.
 
@@ -42,3 +42,6 @@ ERROR: ResFileNotFound | The import could not be completed because no .res file 
 WARNING: NonCriticalResImportError | Denotes application state which is non-nominal but does not interrupt any core operations
 WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the FrostMeshy output folder. The file must be imported manually
 WARNING: NonCriticalResImportError: UnableToRefreshExplorer | Internal error denoting communication failure with the Res Explorer UI element
+
+___
+Licensed under GPL v3.0
