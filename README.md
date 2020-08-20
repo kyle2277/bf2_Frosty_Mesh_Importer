@@ -37,7 +37,7 @@ Log Message | Solution
 ERROR: SelectedFileIsNotFolder | User has selected a file in the open file dialog, not a folder. Select a folder that contains the files you want to import/revert, not any of the files inside
 ERROR: NonChunkResFileFound | User has selected a folder that contains files other than .chunk and .res files. Output folders from FrostMeshy will only contain .chunk and .res files
 ERROR: NoResFileSelected | User has clicked "Export Res" button without selecting a file in the Res Explorer
-ERROR: CannotOverwriteExistingFile | User has attempted to export a .res to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them
+ERROR: CannotOverwriteExistingFile | User has attempted to export a .res file to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them
 ERROR: ResFileNotFound | The import could not be completed because no .res file in the Frosty Res Explorer matches the identifier of the .res file to be imported/reverted
 WARNING: NonCriticalResImportError | Denotes application state which is non-nominal but does not interrupt any core operations
 WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the FrostMeshy output folder. The file must be imported manually
