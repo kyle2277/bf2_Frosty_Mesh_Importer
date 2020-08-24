@@ -4,8 +4,8 @@ ___
 ## Overview
 Running this app creates an instance of Frosty Editor and injects the following functions: Import Mesh, Revert Mesh, and Export Res. This application streamlines the modding workflow by making importing and reverting meshes in the Frosty Editor a one-click operation. It automates the handling of chunk and res files outputted by the mesh converter application, FrostMeshy.
 
-64-bit Windows 10 build download: http://www.mediafire.com/file/nb7zigy7udal21s/Frosty_Res_Chunk_Importer_v1.0.0.0.zip/file
-\64-bit Windows 10 build download for Frosty Editor Alpha: http://www.mediafire.com/file/u5gx3dadn87zwsk/Frosty_Alpha_Res_Chunk_Importer_v1.0.0.0.zip/file
+64-bit Windows 10 build download: http://www.mediafire.com/file/nb7zigy7udal21s/Frosty_Res_Chunk_Importer_v1.0.0.0.zip/file \
+64-bit Windows 10 build download for Frosty Editor Alpha: http://www.mediafire.com/file/u5gx3dadn87zwsk/Frosty_Alpha_Res_Chunk_Importer_v1.0.0.0.zip/file
 
 ## Requirements
 * Frosty Mod Editor v1.0.5.9 - [download link](https://frostytoolsuite.com/downloads.html)
