@@ -20,6 +20,7 @@ using FrostyEditor.Controls;
 using FrostySdk.Managers;
 using Microsoft.Win32;
 using System.IO;
+using FrostySdk.Ebx;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
@@ -39,8 +40,9 @@ namespace FrostyResChunkImporter
         NonNominalReturn = -7,
         NoActiveResChunkExplorer = -8,
         SelectedFileIsNotFolder = -9,
-        NonChunkResFileFound = -10,
-        MissingResID = -11
+        SelectedFolderIsEmpty = -10,
+        NonChunkResFileFound = -11,
+        MissingResID = -12
     };
 
     class Program
@@ -140,6 +142,10 @@ namespace FrostyResChunkImporter
             if (_chunkResExplorer == null)
             {
                 App.Logger.Log($"ERROR: {errorState.NoActiveResChunkExplorer}. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.");
+                string message = $"{errorState.NoActiveResChunkExplorer}. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.";
+                string title = "Frosty Res/Chunk Importer Error";
+                MessageBoxButton buttons = MessageBoxButton.OK;
+                FrostyMessageBox.Show(message, title, buttons);
                 return false;
             }
             else
@@ -200,10 +206,15 @@ namespace FrostyResChunkImporter
                     return;
                 }
 
-                // Sort res and chunk files into lists, if a file is not a res or chunk file, log and exit operation
+                // Sort res and chunk files into lists, if a file is not a res or chunk file or if the folder is empty, log and exit operation
                 List<string> allFiles = Directory.EnumerateFiles(ofdResult).ToList();
                 List<ChunkResFile> chunkFiles = new List<ChunkResFile>();
                 List<ChunkResFile> resFiles = new List<ChunkResFile>();
+
+                if(allFiles.Count == 0)
+                {
+                    string message = $"{errorState.SelectedFolderIsEmpty}. The selected folder has no files in it. Canceled {operation}.";
+                }
 
                 foreach (string absolutePath in allFiles)
                 {
@@ -218,6 +229,8 @@ namespace FrostyResChunkImporter
                             resFiles.Add(curFile);
                             break;
                         default:
+                            string message = $"{errorState.NonChunkResFileFound}. Canceled {operation}.";
+                            string title = "Frosty Res/Chunk Importer Error";
                             App.Logger.Log($"ERROR: {errorState.NonChunkResFileFound}. Canceled {operation}.");
                             return;
                     }
