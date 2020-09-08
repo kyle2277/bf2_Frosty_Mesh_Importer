@@ -54,6 +54,8 @@ namespace FrostyResChunkImporter
         private static FrostyTabControl _tabControl;
         private static App _app;
         private static string _version;
+        public static readonly string IMPORTER_ERROR = "Frosty Res/Chunk Importer Error";
+        public static readonly string IMPORTER_WARNING = "Frosty Res/Chunk Importer Warning";
 
         [STAThread]
         static void Main(string[] args)
@@ -141,11 +143,8 @@ namespace FrostyResChunkImporter
 
             if (_chunkResExplorer == null)
             {
-                App.Logger.Log($"ERROR: {errorState.NoActiveResChunkExplorer}. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.");
-                string message = $"{errorState.NoActiveResChunkExplorer}. Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.";
-                string title = "Frosty Res/Chunk Importer Error";
-                MessageBoxButton buttons = MessageBoxButton.OK;
-                FrostyMessageBox.Show(message, title, buttons);
+                Log(errorState.NoActiveResChunkExplorer.ToString(), "Res/Chunk Explorer not found. " +
+                    "Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.", MessageBoxButton.OK, isError: true);
                 return false;
             }
             else
@@ -202,7 +201,7 @@ namespace FrostyResChunkImporter
                 FileAttributes attr = File.GetAttributes(ofdResult);
                 if (!attr.HasFlag(FileAttributes.Directory))
                 {
-                    App.Logger.Log($"ERROR: {errorState.SelectedFileIsNotFolder}");
+                    Log(errorState.SelectedFileIsNotFolder.ToString(), $"The selected file must be a folder. Canceled {operation}.", MessageBoxButton.OK, isError: true);
                     return;
                 }
 
@@ -213,7 +212,8 @@ namespace FrostyResChunkImporter
 
                 if(allFiles.Count == 0)
                 {
-                    string message = $"{errorState.SelectedFolderIsEmpty}. The selected folder has no files in it. Canceled {operation}.";
+                    Log(errorState.SelectedFolderIsEmpty.ToString(), $"The selected folder has no files in it. Canceled {operation}.", MessageBoxButton.OK, isError: true);
+                    return;
                 }
 
                 foreach (string absolutePath in allFiles)
@@ -229,9 +229,8 @@ namespace FrostyResChunkImporter
                             resFiles.Add(curFile);
                             break;
                         default:
-                            string message = $"{errorState.NonChunkResFileFound}. Canceled {operation}.";
-                            string title = "Frosty Res/Chunk Importer Error";
-                            App.Logger.Log($"ERROR: {errorState.NonChunkResFileFound}. Canceled {operation}.");
+                            Log(errorState.NonChunkResFileFound.ToString(),
+                                $"Folder contains files which are not .chunk or .res files. Canceled {operation}?", MessageBoxButton.OK, isError: true);
                             return;
                     }
                 }
@@ -267,23 +266,35 @@ namespace FrostyResChunkImporter
             }));
             if (selectedAsset == null)
             {
-                App.Logger.Log($"ERROR: {errorState.NoResFileSelected}. Cancelling export.");
+                Log(errorState.NoResFileSelected.ToString(), "No Res file selected in the Res explorer. Canceled export", MessageBoxButton.OK, isError: true);
                 return;
             }
-            FrostySaveFileDialog sfd = new FrostySaveFileDialog("Save Resource", "*.res (Resource Files)|*.res", "Res", selectedAsset.Filename, true);
-            
-            if (!sfd.ShowDialog())
+
+            //export path dialog
+            string selectedFile;
+            do
             {
-                App.Logger.Log($"ERROR: {errorState.CriticalResFileError}. Cancelling export.");
-                return;
-            }
-            // Check if file already exists, if so, exit operation
-            string selectedFile = sfd.FileName;
-            if (File.Exists(selectedFile))
-            {
-                App.Logger.Log($"ERROR: {errorState.CannotOverwriteExistingFile}. Cancelling export.");
-                return;
-            }
+                FrostySaveFileDialog sfd = new FrostySaveFileDialog("Save Resource", "*.res (Resource Files)|*.res", "Res", selectedAsset.Filename, true);
+                //if user exits dialog, log and exit operation
+                if (!sfd.ShowDialog())
+                {
+                    App.Logger.Log("Canceled export.");
+                    return;
+                }
+
+                // Check if file already exists, if so, exit operation
+                selectedFile = sfd.FileName;
+                if (!File.Exists(selectedFile))
+                {
+                    break;
+                }
+                MessageBoxResult result = Log(errorState.CannotOverwriteExistingFile.ToString(), "Cannot save over an existing file. Would you like to choose a different path?", MessageBoxButton.OKCancel, isError: true);
+                if (result == MessageBoxResult.Cancel)
+                {
+                    App.Logger.Log("Canceled export.");
+                    return;
+                }
+            } while (File.Exists(selectedFile));
 
             FrostyTask.Begin("Exporting res file");
             await Task.Run(() =>
@@ -292,7 +303,7 @@ namespace FrostyResChunkImporter
                 int status = importer.ExportResFile(selectedAsset, selectedFile);
                 if(status < 0)
                 {
-                    App.Logger.Log($"ERROR: {(errorState)status}. Cancelling export.");
+                    App.Logger.Log($"ERROR: {(errorState)status}. Canceled export.");
                     return;
                 }
                 App.Logger.Log("Export successful!");
@@ -315,8 +326,27 @@ namespace FrostyResChunkImporter
             }
             else
             {
-                App.Logger.Log($"WARNING: {errorState.NonCriticalResFileError}: {errorState.UnableToRefreshExplorer}. Missing reference.");
+                Log(errorState.NonCriticalResFileError.ToString() + ": " + errorState.UnableToRefreshExplorer, 
+                    "Unable to refresh the Res/Chunk explorer. Missing reference.", MessageBoxButton.OK, isError: false);
             }
+        }
+
+        //Log helper writes errors to log and creates popup message window
+        private static MessageBoxResult Log(string errorState, string message, MessageBoxButton buttons, Boolean isError)
+        {
+            string title, error;
+            if(isError)
+            {
+                title = IMPORTER_ERROR;
+                error = "ERROR";
+            } 
+            else
+            {
+                title = IMPORTER_WARNING;
+                error = "WARNING";
+            }
+            App.Logger.Log($"{error}: {errorState}. {message}");
+            return FrostyMessageBox.Show(message, title, buttons);
         }
 
         /// <summary>

@@ -10,11 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using FrostyEditor;
+using Frosty.Controls;
 using FrostyEditor.Controls;
 using FrostySdk.IO;
 using FrostySdk.Managers;
 using FrostySdk.Resources;
 using System.IO;
+using System.Windows;
 
 // <summary>
 // Facilitates res/chunk file imports within the Frosty res/chunk explorer window.
@@ -95,6 +97,7 @@ namespace FrostyResChunkImporter
                     // Check if res file found, if not log and exit
                     if (oldRes == null)
                     {
+                        FrostyMessageBox.Show("Critical Error. Unable to locate Res file in Frosty Res explorer.", Program.IMPORTER_ERROR, MessageBoxButton.OK);
                         return (int)errorState.CriticalResFileError;
                     }
                     if (revert)
@@ -167,7 +170,7 @@ namespace FrostyResChunkImporter
             {
                 _exportedResFiles.Add(curFile);
             }
-            else if(searchFile != null && searchFile.absolutePath != curFile.absolutePath)  // Check if file location has changed, if so, replace in list, rewrite json
+            else if(searchFile != null && searchFile.absolutePath != curFile.absolutePath)  // Check if file location has changed, if so, replace in list
             {
                 _exportedResFiles.Remove(searchFile);
                 _exportedResFiles.Add(curFile);
@@ -175,6 +178,7 @@ namespace FrostyResChunkImporter
             Stream resStream = App.AssetManager.GetRes(selectedAsset);
             if(resStream == null)
             {
+                FrostyMessageBox.Show("Critical Error. Unable to locate Res file in Frosty Res explorer.", Program.IMPORTER_ERROR, MessageBoxButton.OK);
                 return (int)errorState.CriticalResFileError;
             }
             using (NativeWriter nativeWriter = new NativeWriter(new FileStream(selectedFile, FileMode.Create), false, false))
