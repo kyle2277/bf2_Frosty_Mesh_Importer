@@ -79,6 +79,8 @@ namespace FrostyResChunkImporter
             }
 
             string operation = revert ? "reverted" : "imported";
+            //res counter tells user how many res files need to be imported manually
+            int resCounter = 0;
             // Find and import res files in Frosty res explorer
             foreach (ChunkResFile newRes in _resFiles)
             {
@@ -89,6 +91,7 @@ namespace FrostyResChunkImporter
                 if(intermediate == null)
                 {
                     App.Logger.Log($"WARNING: {errorState.NonCriticalResFileError}: {errorState.MissingResID}. Res file located at {newRes.absolutePath} must be {operation} manually. Unable to locate res file data.");
+                    resCounter++;
                 } 
                 else
                 {
@@ -109,6 +112,10 @@ namespace FrostyResChunkImporter
                         ImportResFiles(oldRes, newRes);
                     }
                 }
+            }
+            if(resCounter != 0)
+            {
+                FrostyMessageBox.Show($"{resCounter} Res files must be {operation} manually. See log for details.", Program.IMPORTER_WARNING, MessageBoxButton.OK);
             }
             return (int)errorState.Success;
         }

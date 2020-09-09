@@ -230,7 +230,7 @@ namespace FrostyResChunkImporter
                             break;
                         default:
                             Log(errorState.NonChunkResFileFound.ToString(),
-                                $"Folder contains files which are not .chunk or .res files. Canceled {operation}?", MessageBoxButton.OK, isError: true);
+                                $"Folder contains files which are not .chunk or .res files. Canceled {operation}.", MessageBoxButton.OK, isError: true);
                             return;
                     }
                 }
@@ -266,7 +266,7 @@ namespace FrostyResChunkImporter
             }));
             if (selectedAsset == null)
             {
-                Log(errorState.NoResFileSelected.ToString(), "No Res file selected in the Res explorer. Canceled export", MessageBoxButton.OK, isError: true);
+                Log(errorState.NoResFileSelected.ToString(), "No Res file selected in the Res explorer. Canceled export.", MessageBoxButton.OK, isError: true);
                 return;
             }
 
