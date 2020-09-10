@@ -14,19 +14,21 @@ namespace FrostyResChunkImporter
     //Imported asset structure used for reversion of imported meshes
     public class ImportedAsset
     {
-        public string name { get; }
+        public string meshSetName { get; }
+        public string directory { get; set; }
         public List<ChunkResFile> chunks { get; }
         public List<ChunkResFile> res { get; }
-        public ImportedAsset(string name, List<ChunkResFile> chunks, List<ChunkResFile> res)
+        public ImportedAsset(string meshSetName, string directory, List<ChunkResFile> chunks, List<ChunkResFile> res)
         {
-            this.name = name;
+            this.meshSetName = meshSetName;
+            this.directory = directory;
             this.chunks = chunks;
             this.res = res;
         }
 
         public override string ToString()
         {
-            return this.name;
+            return this.meshSetName;
         }
     }
 }
