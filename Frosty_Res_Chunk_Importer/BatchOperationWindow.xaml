@@ -1,0 +1,42 @@
+﻿<ctrl:FrostyDockableWindow x:Class="FrostyResChunkImporter.BatchOperationWindow"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                           xmlns:local="clr-namespace:FrostyResChunkImporter"
+                           xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
+                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400"
+                           ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource WindowBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="38"/>
+        </Grid.RowDefinitions>
+        <StackPanel x:Name="PageOne" Visibility="Visible">
+            <Grid Margin="4" Background="{StaticResource ListBackground}">
+                <StackPanel Margin="0,0,2,2">
+                    <Label x:Name="label" Content="Select one or more meshes to revert" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </Grid>
+            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
+                <StackPanel Margin="0">
+                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="223" VerticalAlignment="Top" Width="386" />
+                </StackPanel>
+            </Grid>
+            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
+                <StackPanel Margin="0">
+                    <CheckBox x:Name="revertCheckBox" Content=" Remove reverted meshes from list" HorizontalAlignment="Left" Foreground="White" Margin="2"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <Border Grid.Row="1" Background="{StaticResource ListBackground}">
+            <Grid Margin="8">
+                <DockPanel LastChildFill="false">
+                    <Button Click="CancelButton_Click" x:Name="cancelButton" Content="Cancel" DockPanel.Dock="Left" Width="75"/>
+                    <Button Click="RunButton_Click" x:Name="executeOrderButton" Content="Run" DockPanel.Dock="Right" Width="75"/>
+                </DockPanel>
+            </Grid>
+        </Border>
+            
+    </Grid>
+</ctrl:FrostyDockableWindow>

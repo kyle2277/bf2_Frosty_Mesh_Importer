@@ -29,24 +29,28 @@ namespace FrostyResChunkImporter
         private static MainWindow _mainWindow;
         private FrostyDataExplorer _resExplorer;
         private FrostyChunkResExplorer _chunkResExplorer;
-        private string name;
         private static List<ChunkAssetEntry> _allChunks;
         private static List<ResAssetEntry> _allResFiles;
         private static List<ChunkResFile> _exportedResFiles;
         public static List<ImportedAsset> importedAssets;
         private List<ChunkResFile> _chunkFiles;
         private List<ChunkResFile> _resFiles;
+        private bool _removeReverted;
         private string _searchTerm;
         private string _searchTerm2;
+        private string _name;
+        private string _directory;
 
-        public ChunkResImporter(MainWindow mainWindow, FrostyChunkResExplorer chunkResExplorer, FrostyDataExplorer resExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles, string name)
+        public ChunkResImporter(MainWindow mainWindow, FrostyChunkResExplorer chunkResExplorer, FrostyDataExplorer resExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles, string name, string directory)
         {
             _mainWindow = mainWindow;
             _chunkResExplorer = chunkResExplorer;
             _resExplorer = resExplorer;
             _chunkFiles = chunkFiles;
             _resFiles = resFiles;
-            this.name = name;
+            _directory = directory;
+            _name = name;
+            _removeReverted = false;
             if (_exportedResFiles == null)
             {
                 _exportedResFiles = new List<ChunkResFile>();
@@ -96,7 +100,7 @@ namespace FrostyResChunkImporter
             foreach (ChunkResFile newRes in _resFiles)
             {
                 // Check if res file is documented in exported res files list, if not, log warning and exit operation
-                _searchTerm = newRes.directory;
+                _searchTerm = newRes.meshSetName;
                 _searchTerm2 = newRes.fileName;
                 ChunkResFile intermediate = _exportedResFiles.Find(dirPredicate);
                 if (intermediate == null)
@@ -126,15 +130,19 @@ namespace FrostyResChunkImporter
                 }
             }
             // Remove if exists in record. Add or replace record on successful import
-            _searchTerm = this.name;
+            _searchTerm = this._name;
             ImportedAsset search = importedAssets.Find(importedPredicate);
-            if(search != null)
+            if(revert && search != null && _removeReverted)
             {
                 importedAssets.Remove(search);
             }
             if(!revert)
             {
-                importedAssets.Add(new ImportedAsset(this.name, _chunkFiles, _resFiles));
+                if(search != null)
+                {
+                    importedAssets.Remove(search);
+                }
+                importedAssets.Add(new ImportedAsset(this._name, this._directory, _chunkFiles, _resFiles));
             }
             return resCounter;
         }
@@ -254,7 +262,7 @@ namespace FrostyResChunkImporter
 
         private bool CompareImportedByName(ImportedAsset f)
         {
-            return f.name == _searchTerm; 
+            return f.meshSetName == _searchTerm; 
         }
         
         private bool CompareByRidGeneric(ChunkResFile f)
@@ -264,7 +272,7 @@ namespace FrostyResChunkImporter
 
         private bool CompareByDir(ChunkResFile f)
         {
-            return f.directory == _searchTerm && f.fileName == _searchTerm2;
+            return f.meshSetName == _searchTerm && f.fileName == _searchTerm2;
         }
 
         private ChunkResFile IsAlreadyInList(string resRid)
@@ -284,6 +292,14 @@ namespace FrostyResChunkImporter
                 return;
             App.AssetManager.RevertAsset(asset, false, false);
             App.Logger.Log($"Reverted {assetType}: {asset.Name}");
+        }
+
+        public void SetRemoveReverted(bool? removeReverted)
+        {
+            if(removeReverted == true)
+            {
+                this._removeReverted = true;
+            }
         }
     }
 
