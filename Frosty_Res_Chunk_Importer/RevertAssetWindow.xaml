@@ -8,9 +8,10 @@
                            FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="300" Width="400"
                            ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Button Click="RevertButton_Click" x:Name="revertButton" Content="Revert" HorizontalAlignment="Left" Margin="308,241,0,0" VerticalAlignment="Top" Width="76"/>
+        <Button Click="RevertButton_Click" x:Name="executeOrderButton" Content="Revert" HorizontalAlignment="Left" Margin="308,241,0,0" VerticalAlignment="Top" Width="76"/>
         <Button Click="CancelButton_Click" x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="10,241,0,0" VerticalAlignment="Top" Width="76"/>
-        <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="185" Margin="10,41,0,0" VerticalAlignment="Top" Width="374"/>
-        <Label Content="Select one or more meshes to revert" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="175" Margin="10,41,0,0" VerticalAlignment="Top" Width="374"/>
+        <Label x:Name="label" Content="Select one or more meshes to revert" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="revertCheckBox" Content="Remove reverted meshes from list" HorizontalAlignment="Left" Margin="10,221,0,0" VerticalAlignment="Top" Foreground="White"/>
     </Grid>
 </ctrl:FrostyDockableWindow>

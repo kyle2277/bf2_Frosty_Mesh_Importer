@@ -125,8 +125,9 @@ namespace FrostyResChunkImporter
             var control = FindChild<ItemsControl>(_mainWindow, "editorToolbarItems");
             var items = _currentAssetEditor.RegisterToolbarItems();
             items.Add(new ToolbarItem("Import Mesh", "Import mesh or cloth asset's res/chunk files", "Images/Import.png", new RelayCommand(_ => OnImporterCommand(false),_ => true)));
+            items.Add(new ToolbarItem("Batch Re-import", "Re-import multiple meshes or cloth assets", "Images/Import.png", new RelayCommand(_ => OnBatchCommand(false), _ => true)));
             items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
-            items.Add(new ToolbarItem("Batch Revert", "Revert multiple imported mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnRevertImportedCommand(), _ => true)));
+            items.Add(new ToolbarItem("Batch Revert", "Revert multiple imported mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnBatchCommand(true), _ => true)));
             items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
             control.ItemsSource = items;
         }
@@ -200,7 +201,6 @@ namespace FrostyResChunkImporter
                 string resultName = Path.GetFileName(ofd.FileName);
                 string ofdResult = ofd.FileName.Remove(ofd.FileName.Length - resultName.Length, resultName.Length);
                 App.Logger.Log($"Folder selected: {ofdResult}");
-
                 //Check if the selected file is a directory, if not, log and exit operation
                 FileAttributes attr = File.GetAttributes(ofdResult);
                 if (!attr.HasFlag(FileAttributes.Directory))
@@ -208,41 +208,18 @@ namespace FrostyResChunkImporter
                     Log(errorState.SelectedFileIsNotFolder.ToString(), $"The selected file must be a folder. Canceled {operation}.", MessageBoxButton.OK, isError: true);
                     return;
                 }
-
                 // Sort res and chunk files into lists, if a file is not a res or chunk file or if the folder is empty, log and exit operation
                 List<string> allFiles = Directory.EnumerateFiles(ofdResult).ToList();
                 List<ChunkResFile> chunkFiles = new List<ChunkResFile>();
                 List<ChunkResFile> resFiles = new List<ChunkResFile>();
-
-                if(allFiles.Count == 0)
+                if(PopulateChunkResLists(operation, allFiles, chunkFiles, resFiles) == -1)
                 {
-                    Log(errorState.SelectedFolderIsEmpty.ToString(), $"The selected folder has no files in it. Canceled {operation}.", MessageBoxButton.OK, isError: true);
                     return;
                 }
                 // Parse mesh set name (name of directory)
                 string[] pathSplit = Path.GetDirectoryName(ofdResult).Split('\\');
                 string meshSetName = pathSplit[pathSplit.Length - 1];
-
-                foreach (string absolutePath in allFiles)
-                {
-                    string extension = Path.GetExtension(absolutePath);
-                    ChunkResFile curFile = new ChunkResFile(absolutePath, null);
-                    switch (extension)
-                    {
-                        case ".chunk":
-                            chunkFiles.Add(curFile);
-                            break;
-                        case ".res":
-                            resFiles.Add(curFile);
-                            break;
-                        default:
-                            Log(errorState.NonChunkResFileFound.ToString(),
-                                $"Folder contains files which are not .chunk or .res files. Canceled {operation}.", MessageBoxButton.OK, isError: true);
-                            return;
-                    }
-                }
-
-                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, chunkFiles, resFiles, meshSetName);
+                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, chunkFiles, resFiles, meshSetName, ofdResult);
                 int status = importer.Import(revert);
                 // Positive status indicates number of res files to be imported manually
                 if (status < (int)errorState.Success)
@@ -261,6 +238,36 @@ namespace FrostyResChunkImporter
             });
             FrostyTask.End();
             RefreshExplorers();
+        }
+
+        // Adds chunk and res files to lists, returns -1 if error
+        private static int PopulateChunkResLists(string operation, List<string> allFiles, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles)
+        {
+            if (allFiles.Count == 0)
+            {
+                Log(errorState.SelectedFolderIsEmpty.ToString(), $"The selected folder has no files in it. Canceled {operation}.", MessageBoxButton.OK, isError: true);
+                return (int)errorState.SelectedFolderIsEmpty;
+            }
+
+            foreach (string absolutePath in allFiles)
+            {
+                string extension = Path.GetExtension(absolutePath);
+                ChunkResFile curFile = new ChunkResFile(absolutePath, null);
+                switch (extension)
+                {
+                    case ".chunk":
+                        chunkFiles.Add(curFile);
+                        break;
+                    case ".res":
+                        resFiles.Add(curFile);
+                        break;
+                    default:
+                        Log(errorState.NonChunkResFileFound.ToString(),
+                            $"Folder contains files which are not .chunk or .res files. Canceled {operation}.", MessageBoxButton.OK, isError: true);
+                        return (int)errorState.NonChunkResFileFound;
+                }
+            }
+            return 0;
         }
 
         //user clicks "Export Res File"
@@ -312,7 +319,7 @@ namespace FrostyResChunkImporter
             FrostyTask.Begin("Exporting res file");
             await Task.Run(() =>
             {
-                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, null, null, null);
+                ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, null, null, null, null);
                 int status = importer.ExportResFile(selectedAsset, selectedFile);
                 if(status < 0)
                 {
@@ -328,29 +335,31 @@ namespace FrostyResChunkImporter
         }
 
         //user clicks "Revert Imported Mesh"
-        private static async void OnRevertImportedCommand()
+        private static async void OnBatchCommand(Boolean revert)
         {
             if (!hasChunkResExplorer())
             {
                 return;
             }
+            string operation = revert ? "revert" : "re-import";
+
             //Check if the importer has any imported meshes saved, if not, log and exit
             if (ChunkResImporter.importedAssets == null || ChunkResImporter.importedAssets.Count == 0)
             {
-                Log(errorState.NoImportedAssets.ToString(), "No imported meshes to revert.", MessageBoxButton.OK, isError: true);
+                Log(errorState.NoImportedAssets.ToString(), $"No imported meshes to {operation}.", MessageBoxButton.OK, isError: true);
                 return;
             }
-            ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, null, null, null);
-            RevertAssetWindow ra = new RevertAssetWindow(operation: "revert");
+            App.Logger.Log($"Batch {operation} will commence shortly.");
+            RevertAssetWindow ra = new RevertAssetWindow(operation);
             ra.ShowDialog();
             if(ra.DialogResult == false)
             {
-                App.Logger.Log("Canceled revert.");
+                App.Logger.Log($"Canceled {operation}.");
                 return;
             } 
             else if(ra.DialogResult == true)
             {
-                FrostyTask.Begin("Reverting imported assets");
+                FrostyTask.Begin($"Performing mesh {operation} on selected assets");
                 await Task.Run(() =>
                 {
                     Predicate<ImportedAsset> selectedPredicate = CompareByName;
@@ -360,16 +369,35 @@ namespace FrostyResChunkImporter
                     {
                         _searchTerm = item.ToString();
                         ImportedAsset curAsset = ChunkResImporter.importedAssets.Find(selectedPredicate);
-                        int status = Program.InternalRevert(curAsset);
-                        if (status > 0)
+                        int status;
+                        if(revert)
+                        {
+                            bool? removeReverted = new bool?(false);
+                            // Use dispatcher to get access to UI element selected asset
+                            _mainWindow.Dispatcher.Invoke((Action)(() =>
+                            {
+                                removeReverted = ra.revertCheckBox.IsChecked;
+                            }));
+                            status = Program.InternalRevert(curAsset, removeReverted); ;
+                        } 
+                        else
+                        {
+                            status = Program.InternalImport(curAsset);
+                        }
+                        if(status < 0)
+                        {
+                            App.Logger.Log($"ERROR: {(errorState)status}.");
+                            return;
+                        }
+                        else if (status > 0)
                         {
                             resCounter += status;
                         }
                     }
-                    App.Logger.Log("Revert successful!");
+                    App.Logger.Log($"Successfully {operation}ed assets!");
                     if (resCounter > 0)
                     {
-                        FrostyMessageBox.Show($"{resCounter} Res files need to be reverted manually. See log for details.", Program.IMPORTER_WARNING, MessageBoxButton.OK);
+                        FrostyMessageBox.Show($"{resCounter} Res files need to be {operation}ed manually. See log for details.", Program.IMPORTER_WARNING, MessageBoxButton.OK);
                     }
                 });
                 FrostyTask.End();
@@ -379,18 +407,34 @@ namespace FrostyResChunkImporter
 
         private static bool CompareByName(ImportedAsset f)
         {
-            return f.name == _searchTerm;
+            return f.meshSetName == _searchTerm;
         }
 
-        // Helper to performs revert from recorded import instead of from file
-        private static int InternalRevert(ImportedAsset asset)
+        // Helper to perform revert from recorded import instead of from file
+        private static int InternalRevert(ImportedAsset asset, bool? removeReverted)
         {
-            ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, asset.chunks, asset.res, asset.name);
+            ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, asset.chunks, asset.res, asset.meshSetName, asset.directory);
+            importer.SetRemoveReverted(removeReverted);
             int status = importer.Import(revert: true);
+            importer = null;
+            return status;
+        }
+
+        // Helper to perform re-import from recorded imports, returns -1 if error
+        private static int InternalImport(ImportedAsset asset)
+        {
+            string srcDir = asset.directory;
+            List<string> allFiles = Directory.EnumerateFiles(srcDir).ToList();
+            List<ChunkResFile> chunkFiles = new List<ChunkResFile>();
+            List<ChunkResFile> resFiles = new List<ChunkResFile>();
+            int status = PopulateChunkResLists("re-import", allFiles, chunkFiles, resFiles);
             if(status < 0)
             {
-                App.Logger.Log($"ERROR: {(errorState)status}. Canceled export.");
+                return status;
             }
+            ChunkResImporter importer = new ChunkResImporter(_mainWindow, _chunkResExplorer, _resExplorer, chunkFiles, resFiles, asset.meshSetName, asset.directory);
+            status = importer.Import(revert: false);
+            importer = null;
             return status;
         }
 

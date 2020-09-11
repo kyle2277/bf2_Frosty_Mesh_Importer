@@ -32,6 +32,12 @@ namespace FrostyResChunkImporter
             InitializeComponent();
             this.operation = operation;
             this.Title = $"Batch {operation}";
+            this.label.Content = $"Select one or more meshes to {operation}";
+            this.executeOrderButton.Content = $"{operation}";
+            if(operation == "re-import")
+            {
+                this.revertCheckBox.IsEnabled = false;
+            }
             List<ImportedAsset> items = ChunkResImporter.importedAssets.ToList<ImportedAsset>();
             lbSelectAsset.ItemsSource = items;
             selectedItems = new List<string>();

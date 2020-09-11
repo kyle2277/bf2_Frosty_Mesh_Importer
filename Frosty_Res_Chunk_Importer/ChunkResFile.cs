@@ -15,7 +15,7 @@ namespace FrostyResChunkImporter
     public class ChunkResFile
     {
         public string absolutePath { get; }
-        public string directory { get; }
+        public string meshSetName { get; }
         public string fileName { get; }
         public string extension { get; }
         public string resRid { get; set; }
@@ -28,7 +28,7 @@ namespace FrostyResChunkImporter
             extension = Path.GetExtension(absolutePath);
             string tempFileName = Path.GetFileName(absolutePath);
             string[] pathSplit = Path.GetDirectoryName(absolutePath).Split('\\');
-            directory = pathSplit[pathSplit.Length - 1];
+            meshSetName = pathSplit[pathSplit.Length - 1];
             // Remove extension from file name
             fileName = tempFileName.Substring(0, tempFileName.Length - extension.Length);
         }
