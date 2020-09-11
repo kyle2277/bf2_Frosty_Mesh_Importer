@@ -212,7 +212,7 @@ namespace FrostyResChunkImporter
                 List<string> allFiles = Directory.EnumerateFiles(ofdResult).ToList();
                 List<ChunkResFile> chunkFiles = new List<ChunkResFile>();
                 List<ChunkResFile> resFiles = new List<ChunkResFile>();
-                if(PopulateChunkResLists(operation, allFiles, chunkFiles, resFiles) == -1)
+                if(PopulateChunkResLists(operation, allFiles, chunkFiles, resFiles) < 0)
                 {
                     return;
                 }
@@ -350,7 +350,7 @@ namespace FrostyResChunkImporter
                 return;
             }
             App.Logger.Log($"Batch {operation} will commence shortly.");
-            RevertAssetWindow ra = new RevertAssetWindow(operation);
+            BatchOperationWindow ra = new BatchOperationWindow(operation);
             ra.ShowDialog();
             if(ra.DialogResult == false)
             {
@@ -359,7 +359,7 @@ namespace FrostyResChunkImporter
             } 
             else if(ra.DialogResult == true)
             {
-                FrostyTask.Begin($"Performing mesh {operation} on selected assets");
+                FrostyTask.Begin($"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)}ing selected assets");
                 await Task.Run(() =>
                 {
                     Predicate<ImportedAsset> selectedPredicate = CompareByName;

@@ -1,4 +1,4 @@
-﻿// RevertAssetWindow.xaml.cs - FrostyResChunkImporter
+﻿// BatchOperationWindow.xaml.cs - FrostyResChunkImporter
 // Contributors:
 //      Copyright (C) 2020  Kyle Won
 // This file is subject to the terms and conditions defined in the 'LICENSE' file.
@@ -11,7 +11,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Frosty.Controls;
+using FrostySdk;
+using FrostySdk.Attributes;
+using FrostySdk.Managers;
 using FrostyEditor.Controls;
+using FrostyEditor.Windows;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -24,21 +28,22 @@ using System.Windows.Markup;
 namespace FrostyResChunkImporter
 {
     /// <summary>
-    /// Interaction logic for RevertAsset.xaml
+    /// Interaction logic for BatchOperationWindow.xaml
     /// </summary>
     /// 
-    public partial class RevertAssetWindow : FrostyDockableWindow
+    public partial class BatchOperationWindow : FrostyDockableWindow 
     {
         public List<string> selectedItems;
         private string operation;
 
-        public RevertAssetWindow(string operation)
+
+        public BatchOperationWindow(string operation)
         {
             InitializeComponent();
             this.operation = operation;
             this.Title = $"Batch {operation}";
-            this.label.Content = $"Select one or more meshes to {operation}";
-            this.executeOrderButton.Content = $"{operation}";
+            this.label.Content = $"Select one or more meshes to {operation}:";
+            this.executeOrderButton.Content = $"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)}";
             if(operation == "re-import")
             {
                 this.revertCheckBox.IsEnabled = false;
@@ -54,7 +59,7 @@ namespace FrostyResChunkImporter
             this.Close();
         }
 
-        private void RevertButton_Click(object sender, RoutedEventArgs e)
+        private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             if(lbSelectAsset.SelectedItems.Count == 0)
             {
