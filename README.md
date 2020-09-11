@@ -1,11 +1,12 @@
 <img src=https://github.com/kyle2277/bf2_Frosty_Res_Chunk_Importer/blob/master/FrostyResChunkImportIcon.png width="100" height="100"></img>
 ___
-# TigerVenom22's Frosty Res/Chunk Importer for SWBF2
+# TigerVenom22's Frosty Mesh Importer for SWBF2
+*Previously known as the Frosty Res/Chunk Importer*
 ## Overview
 Running this app creates an instance of Frosty Editor and injects the following functions: Import Mesh, Revert Mesh, and Export Res. This application streamlines the modding workflow by making importing and reverting meshes in the Frosty Editor a one-click operation. It automates the handling of chunk and res files outputted by the mesh converter application, FrostMeshy.
 
-64-bit Windows 10 build download: http://www.mediafire.com/file/nb7zigy7udal21s/Frosty_Res_Chunk_Importer_v1.0.0.0.zip/file \
-64-bit Windows 10 build download for Frosty Editor Alpha: http://www.mediafire.com/file/u5gx3dadn87zwsk/Frosty_Alpha_Res_Chunk_Importer_v1.0.0.0.zip/file
+64-bit Windows 10 build download (v1.1.0.1): http://www.mediafire.com/file/njc4ce2gyy21vta/Frosty_Mesh_Importer_v1.1.0.1.zip/file \
+64-bit Windows 10 build download for Frosty Editor Alpha (v1.0.0.0): http://www.mediafire.com/file/u5gx3dadn87zwsk/Frosty_Alpha_Res_Chunk_Importer_v1.0.0.0.zip/file
 
 ## Requirements
 * Frosty Mod Editor v1.0.5.9 - [download link](https://frostytoolsuite.com/downloads.html)
@@ -13,7 +14,7 @@ Running this app creates an instance of Frosty Editor and injects the following 
 
 ## Documentation
 ### Installation
-Install by placing Frosty_Res_Chunk_Importer.exe in the same folder as your Frosty Editor installation.
+Install by placing Frosty_Mesh_Importer.exe in the same folder as your Frosty Editor installation.
 ### How to import a mesh
 1. **Open the mesh you want to replace**. This prompts three new buttons to show up on the toolbar at the top of the window: Import Mesh, Revert Mesh, and Export Res. These buttons will only be visible when an asset tab is open in Frosty Editor.
 2. **Open the Res/Chunk Explorer** from the "Tools" drop-down menu. The Res/Chunk Explorer must be open to use any of this application's functions. Clicking on one of the buttons without having the Res/Chunk Explorer open will return an error in the log notifying you to open the Res/Chunk Explorer.
@@ -30,7 +31,7 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 
 ## Troubleshooting Tips
 * This functions of this app rely on the file structure and naming conventions of the files outputted by FrostMeshy. Name your mesh set folders using unique identifiers that make it clear which asset each folder is associated with. Avoid moving or renaming mesh set input and output folders after exporting .res files from Frosty Editor and after running FrostMeshy.
-* Chunk files should never fail to automatically import because their file names are unique identnifiers which can always be matched to a chunk file in the Frosty Editor. Res files are not named using unique identifiers, so imported .res files are identified using an ID value noted during export. These ID values are lost when the application is exited, meaning you can only automatically import .res files that you've exported in the same session.
+* Chunk files should never fail to automatically import because their file names are unique identnifiers which can always be matched to a chunk file in the Frosty Editor. Res files are not named using unique identifiers, so imported .res files are identified using an ID value noted during export. These ID values are lost when the application is closed, meaning you can only automatically import .res files that you've exported in the same session.
 * Read the Frosty Editor log. All operations by this app, successful or unsuccessful, are written to the log. The only indication that an operation has failed will be in the log. Below is a table for troubleshooting explaining different log messages.
 
 Log Message | Explanation/Solution
