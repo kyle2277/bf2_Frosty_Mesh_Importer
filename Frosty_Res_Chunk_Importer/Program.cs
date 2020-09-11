@@ -99,7 +99,7 @@ namespace FrostyResChunkImporter
         private static void OnMainWindowLaunch(MainWindow mainWindow)
         {
             _version = typeof(Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-            App.Logger.Log($"TigerVenom22's Frosty Res/Chunk Importer - Version {_version}");
+            App.Logger.Log($"TigerVenom22's Frosty Mesh Importer - Version {_version}");
 
             // hack because Frosty calls GetEntryAssembly() which returns null normally
             var domainManager2 = new AppDomainManager();

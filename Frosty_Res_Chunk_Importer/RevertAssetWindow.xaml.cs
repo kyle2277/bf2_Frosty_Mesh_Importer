@@ -1,4 +1,9 @@
-﻿using System;
+﻿// RevertAssetWindow.xaml.cs - FrostyResChunkImporter
+// Contributors:
+//      Copyright (C) 2020  Kyle Won
+// This file is subject to the terms and conditions defined in the 'LICENSE' file.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
