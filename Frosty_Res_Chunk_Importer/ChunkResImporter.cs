@@ -132,13 +132,13 @@ namespace FrostyResChunkImporter
             // Remove if exists in record. Add or replace record on successful import
             _searchTerm = this._name;
             ImportedAsset search = importedAssets.Find(importedPredicate);
-            if(search != null && _removeReverted)
+            if(revert && search != null && _removeReverted)
             {
                 importedAssets.Remove(search);
             }
             if(!revert)
             {
-                if(search != null && !_removeReverted)
+                if(search != null)
                 {
                     importedAssets.Remove(search);
                 }
