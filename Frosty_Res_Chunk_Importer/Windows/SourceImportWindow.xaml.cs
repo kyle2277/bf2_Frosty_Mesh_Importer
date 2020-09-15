@@ -25,26 +25,19 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Markup;
 
-namespace FrostyResChunkImporter
+namespace FrostyResChunkImporter.Windows
 {
     /// <summary>
     /// Interaction logic for BatchOperationWindow.xaml
     /// </summary>
     /// 
-    public partial class BatchOperationWindow : FrostyDockableWindow 
+    public partial class SourceImportWindow : FrostyDockableWindow 
     {
         public List<string> selectedItems;
-        private string operation;
 
-
-        public BatchOperationWindow(string operation)
+        public SourceImportWindow()
         {
             InitializeComponent();
-            this.operation = operation;
-            this.Title = $"Batch {operation}";
-            this.label.Content = $"Select one or more meshes to {operation}:";
-            this.revertCheckIsVisible(false);
-            this.executeOrderButton.Content = $"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)}";
             selectedItems = new List<string>();
         }
 
@@ -53,23 +46,17 @@ namespace FrostyResChunkImporter
             lbSelectAsset.ItemsSource = items;
         }
 
-        internal void revertCheckIsVisible(bool visible)
-        {
-            Visibility v = visible ? Visibility.Visible : Visibility.Hidden;
-            this.revertCheckBox.Visibility = v;
-        }
-
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = new bool?(false);
             this.Close();
         }
 
-        private void RunButton_Click(object sender, RoutedEventArgs e)
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
             if(lbSelectAsset.SelectedItems.Count == 0)
             {
-                FrostyMessageBox.Show($"Select at least one mesh to {operation}.", "Frost Res/Chunk Importer", MessageBoxButton.OK);
+                FrostyMessageBox.Show($"Select at least one mesh set to import.", Program.IMPORTER_MESSAGE, MessageBoxButton.OK);
                 return;
             }
             foreach(var selection in lbSelectAsset.SelectedItems)

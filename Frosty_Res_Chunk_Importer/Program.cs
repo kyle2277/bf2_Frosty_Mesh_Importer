@@ -23,6 +23,7 @@ using Microsoft.Win32;
 using System.IO;
 using FrostySdk.Ebx;
 using System.Web.SessionState;
+using FrostyResChunkImporter.Windows;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
@@ -46,7 +47,7 @@ namespace FrostyResChunkImporter
         NonChunkResFileFound = -11,
         MissingResID = -12,
         NoImportedAssets = -13,
-        NoFrostMeshySourceLoaded = -14,
+        NoFrostMeshySourceLinked = -14,
         PathDoesNotExist = -15
     };
 
@@ -135,11 +136,10 @@ namespace FrostyResChunkImporter
             items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
             items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
             items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
-            items.Add(new ToolbarItem("Batch Re-import", "Re-import multiple meshes or cloth assets", "Images/Import.png", new RelayCommand(_ => OnBatchCommand(false), _ => true)));
-            items.Add(new ToolbarItem("Batch Revert", "Revert multiple imported mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnBatchCommand(true), _ => true)));
-            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
-            items.Add(new ToolbarItem("Load Source", "Link to the output folder of FrostMeshy", "Images/Open.png", new RelayCommand(_ => OnLoadSourceCommand(), _ => true)));
+            items.Add(new ToolbarItem("Link Source", "Link to the output folder of FrostMeshy", "Images/Interface.png", new RelayCommand(_ => OnLinkSourceCommand(), _ => true)));
             items.Add(new ToolbarItem("Source Import", "Import mesh or cloth asset from FrostMeshy output folder", "Images/Import.png", new RelayCommand(_ => OnSourceImportCommand(), _ => true)));
+            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+            items.Add(new ToolbarItem("History", "Re-import or revert mesh sets from history", "Images/Classref.png", new RelayCommand(_ => OnHistoryCommand(), _ => true)));
             items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
             control.ItemsSource = items;
         }
@@ -383,40 +383,35 @@ namespace FrostyResChunkImporter
         }
 
         //user clicks "Revert Imported Mesh"
-        private static async void OnBatchCommand(Boolean revert)
+        private static async void OnHistoryCommand()
         {
+            //Check if the importer has any imported meshes saved, if not, log and exit
+            if (ChunkResImporter.importedAssets == null || ChunkResImporter.importedAssets.Count == 0)
+            {
+                Log(errorState.NoImportedAssets.ToString(), $"No imported mesh sets in history.", MessageBoxButton.OK, IMPORTER_ERROR);
+                return;
+            }
             if (!hasChunkResExplorer())
             {
                 return;
             }
-            string operation = revert ? "revert" : "re-import";
-
-            //Check if the importer has any imported meshes saved, if not, log and exit
-            if (ChunkResImporter.importedAssets == null || ChunkResImporter.importedAssets.Count == 0)
+            HistoryWindow hw = new HistoryWindow();
+            hw.ShowDialog();
+            if (hw.DialogResult == false)
             {
-                Log(errorState.NoImportedAssets.ToString(), $"No imported meshes to {operation}.", MessageBoxButton.OK, IMPORTER_ERROR);
+                App.Logger.Log($"Canceled history operation.");
                 return;
             }
-            App.Logger.Log($"Batch {operation} will commence shortly.");
-            BatchOperationWindow ra = new BatchOperationWindow(operation);
-            ra.SetItems(ChunkResImporter.importedAssets.ToList<object>());
-            if (operation == "revert")
+            else if(hw.DialogResult == true)
             {
-                ra.revertCheckIsVisible(true);
-            }
-            ra.ShowDialog();
-            if(ra.DialogResult == false)
-            {
-                App.Logger.Log($"Canceled {operation}.");
-                return;
-            }
-            else if(ra.DialogResult == true)
-            {
+                bool revert = hw.revert;
+                string operation = revert ? "revert" : "re-import;";
+                App.Logger.Log($"Batch {operation} will commence shortly.");
                 FrostyTask.Begin($"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)}ing selected assets");
                 await Task.Run(() =>
                 {
                     Predicate<ImportedAsset> selectedPredicate = CompareByName;
-                    List<string> selectedItems = ra.selectedItems;
+                    List<string> selectedItems = hw.selectedItems;
                     int resCounter = 0;
                     foreach (string item in selectedItems)
                     {
@@ -429,7 +424,7 @@ namespace FrostyResChunkImporter
                             // Use dispatcher to get access to UI element selected asset
                             _mainWindow.Dispatcher.Invoke((Action)(() =>
                             {
-                                removeReverted = ra.revertCheckBox.IsChecked;
+                                removeReverted = hw.revertCheckBox.IsChecked;
                             }));
                             status = Program.InternalRevert(curAsset, removeReverted); ;
                         } 
@@ -507,7 +502,7 @@ namespace FrostyResChunkImporter
             }
         }
 
-        private static void OnLoadSourceCommand()
+        private static void OnLinkSourceCommand()
         {
             if (_fMeshySrcDir != null && _fMeshySrcDir != "")
             {
@@ -515,7 +510,7 @@ namespace FrostyResChunkImporter
                     IMPORTER_MESSAGE, MessageBoxButton.YesNo);
                 if (r == MessageBoxResult.No)
                 {
-                    App.Logger.Log("Load source canceled.");
+                    App.Logger.Log("Link source canceled.");
                     return;
                 }
             }
@@ -526,7 +521,7 @@ namespace FrostyResChunkImporter
             DialogResult d = fbd.ShowDialog();
             if(d != DialogResult.OK)
             {
-                App.Logger.Log("Load source canceled.");
+                App.Logger.Log("Link source canceled.");
                 return;
             }            
             _fMeshySrcDir = fbd.SelectedPath;
@@ -537,13 +532,13 @@ namespace FrostyResChunkImporter
         {
             if (_fMeshySrcDir == null)
             {
-                Log(errorState.NoFrostMeshySourceLoaded.ToString(), "No FrostMeshy output folder has been linked. Canceled import.",
+                Log(errorState.NoFrostMeshySourceLinked.ToString(), "No FrostMeshy output folder has been linked.",
                     MessageBoxButton.OK, IMPORTER_ERROR);
                 return;
             }
             else if(!Directory.Exists(_fMeshySrcDir))
             {
-                Log(errorState.PathDoesNotExist.ToString(), "Path to FrostMeshy output does not exist. Click \"Load Source\" to link new FrostMeshy output.", 
+                Log(errorState.PathDoesNotExist.ToString(), "Path to FrostMeshy output does not exist. Click \"Link Source\" to link new FrostMeshy output.", 
                     MessageBoxButton.OK, IMPORTER_ERROR);
                 return;
             }
@@ -560,20 +555,20 @@ namespace FrostyResChunkImporter
                 files.Add(curAsset);
             }
             App.Logger.Log($"Import from FrostMeshy output will commence shortly.");
-            BatchOperationWindow ra = new BatchOperationWindow("import");
-            ra.SetItems(files);
-            ra.ShowDialog();
-            if (ra.DialogResult == false)
+            SourceImportWindow siw = new SourceImportWindow();
+            siw.SetItems(files);
+            siw.ShowDialog();
+            if (siw.DialogResult == false)
             {
-                App.Logger.Log("Canceled import.");
+                App.Logger.Log("Canceled FrostMeshy import.");
                 return;
             }
-            else if (ra.DialogResult == true)
+            else if (siw.DialogResult == true)
             {
                 FrostyTask.Begin($"Importing selected assets");
                 await Task.Run(() =>
                 {
-                    List<string> selectedAssets = ra.selectedItems;
+                    List<string> selectedAssets = siw.selectedItems;
                     int status = MultiFileImport(selectedAssets, "import", false);
                     if (status > (int)errorState.Success)
                     {
