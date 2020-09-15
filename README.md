@@ -33,12 +33,12 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 **Click the "Link Source" button and navigate to your FrostMeshy project output folder**. Select the output folder, not any of the mesh set folders inside it. This is the path that will be referenced upon clicking the "Source Import" button.
 
 ### Importing from a FrostMeshy output source folder
-The "Source Import" function directly refereces and pulls mesh sets from the path specified by "Link Source." Any updates to the linked folder will be reflected in the "Source Import" dialog.
+The "Source Import" function directly references and pulls mesh sets from the path specified by "Link Source." Any updates to the linked folder will be reflected in the "Source Import" dialog.
 1. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button.
 2. **With an asset tab and the Res/Chunk Explorer open, click the "Source Import" button**. Select one or more mesh set and click "Import."
 
 ### Re-importing and reverting via History
-The "History" window allows you to manage all the mesh sets that have been imported during the current session, regardless of how they were imported ("Import Mesh" button, "Source Import" button, or "History" re-import) or whether they have been reverted. The "History" window can be used to re-import or revert multiple meshes. Selecting the "Remove reverted meshes from list" will remove the meshes selected for reversion from the import history. Closing the application clears the import history.
+The "History" window allows you to manage all the mesh sets that have been imported during the current session, regardless of how they were imported ("Import Mesh" button, "Source Import" button, or "History" re-import) or whether they have been reverted. The "History" window can be used to re-import or revert multiple meshes. Selecting the "Remove reverted meshes from list" check box will remove the meshes selected for reversion from the import history. Closing the application clears the import history.
 
 ## Troubleshooting Tips
 * This functions of this app rely on the file structure and naming conventions of the files outputted by FrostMeshy. Name your mesh set folders using unique identifiers that make it clear which asset each folder is associated with. Avoid moving or renaming mesh set input and output folders after exporting .res files from Frosty Editor and after running FrostMeshy.
