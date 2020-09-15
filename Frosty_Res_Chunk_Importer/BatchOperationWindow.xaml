@@ -23,8 +23,8 @@
                     <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="223" VerticalAlignment="Top" Width="386" />
                 </StackPanel>
             </Grid>
-            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
-                <StackPanel Margin="0">
+            <Grid x:Name="revertCheckGrid"  Margin="4,0,4,4" Background="{StaticResource ListBackground}">
+                <StackPanel x:Name="revertCheckStack"  Margin="0">
                     <CheckBox x:Name="revertCheckBox" Content=" Remove reverted meshes from list" HorizontalAlignment="Left" Foreground="White" Margin="2"/>
                 </StackPanel>
             </Grid>

@@ -43,14 +43,20 @@ namespace FrostyResChunkImporter
             this.operation = operation;
             this.Title = $"Batch {operation}";
             this.label.Content = $"Select one or more meshes to {operation}:";
+            this.revertCheckIsVisible(false);
             this.executeOrderButton.Content = $"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)}";
-            if(operation == "re-import")
-            {
-                this.revertCheckBox.IsEnabled = false;
-            }
-            List<ImportedAsset> items = ChunkResImporter.importedAssets.ToList<ImportedAsset>();
-            lbSelectAsset.ItemsSource = items;
             selectedItems = new List<string>();
+        }
+
+        internal void SetItems(List<object> items)
+        {
+            lbSelectAsset.ItemsSource = items;
+        }
+
+        internal void revertCheckIsVisible(bool visible)
+        {
+            Visibility v = visible ? Visibility.Visible : Visibility.Hidden;
+            this.revertCheckBox.Visibility = v;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
