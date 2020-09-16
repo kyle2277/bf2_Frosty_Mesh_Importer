@@ -405,7 +405,7 @@ namespace FrostyResChunkImporter
             else if(hw.DialogResult == true)
             {
                 bool revert = hw.revert;
-                string operation = revert ? "revert" : "re-import;";
+                string operation = revert ? "revert" : "re-import";
                 App.Logger.Log($"Batch {operation} will commence shortly.");
                 FrostyTask.Begin($"{operation.Substring(0, 1).ToUpper()}{operation.Substring(1, operation.Length - 1)}ing selected assets");
                 await Task.Run(() =>

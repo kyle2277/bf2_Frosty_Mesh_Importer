@@ -5,7 +5,7 @@
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:local="clr-namespace:FrostyResChunkImporter.Windows"
                            xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
-                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400"
+                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400" Title="Source Import"
                            ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Background="{StaticResource WindowBackground}">
         <Grid.RowDefinitions>

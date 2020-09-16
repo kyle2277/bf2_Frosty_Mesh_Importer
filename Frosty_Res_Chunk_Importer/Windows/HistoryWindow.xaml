@@ -5,7 +5,7 @@
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:local="clr-namespace:FrostyResChunkImporter.Windows"
                            xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
-                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400"
+                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400" Title="Imported Mesh History"
                            ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Background="{StaticResource WindowBackground}">
         <Grid.RowDefinitions>
@@ -15,7 +15,7 @@
         <StackPanel x:Name="PageOne" Visibility="Visible">
             <Grid Margin="4" Background="{StaticResource ListBackground}">
                 <StackPanel Margin="0,0,2,2">
-                    <Label x:Name="label" Content="Imported Mesh History" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
+                    <Label x:Name="label" Content="Imported mesh sets:" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
                 </StackPanel>
             </Grid>
             <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
