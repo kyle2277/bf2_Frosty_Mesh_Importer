@@ -16,7 +16,7 @@ Running this app creates an instance of Frosty Editor and injects the following 
 ### Installation
 Install by placing Frosty_Mesh_Importer.exe in the same folder as your Frosty Editor installation.
 ### How to import a mesh using "Import Mesh" button
-1. **Open the mesh you want to replace**. This prompts three new buttons to show up on the toolbar at the top of the window: Import Mesh, Revert Mesh, and Export Res. These buttons will only be visible when an asset tab is open in Frosty Editor.
+1. **Open the mesh you want to replace**. This prompts six new buttons to show up on the toolbar at the top of the window: Import Mesh, Revert Mesh, Export Res, Link Source, Souce Import, and History. These buttons will only be visible when an asset tab is open in Frosty Editor.
 2. **Open the Res/Chunk Explorer** from the "Tools" drop-down menu. The Res/Chunk Explorer must be open to use any of this application's functions. Clicking on one of the buttons without having the Res/Chunk Explorer open will return an error in the log notifying you to open the Res/Chunk Explorer.
 3. **Export the .res files using the "Export Res" button**. For each .res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for  cloth) select the file in the res explorer and click the "Export Res" button in the toolbar at the top of the window. DO NOT use Frosty's default right-click > export function or the res file cannot be re-imported automatically.
 4. **Run FrostMeshy**.
