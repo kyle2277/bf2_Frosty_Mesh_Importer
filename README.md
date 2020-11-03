@@ -37,12 +37,12 @@ The "Source Import" function directly references and pulls mesh sets from the pa
 1. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button.
 2. **With an asset tab and the Res/Chunk Explorer open, click the "Source Import" button**. Select one or more mesh set and click "Import."
 
-A green check mark in the status column indicates that a meshset's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually.
+A green check mark in the status column indicates that a mesh set's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually.
 
 ### Re-importing and reverting via History
 The "History" window allows you to manage all the mesh sets that have been imported during the current session, regardless of how they were imported ("Import Mesh" button, "Source Import" button, or "History" re-import) or whether they have been reverted. The "History" window can be used to re-import or revert multiple meshes. Selecting the "Remove reverted meshes from list" check box will remove the meshes selected for reversion from the import history.
 
-A green check mark in the status column indicates that a meshset's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually. Closing the application clears the import history.
+A green check mark in the status column indicates that a mesh set's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually. Closing the application clears the import history.
 
 ## Troubleshooting Tips
 * This functions of this app rely on the file structure and naming conventions of the files output by FrostMeshy. Name your mesh set folders using unique identifiers that make it clear which asset each folder is associated with. Avoid moving or renaming mesh set input and output folders after exporting .res files from Frosty Editor and after running FrostMeshy.
