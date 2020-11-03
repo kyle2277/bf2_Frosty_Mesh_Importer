@@ -24,6 +24,7 @@ using System.IO;
 using FrostySdk.Ebx;
 using System.Web.SessionState;
 using FrostyResChunkImporter.Windows;
+using MeshSet = FrostyResChunkImporter.ChunkResImporter.MeshSet;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
@@ -65,26 +66,7 @@ namespace FrostyResChunkImporter
         public const string IMPORTER_ERROR = "Frosty Mesh Importer Error";
         public const string IMPORTER_WARNING = "Frosty Mesh Importer Warning";
         public const string IMPORTER_MESSAGE = "Frosty Mesh Importer Message";
-        public struct MeshSet
-        {
-            public string img { get; set; }
-            public string meshSetName { get; set; }
-            public void setCanImport(bool canImport)
-            {
-                if (canImport)
-                {
-                    img = "/FrostyEditor;Component/Images/Tick.png";
-                }
-                else
-                {
-                    img = "/FrostyEditor;Component/Images/Warning.png";
-                }
-            }
-            public override string ToString()
-            {
-                return meshSetName;
-            }
-        }
+        
 
         [STAThread]
         static void Main(string[] args)

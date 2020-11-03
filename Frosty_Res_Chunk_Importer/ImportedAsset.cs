@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace FrostyResChunkImporter
 {
+    // TODO: consider combining ImportedAsset and MeshSet struct
     //Imported asset structure used for reversion of imported meshes
     public class ImportedAsset
     {

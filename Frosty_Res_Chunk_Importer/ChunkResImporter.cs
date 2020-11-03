@@ -41,6 +41,28 @@ namespace FrostyResChunkImporter
         private string _name;
         private string _directory;
 
+        // Representation of a mesh set for use in ListBox. Used in determining if res files can be automatically imported
+        public struct MeshSet
+        {
+            public string img { get; set; }
+            public string meshSetName { get; set; }
+            public void setCanImport(bool canImport)
+            {
+                if (canImport)
+                {
+                    img = "/FrostyEditor;Component/Images/Tick.png";
+                }
+                else
+                {
+                    img = "/FrostyEditor;Component/Images/Cross.png";
+                }
+            }
+            public override string ToString()
+            {
+                return meshSetName;
+            }
+        }
+
         public ChunkResImporter(MainWindow mainWindow, FrostyChunkResExplorer chunkResExplorer, FrostyDataExplorer resExplorer, List<ChunkResFile> chunkFiles, List<ChunkResFile> resFiles, string name, string directory)
         {
             _mainWindow = mainWindow;
