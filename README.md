@@ -47,7 +47,7 @@ A green check mark in the status column indicates that a meshset's .res files ca
 ## Troubleshooting Tips
 * This functions of this app rely on the file structure and naming conventions of the files output by FrostMeshy. Name your mesh set folders using unique identifiers that make it clear which asset each folder is associated with. Avoid moving or renaming mesh set input and output folders after exporting .res files from Frosty Editor and after running FrostMeshy.
 * Chunk files should never fail to automatically import because their file names are unique identnifiers which can always be matched to a chunk file in the Frosty Editor. Res files are not named using unique identifiers, so imported .res files are identified using an ID value noted during export. These ID values are lost when the application is closed, meaning you can only automatically import .res files that you've exported in the same session.
-* Read the Frosty Editor log. Some messages do not appear in pop-up message boxes while all operations by this app, successful or unsuccessful, are written to the log. Below is a table for troubleshooting explaining different log messages.
+* Read the Frosty Editor log. Some messages do not appear in pop-up message boxes while all operations by this app, successful or unsuccessful, are written to the log. Below is a table for troubleshooting different log messages.
 
 Log Message | Explanation/Solution
 ----------- | -------------
