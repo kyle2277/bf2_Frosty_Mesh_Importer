@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Markup;
 using Frosty.Controls;
 using FrostyEditor;
 using FrostyEditor.Controls;
@@ -49,7 +50,8 @@ namespace FrostyMeshImporter
         MissingResID = -12,
         NoImportedAssets = -13,
         NoFrostMeshySourceLinked = -14,
-        PathDoesNotExist = -15
+        PathDoesNotExist = -15,
+        VersionMismatch = - 16
     };
 
     class Program
@@ -71,7 +73,7 @@ namespace FrostyMeshImporter
         [STAThread]
         static void Main(string[] args)
         {
-            var altDomain = AppDomain.CreateDomain("FrostyResChunkImporter");
+            var altDomain = AppDomain.CreateDomain("FrostyMeshImporter");
             altDomain.Load(typeof(App).Assembly.GetName());
             altDomain.DoCallBack(() =>
             {
@@ -108,7 +110,37 @@ namespace FrostyMeshImporter
         private static void OnMainWindowLaunch(MainWindow mainWindow)
         {
             _version = typeof(Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-            App.Logger.Log($"TigerVenom22's Frosty Mesh Importer - Version {_version}");
+            // Check the versions of Frosty Editor and Frosty Mesh Importer match
+            bool frostyAlpha = false;
+            if (Attribute.IsDefined(typeof(App).Assembly, typeof(XmlnsDefinitionAttribute)))
+            {
+                string versionType = typeof(App).Assembly.GetCustomAttribute<XmlnsDefinitionAttribute>().XmlNamespace;
+                if(versionType.Equals("FrostyAlpha"))
+                {
+                    frostyAlpha = true;                    
+                }
+            }
+            bool importerAlpha;
+            string importerVersion = typeof(Program).Assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title;
+            if(importerVersion.Contains("Alpha"))
+            {
+                importerAlpha = true;
+            }    
+            importerAlpha = false;
+
+            if (!importerAlpha && frostyAlpha)
+            {
+                Log(errorState.VersionMismatch.ToString(), "Frosty Editor and Frosty Mesh Importer incompatibility detected! " +
+                    "Running Frosty Editor Alpha with regular Frosty Mesh Importer. Please exit the program and load the correct version.", MessageBoxButton.OK, IMPORTER_WARNING);
+            }
+            else if (importerAlpha && !frostyAlpha)
+            {
+                Log(errorState.VersionMismatch.ToString(), "Frosty Editor and Frosty Mesh Importer incompatibility detected! " +
+                    "Running regular Frosty Editor with Frosty Alpha Mesh Importer. Please exit the program and load the correct version.", MessageBoxButton.OK, IMPORTER_WARNING);
+            }
+            string alpha = "";
+            if (importerAlpha) { alpha = " Alpha"; }
+            App.Logger.Log($"TigerVenom22's Frosty{alpha} Mesh Importer - Version {_version}");
 
             // hack because Frosty calls GetEntryAssembly() which returns null normally
             var domainManager2 = new AppDomainManager();

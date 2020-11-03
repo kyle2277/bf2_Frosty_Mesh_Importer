@@ -57,8 +57,9 @@
     <Reference Include="FrostyControls">
       <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostyControls.dll</HintPath>
     </Reference>
-    <Reference Include="FrostyEditor">
-      <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostyEditor.exe</HintPath>
+    <Reference Include="FrostyEditor, Version=1.0.5.9, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Alpha_FrostyEditor_v1.0.5.9\FrostyEditor.exe</HintPath>
     </Reference>
     <Reference Include="FrostySdk">
       <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostySdk.dll</HintPath>
