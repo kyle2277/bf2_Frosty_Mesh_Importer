@@ -1,0 +1,2 @@
+* Fix program running name
+* Check if running in the right version of Frosty

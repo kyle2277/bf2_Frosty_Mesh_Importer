@@ -40,10 +40,9 @@ namespace FrostyResChunkImporter.Windows
         {
             InitializeComponent();
             selectedItems = new List<string>();
-            lbSelectAsset.ItemsSource = ChunkResImporter.importedAssets;
         }
 
-        internal void SetItems(List<object> items)
+        internal void SetItems(List<Program.MeshSet> items)
         {
             lbSelectAsset.ItemsSource = items;
         }

@@ -41,7 +41,7 @@ namespace FrostyResChunkImporter.Windows
             selectedItems = new List<string>();
         }
 
-        internal void SetItems(List<object> items)
+        internal void SetItems(List<Program.MeshSet> items)
         {
             lbSelectAsset.ItemsSource = items;
         }
@@ -71,4 +71,5 @@ namespace FrostyResChunkImporter.Windows
             
         }
     }
+
 }

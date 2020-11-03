@@ -36,8 +36,8 @@ namespace FrostyResChunkImporter
         private List<ChunkResFile> _chunkFiles;
         private List<ChunkResFile> _resFiles;
         private bool _removeReverted;
-        private string _searchTerm;
-        private string _searchTerm2;
+        private static string _searchTerm;
+        private static string _searchTerm2;
         private string _name;
         private string _directory;
 
@@ -225,6 +225,28 @@ namespace FrostyResChunkImporter
             return (int)errorState.Success;
         }
 
+        public static bool CanImportRes(List<ChunkResFile> resFiles)
+        {
+            if(_exportedResFiles == null)
+            {
+                return false;
+            }
+            Predicate<ChunkResFile> dirPredicate = CompareByDir;
+            foreach (ChunkResFile res in resFiles)
+            {
+                // Check if res file is documented in exported res files list, if not, log warning and exit operation
+                _searchTerm = res.meshSetName;
+                _searchTerm2 = res.fileName;
+                ChunkResFile found = _exportedResFiles.Find(dirPredicate);
+                if (found == null)
+                {
+                    // No res files logged with matching mesh set and file names
+                    return false;
+                }
+            }
+            return true;
+        }
+        
         private static void InitResChunkLists(FrostyChunkResExplorer chunkResExplorer, FrostyDataExplorer resExplorer)
         {
             ListBox chunksListBox = ReflectionHelper.GetFieldValue<ListBox>(chunkResExplorer, "chunksListBox");
@@ -248,29 +270,29 @@ namespace FrostyResChunkImporter
             }));
         }
 
-        private bool CompareAssets(AssetEntry f)
+        private static bool CompareAssets(AssetEntry f)
         {
             return f.Name == _searchTerm;
         }
 
-        private bool CompareByRid(ResAssetEntry f)
+        private static bool CompareByRid(ResAssetEntry f)
         {
 
             return f.ResRid.ToString() == _searchTerm;
 
         }
 
-        private bool CompareImportedByName(ImportedAsset f)
+        private static bool CompareImportedByName(ImportedAsset f)
         {
             return f.meshSetName == _searchTerm; 
         }
         
-        private bool CompareByRidGeneric(ChunkResFile f)
+        private static bool CompareByRidGeneric(ChunkResFile f)
         {
             return f.resRid == _searchTerm;
         }
 
-        private bool CompareByDir(ChunkResFile f)
+        private static bool CompareByDir(ChunkResFile f)
         {
             return f.meshSetName == _searchTerm && f.fileName == _searchTerm2;
         }
