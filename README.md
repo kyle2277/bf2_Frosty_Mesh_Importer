@@ -30,14 +30,14 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 3. **Refresh your mesh tab** to see changes.
 
 ### Linking Frosty Mesh Importer to a FrostMeshy output folder
-**Click the "Link Source" button and navigate to your FrostMeshy project output folder**. Select the output folder, not any of the mesh set folders inside it. This is the path that will be referenced upon clicking the "Source Import" button.
+**Click the "Link Source" button and navigate to your FrostMeshy project output folder**. Select the output folder, not any of the mesh set folders inside it. This is the path that will be referenced upon clicking the "Source Import" button. Closing the application will clear the linked source path.
 
 ### Importing from a FrostMeshy output source folder
 The "Source Import" function directly references and pulls mesh sets from the path specified by "Link Source." Any updates to the linked folder will be reflected in the "Source Import" dialog.
 1. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button.
 2. **With an asset tab and the Res/Chunk Explorer open, click the "Source Import" button**. Select one or more mesh set and click "Import."
 
-A green check mark in the status column indicates that a meshset's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually. Closing the application will clear the linked source path.
+A green check mark in the status column indicates that a meshset's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually.
 
 ### Re-importing and reverting via History
 The "History" window allows you to manage all the mesh sets that have been imported during the current session, regardless of how they were imported ("Import Mesh" button, "Source Import" button, or "History" re-import) or whether they have been reverted. The "History" window can be used to re-import or revert multiple meshes. Selecting the "Remove reverted meshes from list" check box will remove the meshes selected for reversion from the import history.
