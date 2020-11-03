@@ -23,14 +23,14 @@ using Microsoft.Win32;
 using System.IO;
 using FrostySdk.Ebx;
 using System.Web.SessionState;
-using FrostyResChunkImporter.Windows;
-using MeshSet = FrostyResChunkImporter.ChunkResImporter.MeshSet;
+using FrostyMeshImporter.Windows;
+using MeshSet = FrostyMeshImporter.ChunkResImporter.MeshSet;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
 // </summary>
 
-namespace FrostyResChunkImporter
+namespace FrostyMeshImporter
 {
     public enum errorState
     {

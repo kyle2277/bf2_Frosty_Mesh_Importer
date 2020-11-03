@@ -25,7 +25,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Markup;
 
-namespace FrostyResChunkImporter.Windows
+namespace FrostyMeshImporter.Windows
 {
     /// <summary>
     /// Interaction logic for BatchOperationWindow.xaml

@@ -1,11 +1,11 @@
-﻿<ctrl:FrostyDockableWindow x:Class="FrostyResChunkImporter.Windows.HistoryWindow"
+﻿<ctrl:FrostyDockableWindow x:Class="FrostyMeshImporter.Windows.SourceImportWindow"
                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                           xmlns:local="clr-namespace:FrostyResChunkImporter.Windows"
+                           xmlns:local="clr-namespace:FrostyMeshImporter.Windows"
                            xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
-                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400" Title="Imported Mesh History"
+                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400" Title="FrostMeshy Source Import"
                            ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Background="{StaticResource WindowBackground}">
         <Grid.RowDefinitions>
@@ -15,13 +15,13 @@
         <StackPanel x:Name="PageOne" Visibility="Visible">
             <Grid Margin="4" Background="{StaticResource ListBackground}">
                 <StackPanel Margin="0,0,2,2">
-                    <Label x:Name="label" Content="Imported mesh sets:" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
+                    <Label x:Name="label" Content="Select one or more mesh sets to import:" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
                     <Label x:Name="status" Content="  Status" FontFamily="Global User Interface" HorizontalAlignment="Left"/>
                 </StackPanel>
             </Grid>
-            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}" Height="197">
+            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
                 <StackPanel Margin="0">
-                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="197" VerticalAlignment="Top" Width="386">
+                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="386">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -33,18 +33,12 @@
                     </ListBox>
                 </StackPanel>
             </Grid>
-            <Grid x:Name="revertCheckGrid"  Margin="4,0,4,4" Background="{StaticResource ListBackground}">
-                <StackPanel x:Name="revertCheckStack"  Margin="0">
-                    <CheckBox x:Name="revertCheckBox" Content=" Remove reverted meshes from list" HorizontalAlignment="Left" Foreground="White" Margin="2"/>
-                </StackPanel>
-            </Grid>
         </StackPanel>
         <Border Grid.Row="1" Background="{StaticResource ListBackground}">
             <Grid Margin="8">
                 <DockPanel LastChildFill="false">
                     <Button Click="CancelButton_Click" x:Name="cancelButton" Content="Cancel" DockPanel.Dock="Left" Width="75"/>
-                    <Button Click="RevertButton_Click" x:Name="revertButton" Content="Revert" DockPanel.Dock="Right" Width="75"/>
-                    <Button Click="ReImportButton_Click" x:Name="importButton" Content="Re-import" DockPanel.Dock="Right" Width="75"/>
+                    <Button Click="ImportButton_Click" x:Name="importButton" Content="Import" DockPanel.Dock="Right" Width="75"/>
                 </DockPanel>
             </Grid>
         </Border>

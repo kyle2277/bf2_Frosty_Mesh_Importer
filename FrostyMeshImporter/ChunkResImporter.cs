@@ -22,7 +22,7 @@ using System.Windows;
 // Facilitates res/chunk file imports within the Frosty res/chunk explorer window.
 // </summary>
 
-namespace FrostyResChunkImporter
+namespace FrostyMeshImporter
 {
     class ChunkResImporter
     {

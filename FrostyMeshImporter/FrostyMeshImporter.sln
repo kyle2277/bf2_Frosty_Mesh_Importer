@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrostyResChunkImporter", "FrostyResChunkImporter.csproj", "{3838791A-CA0E-4B67-860A-084B3025E373}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrostyMeshImporter", "FrostyMeshImporter.csproj", "{3838791A-CA0E-4B67-860A-084B3025E373}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

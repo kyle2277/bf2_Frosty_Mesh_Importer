@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3838791A-CA0E-4B67-860A-084B3025E373}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>FrostyResChunkImporter</RootNamespace>
-    <AssemblyName>Frosty_Mesh_Importer</AssemblyName>
+    <RootNamespace>FrostyMeshImporter</RootNamespace>
+    <AssemblyName>Frosty Mesh Importer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

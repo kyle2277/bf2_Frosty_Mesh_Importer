@@ -13,7 +13,7 @@ using System.Reflection;
 // Helper for getting and setting field values via Reflection
 // </summary>
 
-namespace FrostyResChunkImporter
+namespace FrostyMeshImporter
 {
     public static class ReflectionHelper
     {

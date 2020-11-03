@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace FrostyResChunkImporter
+namespace FrostyMeshImporter
 {
     public class ChunkResFile
     {
