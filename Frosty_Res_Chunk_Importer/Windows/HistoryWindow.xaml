@@ -16,11 +16,21 @@
             <Grid Margin="4" Background="{StaticResource ListBackground}">
                 <StackPanel Margin="0,0,2,2">
                     <Label x:Name="label" Content="Imported mesh sets:" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
+                    <Label x:Name="status" Content="  Status" FontFamily="Global User Interface" HorizontalAlignment="Left"/>
                 </StackPanel>
             </Grid>
-            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
+            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}" Height="197">
                 <StackPanel Margin="0">
-                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="221" VerticalAlignment="Top" Width="386" />
+                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="197" VerticalAlignment="Top" Width="386">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding img}" Margin="10,0,15,0" />
+                                    <TextBlock Text="{Binding meshSetName}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </Grid>
             <Grid x:Name="revertCheckGrid"  Margin="4,0,4,4" Background="{StaticResource ListBackground}">

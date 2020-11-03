@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 
 namespace FrostyResChunkImporter
 {
+    // TODO: consider combining ImportedAsset and MeshSet struct
     //Imported asset structure used for reversion of imported meshes
     public class ImportedAsset
     {
         public string meshSetName { get; }
         public string directory { get; set; }
+        public bool canImportRes { get; set; }
         public List<ChunkResFile> chunks { get; }
         public List<ChunkResFile> res { get; }
         public ImportedAsset(string meshSetName, string directory, List<ChunkResFile> chunks, List<ChunkResFile> res)
@@ -24,6 +26,7 @@ namespace FrostyResChunkImporter
             this.directory = directory;
             this.chunks = chunks;
             this.res = res;
+            canImportRes = false;
         }
 
         public override string ToString()

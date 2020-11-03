@@ -24,6 +24,7 @@ using System.IO;
 using FrostySdk.Ebx;
 using System.Web.SessionState;
 using FrostyResChunkImporter.Windows;
+using MeshSet = FrostyResChunkImporter.ChunkResImporter.MeshSet;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
@@ -65,6 +66,7 @@ namespace FrostyResChunkImporter
         public const string IMPORTER_ERROR = "Frosty Mesh Importer Error";
         public const string IMPORTER_WARNING = "Frosty Mesh Importer Warning";
         public const string IMPORTER_MESSAGE = "Frosty Mesh Importer Message";
+        
 
         [STAThread]
         static void Main(string[] args)
@@ -314,7 +316,7 @@ namespace FrostyResChunkImporter
                         return (int)errorState.NonChunkResFileFound;
                 }
             }
-            return 0;
+            return (int)errorState.Success;
         }
 
         //user clicks "Export Res File"
@@ -396,6 +398,14 @@ namespace FrostyResChunkImporter
                 return;
             }
             HistoryWindow hw = new HistoryWindow();
+            List<MeshSet> meshSets = new List<MeshSet>();
+            foreach(ImportedAsset asset in ChunkResImporter.importedAssets)
+            {
+                MeshSet curSet = new MeshSet() { meshSetName = asset.meshSetName};
+                curSet.setCanImport(ChunkResImporter.CanImportRes(asset.res));
+                meshSets.Add(curSet);
+            }
+            hw.SetItems(meshSets);
             hw.ShowDialog();
             if (hw.DialogResult == false)
             {
@@ -546,13 +556,28 @@ namespace FrostyResChunkImporter
             {
                 return;
             }
-            List<string> strFiles = Directory.EnumerateDirectories(_fMeshySrcDir).ToList();
-            List<object> files = new List<object>();
-            foreach(string fullPath in strFiles)
+            List<string> strDirs = Directory.EnumerateDirectories(_fMeshySrcDir).ToList();
+            List<MeshSet> files = new List<MeshSet>();
+            // Check if res files can be imported
+            foreach(string fullPath in strDirs)
             {
                 string meshSetName = Path.GetFileName(fullPath);
-                ImportedAsset curAsset = new ImportedAsset(meshSetName, _fMeshySrcDir, null, null);
-                files.Add(curAsset);
+                MeshSet curAsset = new MeshSet() { meshSetName = meshSetName };
+                // Sort res and chunk files into lists, if a file is not a res or chunk file or if the folder is empty, log and exit operation
+                List<string> allFiles = Directory.EnumerateFiles(fullPath).ToList();
+                List<ChunkResFile> chunkFiles = new List<ChunkResFile>();
+                List<ChunkResFile> resFiles = new List<ChunkResFile>();
+                int status = PopulateChunkResLists("import", allFiles, chunkFiles, resFiles);
+                if(status != (int)errorState.Success) // only chunk/res files exist in directory
+                {
+                    continue;
+                } 
+                else
+                {
+                    bool canImport = ChunkResImporter.CanImportRes(resFiles);
+                    curAsset.setCanImport(canImport);
+                    files.Add(curAsset);
+                }
             }
             App.Logger.Log($"Import from FrostMeshy output will commence shortly.");
             SourceImportWindow siw = new SourceImportWindow();

@@ -5,7 +5,7 @@
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:local="clr-namespace:FrostyResChunkImporter.Windows"
                            xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
-                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400" Title="Source Import"
+                           FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="350" Width="400" Title="FrostMeshy Source Import"
                            ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Background="{StaticResource WindowBackground}">
         <Grid.RowDefinitions>
@@ -16,11 +16,21 @@
             <Grid Margin="4" Background="{StaticResource ListBackground}">
                 <StackPanel Margin="0,0,2,2">
                     <Label x:Name="label" Content="Select one or more mesh sets to import:" FontFamily="Global User Interface" Width="300" HorizontalAlignment="Left"/>
+                    <Label x:Name="status" Content="  Status" FontFamily="Global User Interface" HorizontalAlignment="Left"/>
                 </StackPanel>
             </Grid>
             <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}">
                 <StackPanel Margin="0">
-                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="242" VerticalAlignment="Top" Width="386" />
+                    <ListBox Name="lbSelectAsset" SelectionMode="Extended" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="386">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding img}" Margin="10,0,15,0" />
+                                    <TextBlock Text="{Binding meshSetName}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </Grid>
         </StackPanel>
