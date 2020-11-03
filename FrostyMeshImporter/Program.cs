@@ -120,14 +120,12 @@ namespace FrostyMeshImporter
                     frostyAlpha = true;                    
                 }
             }
-            bool importerAlpha;
+            bool importerAlpha = false;
             string importerVersion = typeof(Program).Assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title;
             if(importerVersion.Contains("Alpha"))
             {
                 importerAlpha = true;
-            }    
-            importerAlpha = false;
-
+            }
             if (!importerAlpha && frostyAlpha)
             {
                 Log(errorState.VersionMismatch.ToString(), "Frosty Editor and Frosty Mesh Importer incompatibility detected! " +
