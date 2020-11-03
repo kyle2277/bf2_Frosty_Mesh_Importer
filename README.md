@@ -57,7 +57,7 @@ ERROR: NoResFileSelected | User has clicked "Export Res" button without selectin
 ERROR: CannotOverwriteExistingFile | User has attempted to export a .res file to a folder which already contains a .res file of the same name. Delete old .res files before re-exporting them
 ERROR: CriticalResFileError | The import could not be completed because no .res file in the Frosty Res Explorer matches the identifier of the .res file to be imported/reverted. Internal error, not related to any user actions
 WARNING: NonCriticalResImportError | Denotes application state which is non-nominal but does not interrupt any core operations
-WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh is present in the FrostMeshy output folder. The file must be imported manually
+WARNING: NonCriticalResImportError: MissingResID | Exported .res file identifier missing. Either the .res file was not exported using the "Export Res" button, or the .res file was exported in a different session, or only one mesh set is present in the FrostMeshy output folder. The file must be imported manually
 WARNING: NonCriticalResImportError: UnableToRefreshExplorer | Internal error denoting communication failure with the Res Explorer UI element
 
 ___
