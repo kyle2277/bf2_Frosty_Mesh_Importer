@@ -61,6 +61,7 @@ namespace FrostyMeshImporter
         private static FrostyChunkResExplorer _chunkResExplorer;
         private static FrostyDataExplorer _resExplorer;
         private static FrostyTabControl _tabControl;
+        private static MethodInfo _openChunkResExplorer;
         private static App _app;
         private static string _version;
         private static string _searchTerm;
@@ -144,25 +145,38 @@ namespace FrostyMeshImporter
             var domainManager2 = new AppDomainManager();
             domainManager2.SetFieldValue("m_entryAssembly", System.Windows.Application.ResourceAssembly);
             AppDomain.CurrentDomain.SetFieldValue("_domainManager", domainManager2);
-            
+
             // Inject functionality
+            // OPEN RES CHUNK EXPLORER **************************************************************************
+            _openChunkResExplorer = _mainWindow.GetType().GetMethod("ResChunkExplorerMenuItem_Click", BindingFlags.NonPublic | BindingFlags.Instance);
+            // **************************************************************************************************
             _tabControl = mainWindow.GetFieldValue<FrostyTabControl>("tabControl");
-            _tabControl.SelectionChanged += TabControlOnSelectionChanged;
+            setToolbarItems(_mainWindow, null);
+            _tabControl.SelectionChanged += setToolbarItems;
         }
 
-        private static void TabControlOnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private static void setToolbarItems(object sender, SelectionChangedEventArgs e)
         {
             // Check if user has switched to asset viewer tab
             var selectedTab = _tabControl.SelectedItem as FrostyTabItem;
-            if(!(selectedTab?.Content is FrostyAssetEditor assetEditorContent))
+            List<ToolbarItem> items;
+
+            if (selectedTab?.Content is FrostyAssetEditor openedAssetEditor)
             {
-                // If not an asset viewer tab, do nothing
+                // If an asset tab, get toolbar items from asset toolbar
+                _currentAssetEditor = openedAssetEditor;
+                items = _currentAssetEditor.RegisterToolbarItems();
+            } else if(selectedTab?.Content is Border mainWindowBorder)
+            {
+                // If main window, create new list for toolbar items
+                items = new List<ToolbarItem>();
+            } else
+            {
+                // If not an asset viewer tab or main window, do nothing
                 return;
             }
-            _currentAssetEditor = assetEditorContent;
-            // Inject new functions into asset viewer toolbar
+            // Inject functions into toolbar
             var control = FindChild<ItemsControl>(_mainWindow, "editorToolbarItems");
-            var items = _currentAssetEditor.RegisterToolbarItems();
             items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
             items.Add(new ToolbarItem("Import Mesh", "Import mesh or cloth asset's res/chunk files", "Images/Import.png", new RelayCommand(_ => OnImporterCommand(false),_ => true)));
             items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
@@ -176,9 +190,20 @@ namespace FrostyMeshImporter
             control.ItemsSource = items;
         }
 
-        private static bool hasChunkResExplorer()
+        // Opens a new chunk/res explorer tab if one is not currently open.
+        private static void checkChunkResExplorerOpen()
         {
             // refreshes and then retrieves the active res/chunk explorer. Return true if exists, otherwise, logs and return false.
+            if (!setChunkResExplorer())
+            {
+                _openChunkResExplorer.Invoke(_mainWindow, new object[] { _mainWindow, null });
+                setChunkResExplorer();
+            }
+        }
+        
+        // Sets global chunkResExplorer to the current open chunk/res explorer tab. Returns true if a chunk/res explorer tab exists in the current open tabs, false otherwise.
+        private static bool setChunkResExplorer()
+        {
             _chunkResExplorer = null;
             var opentabs = _tabControl.Items;
             foreach (FrostyTabItem tab in opentabs)
@@ -186,31 +211,18 @@ namespace FrostyMeshImporter
                 if (tab?.Content is FrostyChunkResExplorer chunkResExplorerContent)
                 {
                     _chunkResExplorer = chunkResExplorerContent;
+                    _resExplorer = ReflectionHelper.GetFieldValue<FrostyDataExplorer>(_chunkResExplorer, "resExplorer");
+                    return true;
                 }
             }
-
-            if (_chunkResExplorer == null)
-            {
-                Log(errorState.NoActiveResChunkExplorer.ToString(), "Res/Chunk Explorer not found. " +
-                    "Open the Res/Chunk Explorer from the Tools dropdown menu and re-execute order.", MessageBoxButton.OK, IMPORTER_ERROR);
-                return false;
-            }
-            else
-            {
-                _resExplorer = ReflectionHelper.GetFieldValue<FrostyDataExplorer>(_chunkResExplorer, "resExplorer");
-                return true;
-            }
+            return false;
         }
-        
+
         //user clicks Import/Revert mesh
         private static async void OnImporterCommand(bool revert)
         {
             string operation = revert ? "revert" : "import";
-            // Check if there is an open res/chunk explorer. If not, exit operation
-            if (!hasChunkResExplorer())
-            {
-                return;
-            }
+            checkChunkResExplorerOpen();
             App.Logger.Log($"{operation.Substring(0,1).ToUpper()}{operation.Substring(1, operation.Length - 1)} will commence shortly.");
 
             // Get path to res/chunk data directory
@@ -352,11 +364,7 @@ namespace FrostyMeshImporter
         //user clicks "Export Res File"
         private static async void OnExportCommand()
         {
-            // Check if there is an open res/chunk explorer. If not, exit operation
-            if (!hasChunkResExplorer())
-            {
-                return;
-            }
+            checkChunkResExplorerOpen();
             ResAssetEntry selectedAsset = null;
             // Use dispatcher to get access to UI element selected asset
             _mainWindow.Dispatcher.Invoke((Action)(() =>
@@ -423,10 +431,7 @@ namespace FrostyMeshImporter
                 Log(errorState.NoImportedAssets.ToString(), $"No imported mesh sets in history.", MessageBoxButton.OK, IMPORTER_ERROR);
                 return;
             }
-            if (!hasChunkResExplorer())
-            {
-                return;
-            }
+            checkChunkResExplorerOpen();
             HistoryWindow hw = new HistoryWindow();
             List<MeshSet> meshSets = new List<MeshSet>();
             foreach(ImportedAsset asset in ChunkResImporter.importedAssets)
@@ -582,10 +587,7 @@ namespace FrostyMeshImporter
                     MessageBoxButton.OK, IMPORTER_ERROR);
                 return;
             }
-            if (!hasChunkResExplorer())
-            {
-                return;
-            }
+            checkChunkResExplorerOpen();
             List<string> strDirs = Directory.EnumerateDirectories(_fMeshySrcDir).ToList();
             List<MeshSet> files = new List<MeshSet>();
             // Check if res files can be imported
