@@ -33,12 +33,6 @@ namespace FrostyMeshImporter.Controls
                 numAddedCommands -= 1;
             }
         }
-
-        public void AddCommand(MenuItem item)
-        {
-            dataExplorer.AssetContextMenu.Items.Add(item);
-        }
-
         public void UpdateContextMenu(object sender, RoutedEventArgs e)
         {
             if(dataExplorer?.SelectedAsset is AssetEntry asset)
@@ -49,7 +43,8 @@ namespace FrostyMeshImporter.Controls
                     MenuItem meshExport = new MenuItem();
                     meshExport.Click += Program.OnExportResourceFilesCommand;
                     meshExport.Header = "Export Mesh Files";
-                    AddCommand(meshExport);
+                    // Todo icon
+                    dataExplorer.AssetContextMenu.Items.Add(meshExport);
                     numAddedCommands += 1;
                 }
             }
