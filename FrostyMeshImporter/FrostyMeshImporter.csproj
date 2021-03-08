@@ -83,6 +83,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\CustomAssetContextMenu.cs" />
     <Compile Include="Windows\HistoryWindow.xaml.cs">
       <DependentUpon>HistoryWindow.xaml</DependentUpon>
     </Compile>
