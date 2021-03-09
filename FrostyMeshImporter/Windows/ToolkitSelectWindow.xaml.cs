@@ -18,11 +18,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Frosty.Controls;
-using FrostySdk;
-using FrostySdk.Attributes;
-using FrostySdk.Managers;
-using FrostyEditor.Controls;
-using FrostyEditor.Windows;
 
 namespace FrostyMeshImporter.Windows
 {

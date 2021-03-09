@@ -236,11 +236,14 @@ namespace FrostyMeshImporter
             if (!SetChunkResExplorer())
             {
                 _openChunkResExplorer.Invoke(_mainWindow, new object[] { _mainWindow, null });
-                // Open message box to lock UI while res/chunk explorer tab opens
+                // Hack: open some window to lock UI while res/chunk explorer tab opens
                 Cursor.Current = Cursors.WaitCursor;
-                FrostyMessageBox mb = new FrostyMessageBox();
-                mb.Show();
-                mb.RequestClose(MessageBoxResult.OK);
+                ToolkitSelectWindow tsw = new ToolkitSelectWindow(_currentToolkit);
+                tsw.MaxHeight = 0;
+                tsw.MaxWidth = 0;
+                tsw.Title = "";
+                tsw.Show();
+                tsw.Close();
                 Cursor.Current = Cursors.Default;
                 SetChunkResExplorer();
             }
