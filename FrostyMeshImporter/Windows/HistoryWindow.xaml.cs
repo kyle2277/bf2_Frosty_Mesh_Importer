@@ -24,6 +24,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Markup;
+using MeshSet = FrostyMeshImporter.Toolkits.MeshImport.ChunkResImporter.MeshSet;
 
 namespace FrostyMeshImporter.Windows
 {
@@ -42,7 +43,7 @@ namespace FrostyMeshImporter.Windows
             selectedItems = new List<string>();
         }
 
-        internal void SetItems(List<ChunkResImporter.MeshSet> items)
+        internal void SetItems(List<MeshSet> items)
         {
             lbSelectAsset.ItemsSource = items;
         }

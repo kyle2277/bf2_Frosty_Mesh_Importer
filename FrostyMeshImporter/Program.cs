@@ -25,8 +25,8 @@ using System.IO;
 using FrostySdk.Ebx;
 using System.Web.SessionState;
 using FrostyMeshImporter.Windows;
-using MeshSet = FrostyMeshImporter.ChunkResImporter.MeshSet;
-using MenuItem = System.Windows.Controls.MenuItem;
+using MeshSet = FrostyMeshImporter.Toolkits.MeshImport.ChunkResImporter.MeshSet;
+using FrostyMeshImporter.Toolkits.MeshImport;
 
 // <summary>
 // Adds Res/Chunk file batch import funtionality to the Frosty Mod Editor.
@@ -56,6 +56,12 @@ namespace FrostyMeshImporter
         FailedToFindResFile = -17
     };
 
+    public enum toolkit
+    {
+        Default = 0,
+        FrostMeshyImport = 1
+    } 
+
     partial class Program
     {
         private static MainWindow _mainWindow;
@@ -66,6 +72,7 @@ namespace FrostyMeshImporter
         private static FrostyDataExplorer _mainWindowExplorer;
         private static MethodInfo _openChunkResExplorer;
         private static App _app;
+        private static toolkit _currentToolkit = 0;
         private static string _version;
         private static string _searchTerm;
         private static string _fMeshySrcDir;
@@ -174,28 +181,52 @@ namespace FrostyMeshImporter
                 // If an asset tab, get toolbar items from asset toolbar
                 _currentAssetEditor = openedAssetEditor;
                 items = _currentAssetEditor.RegisterToolbarItems();
-            } else if(selectedTab?.Content is Border mainWindowBorder)
+            } else
             {
                 // If main window, create new list for toolbar items
                 items = new List<ToolbarItem>();
-            } else
-            {
-                // If not an asset viewer tab or main window, do nothing
-                return;
             }
             // Inject functions into toolbar
             var control = FindChild<ItemsControl>(_mainWindow, "editorToolbarItems");
-            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
-            items.Add(new ToolbarItem("Import Mesh", "Import mesh or cloth asset's res/chunk files", "Images/Import.png", new RelayCommand(_ => OnImporterCommand(false),_ => true)));
-            items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
-            items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
-            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
-            items.Add(new ToolbarItem("Link Source", "Link to the output folder of FrostMeshy", "Images/Interface.png", new RelayCommand(_ => OnLinkSourceCommand(), _ => true)));
-            items.Add(new ToolbarItem("Source Import", "Import mesh or cloth asset from FrostMeshy output folder", "Images/Import.png", new RelayCommand(_ => OnSourceImportCommand(), _ => true)));
-            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
-            items.Add(new ToolbarItem("History", "Re-import or revert mesh sets from history", "Images/Classref.png", new RelayCommand(_ => OnHistoryCommand(), _ => true)));
-            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+            switch (_currentToolkit)
+            {
+                case toolkit.Default:
+                    items.Add(new ToolbarItem("Toolkit", "Select the set of tools to be displayed on the toolbar", "Images/Settings.png", new RelayCommand(_ => OnToolkitCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    items.Add(new ToolbarItem("Import Mesh", "Import mesh or cloth asset's res/chunk files", "Images/Import.png", new RelayCommand(_ => OnImporterCommand(false), _ => true)));
+                    items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
+                    items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    items.Add(new ToolbarItem("Link Source", "Link to the output folder of FrostMeshy", "Images/Interface.png", new RelayCommand(_ => OnLinkSourceCommand(), _ => true)));
+                    items.Add(new ToolbarItem("Source Import", "Import mesh or cloth asset from FrostMeshy output folder", "Images/Import.png", new RelayCommand(_ => OnSourceImportCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    items.Add(new ToolbarItem("History", "Re-import or revert mesh sets from history", "Images/Classref.png", new RelayCommand(_ => OnHistoryCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    break;
+                case toolkit.FrostMeshyImport:
+                    items.Add(new ToolbarItem("Toolkit", "Select the set of tools to be displayed on the toolbar", "Images/Settings.png", new RelayCommand(_ => OnToolkitCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
+                    items.Add(new ToolbarItem("Link Source", "Link to the output folder of FrostMeshy", "Images/Interface.png", new RelayCommand(_ => OnLinkSourceCommand(), _ => true)));
+                    items.Add(new ToolbarItem("Source Import", "Import mesh or cloth asset from FrostMeshy output folder", "Images/Import.png", new RelayCommand(_ => OnSourceImportCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    items.Add(new ToolbarItem("History", "Re-import or revert mesh sets from history", "Images/Classref.png", new RelayCommand(_ => OnHistoryCommand(), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    break;
+            }
             control.ItemsSource = items;
+        }
+
+        // Opens dialog for selecting toolkit.
+        private static void OnToolkitCommand()
+        {
+            ToolkitSelectWindow tw = new ToolkitSelectWindow(_currentToolkit);
+            tw.ShowDialog();
+            if(tw.DialogResult == true)
+            {
+                _currentToolkit = tw.GetToolkit();
+                SetToolbarItems(_mainWindow, null);
+            }
         }
 
         // Opens a new chunk/res explorer tab if one is not currently open.
@@ -234,7 +265,7 @@ namespace FrostyMeshImporter
             return false;
         }
 
-        // User selects Export Mesh Files or Export Cloth Files from asset context menu
+        // Facilitates exporting mesh/cloth resource files from a selected mesh in the main window data explorer.
         public static async void OnExportResourceFilesCommand(object sender, RoutedEventArgs e)
         {
             CheckChunkResExplorerOpen();
@@ -337,12 +368,13 @@ namespace FrostyMeshImporter
             }
         }
 
+        // Comparator function for searching for a res file by path in the res explorer.
         private static bool CompareResEntryByName(ResAssetEntry f)
         {
             return f.Name == _searchTerm;
         }
 
-        // Generate mesh res file names
+        // Generates mesh resource file paths to be retrieved from the res explorer.
         private static void GenerateMeshResPaths(ref List<string> resFilePaths, string assetName, string assetPath)
         {
             // Generate blocks path
@@ -350,7 +382,7 @@ namespace FrostyMeshImporter
             resFilePaths.Add(blocksPath);
         }
 
-        // Generate cloth res file names
+        // Generates cloth resource file paths to be retrieved from the res explorer.
         private static void GenerateClothResPaths(ref List<string> resFilePaths, string assetName, string assetPath)
         {
             // Generate blocks path
@@ -361,7 +393,7 @@ namespace FrostyMeshImporter
             resFilePaths.Add(eaClothPath);
         }
 
-        // User clicks Import/Revert mesh
+        // Standard Import/Export command. Prompts user to select mesh set directory.
         private static async void OnImporterCommand(bool revert)
         {
             string operation = revert ? "revert" : "import";
@@ -416,6 +448,7 @@ namespace FrostyMeshImporter
             RefreshExplorers();
         }
 
+        // Facilitates batch import/revert of FrostMeshy mesh sets.
         private static int MultiFileImport(List<string> dirNames, string operation, bool revert)
         {
             int status = 0;
@@ -442,6 +475,7 @@ namespace FrostyMeshImporter
             return status;
         }
 
+        // Executes a file operation (import or export) at the given directory path.
         private static int FileOperation(string dirPath, string operation, bool revert)
         {
             // Parse mesh set name (name of directory)
@@ -502,7 +536,7 @@ namespace FrostyMeshImporter
             return (int)errorState.Success;
         }
 
-        //user clicks "Export Res File"
+        // Facilitates exporting a selected res file from the res explorer.
         private static async void OnExportCommand()
         {
             CheckChunkResExplorerOpen();
@@ -553,6 +587,7 @@ namespace FrostyMeshImporter
             RefreshExplorers();
         }
 
+        // Exports the given res file to the given file location.
         private static void ExportResCommand(ResAssetEntry selectedAsset, string selectedFile)
         {
             
@@ -693,6 +728,7 @@ namespace FrostyMeshImporter
             }
         }
 
+        // Opens dialog for selecting a FrostMeshy output folder
         private static void OnLinkSourceCommand()
         {
             if (_fMeshySrcDir != null && _fMeshySrcDir != "")
@@ -719,6 +755,7 @@ namespace FrostyMeshImporter
             Log(errorState.Success.ToString(), $"Linked to FrostMeshy output folder: {_fMeshySrcDir}.", MessageBoxButton.OK, IMPORTER_MESSAGE);
         }
 
+        // Facilitates importing mesh sets from a FrostMeshy source output directory.
         private static async void OnSourceImportCommand()
         {
             if (_fMeshySrcDir == null)
@@ -784,6 +821,7 @@ namespace FrostyMeshImporter
             }
         }
 
+        // Refreshes res and chunk explorer to reflect changes in imported/reverted assets.
         private static void RefreshExplorers()
         {
             // Refresh chunk explorer

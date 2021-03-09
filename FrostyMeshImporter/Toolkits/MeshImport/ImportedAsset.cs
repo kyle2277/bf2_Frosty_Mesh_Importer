@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrostyMeshImporter
+namespace FrostyMeshImporter.Toolkits.MeshImport
 {
     // TODO: consider combining ImportedAsset and MeshSet struct
     //Imported asset structure used for reversion of imported meshes

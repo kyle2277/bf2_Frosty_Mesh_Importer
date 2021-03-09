@@ -42,6 +42,5 @@
                 </DockPanel>
             </Grid>
         </Border>
-            
     </Grid>
 </ctrl:FrostyDockableWindow>
