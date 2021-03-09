@@ -1,6 +1,6 @@
-﻿// ReflectionHelper.cs - FrostyResChunkImporter
+﻿// ReflectionHelper.cs - FrostyMeshImporter
 // Contributors:
-//      Copyright (C) 2020  Kyle Won
+//      Copyright (C) 2021  Kyle Won
 //      Copyright (C) 2020  Daniel Elam <dan@dandev.uk>
 // This file is subject to the terms and conditions defined in the 'LICENSE' file.
 // The following code is derived from Daniel Elam's bf2-sound-import project
