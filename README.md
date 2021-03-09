@@ -1,4 +1,4 @@
-<img src=https://github.com/kyle2277/bf2_Frosty_Res_Chunk_Importer/blob/master/FrostyResChunkImportIcon.png width="100" height="100"></img>
+<img src=https://github.com/kyle2277/bf2_Frosty_Mesh_Importer/blob/master/FrostyMeshImporter/FrostyMeshImportIcon.png width="100" height="100"></img>
 ___
 # TigerVenom22's Frosty Mesh Importer for SWBF2
 *Formerly the Frosty Res/Chunk Importer*
