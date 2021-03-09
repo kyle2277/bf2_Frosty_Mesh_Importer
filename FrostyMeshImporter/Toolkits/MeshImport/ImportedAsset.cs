@@ -1,6 +1,6 @@
-﻿// ImportedAsset.cs - FrostyResChunkImporter
+﻿// ImportedAsset.cs - FrostyMeshImporter
 // Contributors:
-//      Copyright (C) 2020  Kyle Won
+//      Copyright (C) 2021  Kyle Won
 // This file is subject to the terms and conditions defined in the 'LICENSE' file.
 
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrostyMeshImporter
+namespace FrostyMeshImporter.Toolkits.MeshImport
 {
     // TODO: consider combining ImportedAsset and MeshSet struct
     //Imported asset structure used for reversion of imported meshes

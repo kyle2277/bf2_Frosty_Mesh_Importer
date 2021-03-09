@@ -1,6 +1,6 @@
-﻿// BatchOperationWindow.xaml.cs - FrostyResChunkImporter
+﻿// BatchOperationWindow.xaml.cs - FrostyMeshImporter
 // Contributors:
-//      Copyright (C) 2020  Kyle Won
+//      Copyright (C) 2021  Kyle Won
 // This file is subject to the terms and conditions defined in the 'LICENSE' file.
 
 using System;
@@ -24,6 +24,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Markup;
+using MeshSet = FrostyMeshImporter.Toolkits.MeshImport.ChunkResImporter.MeshSet;
 
 namespace FrostyMeshImporter.Windows
 {
@@ -41,7 +42,7 @@ namespace FrostyMeshImporter.Windows
             selectedItems = new List<string>();
         }
 
-        internal void SetItems(List<ChunkResImporter.MeshSet> items)
+        internal void SetItems(List<MeshSet> items)
         {
             lbSelectAsset.ItemsSource = items;
         }

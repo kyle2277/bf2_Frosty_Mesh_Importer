@@ -1,6 +1,6 @@
-﻿// ChunkResImporter.cs - FrostyResChunkImporter
+﻿// ChunkResImporter.cs - FrostyMeshImporter
 // Contributors:
-//      Copyright (C) 2020  Kyle Won
+//      Copyright (C) 2021  Kyle Won
 // This file is subject to the terms and conditions defined in the 'LICENSE' file.
 
 using System;
@@ -22,7 +22,7 @@ using System.Windows;
 // Facilitates res/chunk file imports within the Frosty res/chunk explorer window.
 // </summary>
 
-namespace FrostyMeshImporter
+namespace FrostyMeshImporter.Toolkits.MeshImport
 {
     class ChunkResImporter
     {
