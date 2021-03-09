@@ -17,13 +17,13 @@ Running this app creates an instance of Frosty Editor and injects the following 
 Install by placing `Frosty Mesh Importer.exe` in the same folder as your Frosty Editor installation.
 ### How to import a mesh using "Import Mesh" button
 1. **Locate the mesh you want to replace in the main asset explorer**. This program can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
-2. **Export the mesh's .res files one the two following ways:**
-    a. Export from the main asset explorer. Right click on the mesh in the asset explorer and click "Export Mesh Files." Use the file select pop-up to navigate into the desired        output folder and click "Open". All the .res files belonging to the selected mesh will be exported to this location.
-    b. Export from the Res/Chunk explorer window. For the .res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the "Export Res" button in the toolbar at the top of the window. 
+2. **Export the mesh's .res files one the two following ways:** \
+    **a.** Export from the main asset explorer. Right click on the mesh in the asset explorer and click "Export Mesh Files." Use the file select pop-up to navigate into the                desired output folder and click "Open". All the .res files belonging to the selected mesh will be exported to this location. \
+    **b.** Export from the Res/Chunk explorer window. For the .res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the "Export Res" button in the toolbar at the top of the window.  \
     **DO NOT use Frosty's default right-click > export function** or the res file cannot be re-imported automatically.
-5. **Run FrostMeshy**.
-6. **Click the "Import Mesh" button on the toolbar and navigate to the FrostMeshy output folder for your mesh**. Inside the folder, click the "Open" button in the open-file pop-up without selecting any of the files inside the folder. All the .chunk files in the folder will be automatically imported into Frosty. The .res files will be automatically imported if two conditions are satisfied: the "Export Res" button was used to export the .res files and there's more than one mesh set in the FrostMeshy output folder. Check the Frosty Editor log to determine which files were successfully imported and whether you need to import any files manually.
-7. **Refresh your mesh tab** to see changes.
+3. **Run FrostMeshy**.
+4. **Click the "Import Mesh" button on the toolbar and navigate to the FrostMeshy output folder for your mesh**. Inside the folder, click the "Open" button in the open-file pop-up without selecting any of the files inside the folder. All the .chunk files in the folder will be automatically imported into Frosty. The .res files will be automatically imported if two conditions are satisfied: the "Export Res" button was used to export the .res files and there's more than one mesh set in the FrostMeshy output folder. Check the Frosty Editor log to determine which files were successfully imported and whether you need to import any files manually.
+5. **Refresh your mesh tab** to see changes.
 
 ### How to revert an imported mesh using "Revert Mesh" button
 The default "revert" function in the Frosty Editor is not designed to revert meshes that have been imported using FrostMeshy. The "Revert Mesh" button restores a mesh by reverting all chunk and res files associated with said mesh. Reverting a mesh requires the output files from FrostMeshy because the names of the output files are used to locate the files to revert in Frosty Editor.
@@ -36,8 +36,14 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 
 ### Importing from a FrostMeshy output source folder
 The "Source Import" function directly references and pulls mesh sets from the path specified by "Link Source." Any updates to the linked folder will be reflected in the "Source Import" dialog.
-1. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button.
-2. **Click the "Source Import" button**. Select one or more mesh set and click "Import."
+1. **Locate the mesh you want to replace in the main asset explorer**. This program can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
+2. **Export the mesh's .res files one the two following ways:** \
+    **a.** Export from the main asset explorer. Right click on the mesh in the asset explorer and click "Export Mesh Files." Use the file select pop-up to navigate into the                desired output folder and click "Open". All the .res files belonging to the selected mesh will be exported to this location. \
+    **b.** Export from the Res/Chunk explorer window. For the .res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the "Export Res" button in the toolbar at the top of the window.  \
+    **DO NOT use Frosty's default right-click > export function** or the res file cannot be re-imported automatically.
+3. **Run FrostMeshy**.
+4. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button.
+5. **Click the "Source Import" button**. Select one or more mesh set and click "Import."
 
 A green check mark in the status column indicates that a mesh set's .res files can be imported automatically. A red cross indicates that the mesh set's .res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its .res files will need to be imported manually.
 
