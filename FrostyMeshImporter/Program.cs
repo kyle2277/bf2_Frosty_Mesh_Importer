@@ -278,7 +278,7 @@ namespace FrostyMeshImporter
             // Get path to res/chunk data directory
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             // Config dialog
-            ofd.Title = "Select export desination folder";
+            ofd.Title = "Select export destination folder";
             ofd.Filter = "Folder|*.*";
             ofd.RestoreDirectory = true;
             ofd.AddExtension = false;
