@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static FrostyMeshImporter.Program;
 
 namespace FrostyMeshImporter.Controls
 {
@@ -45,11 +46,20 @@ namespace FrostyMeshImporter.Controls
                 ResetContextMenu();
                 if(asset.Type.Contains("MeshAsset"))
                 {
+                    // Add res file export to context menu
                     MenuItem meshExport = new MenuItem();
-                    meshExport.Click += Program.OnExportResourceFilesCommand;
+                    meshExport.Click += OnExportResourceFilesCommand;
                     meshExport.Header = "Export Mesh Files";
                     // Todo icon
                     dataExplorer.AssetContextMenu.Items.Add(meshExport);
+                    numAddedCommands += 1;
+                } else if(asset.Type.Equals("FsUITextDatabase"))
+                {
+                    // Add FrosTxt to context menu
+                    MenuItem frosTxt = new MenuItem();
+                    frosTxt.Click += OnFrosTxtCommand;
+                    frosTxt.Header = "Open FrosTxt";
+                    dataExplorer.AssetContextMenu.Items.Add(frosTxt);
                     numAddedCommands += 1;
                 }
             }

@@ -30,23 +30,24 @@ namespace FrostyMeshImporter.Windows
         private struct ToolkitSelect
         {
             public string toolkitName { get; }
-            public toolkit toolkitID { get; }
+            public Toolkit toolkitID { get; }
 
-            public ToolkitSelect(string toolkitName, toolkit toolkitID)
+            public ToolkitSelect(string toolkitName, Toolkit toolkitID)
             {
                 this.toolkitName = toolkitName;
                 this.toolkitID = toolkitID;
             }
         }
 
-        public toolkit selectedToolkit = toolkit.Default;
+        public Toolkit selectedToolkit = Toolkit.Default;
 
-        public ToolkitSelectWindow(toolkit currentToolkit)
+        public ToolkitSelectWindow(Toolkit currentToolkit)
         {
             InitializeComponent();
             List<ToolkitSelect> comboBoxChoices = new List<ToolkitSelect>();
-            comboBoxChoices.Add(new ToolkitSelect("Mesh Import (Default)", toolkit.Default));
-            comboBoxChoices.Add(new ToolkitSelect("FrostMeshy Import", toolkit.FrostMeshyImport));
+            comboBoxChoices.Add(new ToolkitSelect("Mesh Import (Default)", Toolkit.Default));
+            comboBoxChoices.Add(new ToolkitSelect("FrostMeshy Import", Toolkit.FrostMeshyImport));
+            comboBoxChoices.Add(new ToolkitSelect("FrosTxt", Toolkit.FrosTxt));
             selectionBox.ItemsSource = comboBoxChoices;
             // Set selected value to current toolkit
             foreach (ToolkitSelect cur in comboBoxChoices)
@@ -67,7 +68,7 @@ namespace FrostyMeshImporter.Windows
             this.Close();
         }
 
-        public toolkit GetToolkit()
+        public Toolkit GetToolkit()
         {
             return selectedToolkit;
         }

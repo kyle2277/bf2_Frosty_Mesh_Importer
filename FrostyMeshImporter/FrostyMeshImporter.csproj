@@ -55,6 +55,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FrosTxtCore">
+      <HintPath>..\..\FrosTxt\FrosTxt\FrosTxtCore\bin\Release\netstandard2.0\FrosTxtCore.dll</HintPath>
+    </Reference>
     <Reference Include="FrostyControls">
       <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostyControls.dll</HintPath>
     </Reference>
@@ -85,6 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\CustomAssetContextMenu.cs" />
+    <Compile Include="Toolkits\FrosTxt\Program.cs" />
+    <Compile Include="Windows\FrosTxtWindow.xaml.cs">
+      <DependentUpon>FrosTxtWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\HistoryWindow.xaml.cs">
       <DependentUpon>HistoryWindow.xaml</DependentUpon>
     </Compile>
@@ -109,6 +116,10 @@
     <Content Include="FrostyResChunkImportIcon.ico.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Windows\FrosTxtWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\HistoryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

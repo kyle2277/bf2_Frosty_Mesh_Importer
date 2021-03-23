@@ -56,10 +56,11 @@ namespace FrostyMeshImporter
         FailedToFindResFile = -17
     };
 
-    public enum toolkit
+    public enum Toolkit
     {
         Default = 0,
-        FrostMeshyImport = 1
+        FrostMeshyImport = 1,
+        FrosTxt = 2
     } 
 
     partial class Program
@@ -72,7 +73,7 @@ namespace FrostyMeshImporter
         private static FrostyDataExplorer _mainWindowExplorer;
         private static MethodInfo _openChunkResExplorer;
         private static App _app;
-        private static toolkit _currentToolkit = 0;
+        private static Toolkit _currentToolkit = 0;
         private static string _version;
         private static string _searchTerm;
         private static string _fMeshySrcDir;
@@ -126,14 +127,14 @@ namespace FrostyMeshImporter
             if (Attribute.IsDefined(typeof(App).Assembly, typeof(XmlnsDefinitionAttribute)))
             {
                 string versionType = typeof(App).Assembly.GetCustomAttribute<XmlnsDefinitionAttribute>().XmlNamespace;
-                if(versionType.Equals("FrostyAlpha"))
+                if (versionType.Equals("FrostyAlpha"))
                 {
-                    frostyAlpha = true;                    
+                    frostyAlpha = true;
                 }
             }
             bool importerAlpha = false;
             string importerVersion = typeof(Program).Assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title;
-            if(importerVersion.Contains("Alpha"))
+            if (importerVersion.Contains("Alpha"))
             {
                 importerAlpha = true;
             }
@@ -186,13 +187,14 @@ namespace FrostyMeshImporter
                 // If main window, create new list for toolbar items
                 items = new List<ToolbarItem>();
             }
+            items.Add(new ToolbarItem("Toolkit", "Select the set of tools to be displayed on the toolbar", "Images/Settings.png", new RelayCommand(_ => OnToolkitCommand(), _ => true)));
+            items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
             // Inject functions into toolbar
             var control = FindChild<ItemsControl>(_mainWindow, "editorToolbarItems");
             switch (_currentToolkit)
             {
-                case toolkit.Default:
-                    items.Add(new ToolbarItem("Toolkit", "Select the set of tools to be displayed on the toolbar", "Images/Settings.png", new RelayCommand(_ => OnToolkitCommand(), _ => true)));
-                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                case Toolkit.Default:
+                    // Mesh import tools
                     items.Add(new ToolbarItem("Import Mesh", "Import mesh or cloth asset's res/chunk files", "Images/Import.png", new RelayCommand(_ => OnImporterCommand(false), _ => true)));
                     items.Add(new ToolbarItem("Revert Mesh", "Revert a mesh or cloth asset", "Images/Revert.png", new RelayCommand(_ => OnImporterCommand(true), _ => true)));
                     items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
@@ -203,9 +205,8 @@ namespace FrostyMeshImporter
                     items.Add(new ToolbarItem("History", "Re-import or revert mesh sets from history", "Images/Classref.png", new RelayCommand(_ => OnHistoryCommand(), _ => true)));
                     items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
                     break;
-                case toolkit.FrostMeshyImport:
-                    items.Add(new ToolbarItem("Toolkit", "Select the set of tools to be displayed on the toolbar", "Images/Settings.png", new RelayCommand(_ => OnToolkitCommand(), _ => true)));
-                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                case Toolkit.FrostMeshyImport:
+                    // FrostMeshy import tools
                     items.Add(new ToolbarItem("Export Res", "Export selected res file in res explorer", "Images/Export.png", new RelayCommand(_ => OnExportCommand(), _ => true)));
                     items.Add(new ToolbarItem("Link Source", "Link to the output folder of FrostMeshy", "Images/Interface.png", new RelayCommand(_ => OnLinkSourceCommand(), _ => true)));
                     items.Add(new ToolbarItem("Source Import", "Import mesh or cloth asset from FrostMeshy output folder", "Images/Import.png", new RelayCommand(_ => OnSourceImportCommand(), _ => true)));
@@ -213,8 +214,21 @@ namespace FrostyMeshImporter
                     items.Add(new ToolbarItem("History", "Re-import or revert mesh sets from history", "Images/Classref.png", new RelayCommand(_ => OnHistoryCommand(), _ => true)));
                     items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
                     break;
+                case Toolkit.FrosTxt:
+                    // FrosTxt tools
+                    items.Add(new ToolbarItem("FrosTxt", "Open FrosTxt text edit tool", "Images/Editlabel.png", new RelayCommand(_ => OnFrosTxtCommand(_mainWindow, null), _ => true)));
+                    items.Add(new ToolbarItem("Revert", "Revert edits to localization files", "Images/Revert.png", new RelayCommand(_ => OnRevertFrosTxtCommand(_mainWindow, null), _ => true)));
+                    items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
+                    break;
             }
             control.ItemsSource = items;
+            
+            // Check whether to open FrosTxt
+            if(openFrosTxt)
+            {
+                OpenFrosTxtWindow();
+                openFrosTxt = false;
+            }
         }
 
         // Opens dialog for selecting toolkit.
@@ -236,17 +250,22 @@ namespace FrostyMeshImporter
             if (!SetChunkResExplorer())
             {
                 _openChunkResExplorer.Invoke(_mainWindow, new object[] { _mainWindow, null });
-                // Hack: open some window to lock UI while res/chunk explorer tab opens
-                Cursor.Current = Cursors.WaitCursor;
-                ToolkitSelectWindow tsw = new ToolkitSelectWindow(_currentToolkit);
-                tsw.MaxHeight = 0;
-                tsw.MaxWidth = 0;
-                tsw.Title = "";
-                tsw.Show();
-                tsw.Close();
-                Cursor.Current = Cursors.Default;
+                StallUI();
                 SetChunkResExplorer();
             }
+        }
+
+        // Hack: open some window to lock UI while an editor tab opens
+        private static void StallUI()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            ToolkitSelectWindow tsw = new ToolkitSelectWindow(_currentToolkit);
+            tsw.MaxHeight = 0;
+            tsw.MaxWidth = 0;
+            tsw.Title = "";
+            tsw.Show();
+            tsw.Close();
+            Cursor.Current = Cursors.Default;
         }
         
         // Sets global chunkResExplorer to the current open chunk/res explorer tab. Returns true if a chunk/res explorer tab exists in the current open tabs, false otherwise.
