@@ -9,6 +9,8 @@ using Microsoft.Win32;
 using System.Windows.Controls;
 using Frosty.Controls;
 using FrostySdk.Managers;
+
+using FrostySdk.Ebx;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -26,30 +28,19 @@ namespace FrostyMeshImporter.Windows
     /// </summary>
     public partial class FrosTxtWindow : FrostyDockableWindow
     {
-        // Enumaration of all localization types
-        public enum Localizations
-        {
-            English,
-            BrazilianPortuguese,
-            French,
-            German,
-            Italian,
-            Japanese,
-            Polish,
-            Russian,
-            Spanish,
-            SpanishMex,
-            TraditionalChinese,
-            WorstCase
-        }
+        public string language;
+        public FsUITextDatabase localizationTextData;
+        public EbxAssetEntry localizationAsset;
         public LocalizationMerger lm;
-        public Localizations language;
-        public FrosTxtWindow(Localizations language, string baseFile)
+        public FrosTxtWindow(LocalizationFile baseFile, string language, FsUITextDatabase localizationTextData, EbxAssetEntry localizationAsset)
         {
-            this.language = language;
-            lm = new LocalizationMerger(baseFile);
-            SetItems(lm.GetGenericModifiedFiles());
             InitializeComponent();
+            this.language = language;
+            this.localizationTextData = localizationTextData;
+            this.localizationAsset = localizationAsset;
+            lm = new LocalizationMerger(baseFile);
+            this.Title += " - " + language;
+            SetItems(lm.GetGenericModifiedFiles());
         }
 
         internal void SetItems(List<object> files)
@@ -232,8 +223,7 @@ namespace FrostyMeshImporter.Windows
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = new bool?(false);
-            this.Close();
+            this.Hide();
         }
 
         private void SelectBaseButton_Click(object sender, RoutedEventArgs e)

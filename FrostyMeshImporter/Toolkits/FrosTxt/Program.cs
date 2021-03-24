@@ -20,31 +20,19 @@ using System.Web.SessionState;
 using FrostyMeshImporter.Windows;
 using MeshSet = FrostyMeshImporter.Toolkits.MeshImport.ChunkResImporter.MeshSet;
 using FrostyMeshImporter.Toolkits.MeshImport;
+using FrosTxtCore;
 
 namespace FrostyMeshImporter
 {
     partial class Program
     {
-        private static List<FrosTxtWindowObj> _localizationProfiles;
-        private static AssetEntry _currentLocalization;
+        private static List<FrosTxtWindow> _localizationProfiles;
+        private static EbxAssetEntry _currentLocalization;
         private static FsUITextDatabase _currentTextDatabase;
-        private static FrosTxtWindowObj _lastFrosTxtWindow;
+        private static FrosTxtWindow _lastFrosTxtWindow;
         private static bool _openFrosTxt = false;
-        private static Guid DEFAULT_ENGLISH_GUID = new Guid("d95231aa-79a3-64a3-ac02-6848d19021d5");
-
-        private class FrosTxtWindowObj
-        {
-            public FrosTxtWindow window;
-            public AssetEntry localizationAsset;
-            public ChunkAssetEntry textChunk;
-
-            public FrosTxtWindowObj(FrosTxtWindow window, AssetEntry localizationAsset, ChunkAssetEntry textChunk)
-            {
-                this.window = window;
-                this.localizationAsset = localizationAsset;
-                this.textChunk = textChunk;
-            }
-        }
+        private static string DEFAULT_ENGLISH = "Localization/WSLocalization_English";
+        private static string _tempChunk = ".\\FrosTxtTemp\\chunk.chunk";
 
         // Setup FrosTxt window to be opened.
         public static void OnFrosTxtCommand(object sender, RoutedEventArgs e)
@@ -52,51 +40,94 @@ namespace FrostyMeshImporter
             CheckChunkResExplorerOpen();
             if(_localizationProfiles == null)
             {
-                _localizationProfiles = new List<FrosTxtWindowObj>();
+                _localizationProfiles = new List<FrosTxtWindow>();
             }
-            if(_mainWindowExplorer.SelectedAsset.Type.Equals("FsUITextDatabase"))
+            if(_mainWindowExplorer.SelectedAsset != null && 
+                _mainWindowExplorer.SelectedAsset.Type.Equals("FsUITextDatabase"))
             {
                 // Open FrosTxt window corresponding to current selected asset
-                _currentLocalization = _mainWindowExplorer.SelectedAsset;
+                _currentLocalization = (EbxAssetEntry)_mainWindowExplorer.SelectedAsset;
                 _lastFrosTxtWindow = null;
-            } else
+            } else if(_lastFrosTxtWindow != null)
             {
                 // Open last FrosTxt window
                 _currentLocalization = null;
                 _mainWindowExplorer.SelectedAsset = _lastFrosTxtWindow.localizationAsset;
+            } else  // lastFrosTxtWindow is null
+            {
+                EbxAssetEntry englishLocalization = App.AssetManager.GetEbxEntry(DEFAULT_ENGLISH);
+                _mainWindowExplorer.SelectedAsset = englishLocalization;
+                _currentLocalization = englishLocalization;
             }
-            _mainWindowExplorer.DoubleClickSelectedAsset();
-            _openFrosTxt = true;
+            FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
+            if(testTab != null && _mainWindowExplorer.SelectedAsset != null && 
+                testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
+            {
+                OpenFrosTxtWindow();
+            } else
+            {
+                _mainWindowExplorer.DoubleClickSelectedAsset();
+                _openFrosTxt = true;
+            }
         }
 
         // Opens FrosTxt window specified by lastFrosTxtWindow.
         // Pre-condition: lastFrosTxtWindow != null and contains an initialized FrosTxtWindow reference.
         private static void OpenFrosTxtWindow()
         {
-            if(_currentLocalization != null && _lastFrosTxtWindow == null)
+            Predicate<FrosTxtWindow> FrosTxtWindowPredicate = CompareByFrosTxtWindowLanguage;
+            if (_currentLocalization != null)
             {
                 // Open FrosTxtWindow using the current open localization asset
-                FsUITextDatabase data = (FsUITextDatabase)_currentAssetEditor.RootObject;
-                // Check if FrosTxtWindow already in localizationProfiles
-                // If so, set as last opened window and open
-                // Else, create new window profile, add to localization profiles, and set as last opened window
-                Guid chunkID = data.BinaryChunk;
-                ChunkAssetEntry textChunk = App.AssetManager.GetChunkEntry(chunkID);
-                Stream baseTextStream = App.AssetManager.GetChunk(textChunk);
-                // create base file with chunk stream
-            } else if(_currentLocalization == null && _lastFrosTxtWindow != null)
-            {
-                // Open FrosTxtWindow using the last opened window
-                FsUITextDatabase data = (FsUITextDatabase)_currentAssetEditor.RootObject;
-            } else  // No localization asset selected and no last FrosTxtWindow
-            {
-                // Open default english FrosTxtWindow
+                _currentTextDatabase = (FsUITextDatabase)_currentAssetEditor.RootObject;
+                // data.Name = WSLocalization_English
+                // Using string.split to get "English"
+                string language = _currentTextDatabase.Name.ToString().Split('_')[1];
+                if(!language.Equals(_lastFrosTxtWindow?.language))
+                {
+                    // Check if FrosTxtWindow already in localizationProfiles
+                    _searchTerm = language;
+                    FrosTxtWindow searchResult = _localizationProfiles.Find(FrosTxtWindowPredicate);
+                    if (searchResult != null)
+                    {
+                        // Set as last opened window
+                        _lastFrosTxtWindow = searchResult;
+                    }
+                    else
+                    {
+                        // Create new window profile, add to localization profiles, and set as last opened window
+                        // create base file with chunk stream
+                        LocalizationFile baseFile = loadBaseChunk();
+                        FrosTxtWindow newWindow = new FrosTxtWindow(baseFile, language, _currentTextDatabase, _currentLocalization);
+                        _localizationProfiles.Add(newWindow);
+                        _lastFrosTxtWindow = newWindow;
+                    }
+                }
             }
+            // open last opened window
+            _lastFrosTxtWindow.Show();
         }
 
-        public static bool CompareByAssetEntryName(AssetEntry a)
+        // Creates a new localization base file for the currently selected localization asset.
+        // Pre-condition: the given FsUITextDatabase asset must be an open tab.
+        private static LocalizationFile loadBaseChunk()
+        {
+            Guid chunkID = _currentTextDatabase.BinaryChunk;
+            ChunkAssetEntry textChunk = App.AssetManager.GetChunkEntry(chunkID);
+            Stream memStream = App.AssetManager.GetChunk(textChunk);
+            FileStream baseTextStream = new FileStream(_tempChunk, FileMode.OpenOrCreate);
+            memStream.CopyTo(baseTextStream);
+            return new LocalizationFile(baseTextStream, _currentTextDatabase.Language.ToString());
+        }
+
+        private static bool CompareByAssetEntryName(AssetEntry a)
         {
             return a.Name == _searchTerm;
+        }
+
+        private static bool CompareByFrosTxtWindowLanguage(FrosTxtWindow f)
+        {
+            return f.language == _searchTerm;
         }
 
         // Open FrosTxt reversion window.

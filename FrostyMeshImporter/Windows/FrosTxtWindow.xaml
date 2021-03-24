@@ -6,7 +6,8 @@
                            xmlns:local="clr-namespace:FrostyMeshImporter.Windows"
                            xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
                            FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="400" Width="500" Title="FrosTxt"
-                           ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+                           ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+                           Topmost="True">
     <Grid Background="{StaticResource WindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition/>

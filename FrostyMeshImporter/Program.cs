@@ -224,10 +224,10 @@ namespace FrostyMeshImporter
             control.ItemsSource = items;
             
             // Check whether to open FrosTxt
-            if(openFrosTxt)
+            if(_openFrosTxt)
             {
                 OpenFrosTxtWindow();
-                openFrosTxt = false;
+                _openFrosTxt = false;
             }
         }
 
