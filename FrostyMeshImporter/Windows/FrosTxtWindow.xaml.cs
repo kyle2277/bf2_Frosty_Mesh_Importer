@@ -9,7 +9,6 @@ using Microsoft.Win32;
 using System.Windows.Controls;
 using Frosty.Controls;
 using FrostySdk.Managers;
-
 using FrostySdk.Ebx;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -20,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Markup;
 using FrosTxtCore;
+using static FrostyMeshImporter.Program;
 
 namespace FrostyMeshImporter.Windows
 {
@@ -28,6 +28,24 @@ namespace FrostyMeshImporter.Windows
     /// </summary>
     public partial class FrosTxtWindow : FrostyDockableWindow
     {
+        // Enumaration of all localization types
+        public enum Localizations
+        {
+            English,
+            BrazilianPortuguese,
+            French,
+            German,
+            Italian,
+            Japanese,
+            Polish,
+            Russian,
+            Spanish,
+            SpanishMex,
+            TraditionalChinese,
+            WorstCase,
+            Custom
+        }
+
         public string language;
         public FsUITextDatabase localizationTextData;
         public EbxAssetEntry localizationAsset;
@@ -40,7 +58,10 @@ namespace FrostyMeshImporter.Windows
             this.localizationAsset = localizationAsset;
             lm = new LocalizationMerger(baseFile);
             this.Title += " - " + language;
+            baseComboBox.ItemsSource = Enum.GetNames(typeof(Localizations));
+            baseComboBox.SelectedItem = language;
             SetItems(lm.GetGenericModifiedFiles());
+            baseComboBox.SelectionChanged += BaseComboBox_SelectionChanged;
         }
 
         internal void SetItems(List<object> files)
@@ -48,6 +69,12 @@ namespace FrostyMeshImporter.Windows
             CheckCount(files);
             fileListBox.ItemsSource = files;
             FileSelection_Changed(this);
+        }
+
+        public void BaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.Hide();
+            SwitchFrosTxtProfile(baseComboBox.SelectedItem.ToString());
         }
 
         private void CheckCount(List<object> files)
@@ -232,6 +259,11 @@ namespace FrostyMeshImporter.Windows
         }
 
         private void FrostyDockableWindow_FrostyLoaded(object sender, EventArgs e)
+        {
+
+        }
+
+        private void baseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }

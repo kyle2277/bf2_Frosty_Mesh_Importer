@@ -16,7 +16,7 @@
         <StackPanel x:Name="PageOne" Visibility="Visible">
             <Grid Margin="4" Background="{StaticResource ListBackground}">
                 <Label x:Name="label" Content="Base file:" FontFamily="Global User Interface" Width="56" HorizontalAlignment="Left" Margin="0,0,0,30" VerticalAlignment="Center"/>
-                <ComboBox x:Name="baseComboBox" FontFamily="Global User Interface" Width="175" Height="25" Margin="61,0,250.667,31" VerticalAlignment="Center"/>
+                <ComboBox x:Name="baseComboBox" FontFamily="Global User Interface" Width="175" Height="25" Margin="61,0,250.667,31" VerticalAlignment="Center" IsReadOnly="True"/>
                 <Button x:Name="selectBaseButton" Content="Open" Click="SelectBaseButton_Click" FontFamily="Global User Interface" Height="25" Width="75" Margin="241,0,170.667,31" IsEnabled="False"/>
             </Grid>
             <Grid Margin="4" Background="{StaticResource ListBackground}" Height="256">

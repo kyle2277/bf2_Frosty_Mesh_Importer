@@ -31,13 +31,12 @@ namespace FrostyMeshImporter
         private static FsUITextDatabase _currentTextDatabase;
         private static FrosTxtWindow _lastFrosTxtWindow;
         private static bool _openFrosTxt = false;
-        private static string DEFAULT_ENGLISH = "Localization/WSLocalization_English";
+        private static string DEFAULT_LOCALIZATION_PATH = "Localization/WSLocalization_";
         private static string _tempChunk = ".\\FrosTxtTemp\\chunk.chunk";
 
         // Setup FrosTxt window to be opened.
         public static void OnFrosTxtCommand(object sender, RoutedEventArgs e)
         {
-            CheckChunkResExplorerOpen();
             if(_localizationProfiles == null)
             {
                 _localizationProfiles = new List<FrosTxtWindow>();
@@ -55,7 +54,7 @@ namespace FrostyMeshImporter
                 _mainWindowExplorer.SelectedAsset = _lastFrosTxtWindow.localizationAsset;
             } else  // lastFrosTxtWindow is null
             {
-                EbxAssetEntry englishLocalization = App.AssetManager.GetEbxEntry(DEFAULT_ENGLISH);
+                EbxAssetEntry englishLocalization = App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + "English");
                 _mainWindowExplorer.SelectedAsset = englishLocalization;
                 _currentLocalization = englishLocalization;
             }
@@ -97,7 +96,7 @@ namespace FrostyMeshImporter
                     {
                         // Create new window profile, add to localization profiles, and set as last opened window
                         // create base file with chunk stream
-                        LocalizationFile baseFile = loadBaseChunk();
+                        LocalizationFile baseFile = LoadBaseChunk();
                         FrosTxtWindow newWindow = new FrosTxtWindow(baseFile, language, _currentTextDatabase, _currentLocalization);
                         _localizationProfiles.Add(newWindow);
                         _lastFrosTxtWindow = newWindow;
@@ -110,7 +109,7 @@ namespace FrostyMeshImporter
 
         // Creates a new localization base file for the currently selected localization asset.
         // Pre-condition: the given FsUITextDatabase asset must be an open tab.
-        private static LocalizationFile loadBaseChunk()
+        private static LocalizationFile LoadBaseChunk()
         {
             Guid chunkID = _currentTextDatabase.BinaryChunk;
             ChunkAssetEntry textChunk = App.AssetManager.GetChunkEntry(chunkID);
@@ -118,6 +117,37 @@ namespace FrostyMeshImporter
             FileStream baseTextStream = new FileStream(_tempChunk, FileMode.OpenOrCreate);
             memStream.CopyTo(baseTextStream);
             return new LocalizationFile(baseTextStream, _currentTextDatabase.Language.ToString());
+        }
+
+        public static void SwitchFrosTxtProfile(string switchToLanguage)
+        {
+            _searchTerm = switchToLanguage;
+            FrosTxtWindow toOpen = _localizationProfiles.Find(CompareByFrosTxtWindowLanguage);
+            if(toOpen != null)
+            {
+                _lastFrosTxtWindow = toOpen;
+                _lastFrosTxtWindow.baseComboBox.SelectionChanged -= _lastFrosTxtWindow.BaseComboBox_SelectionChanged;
+                _lastFrosTxtWindow.baseComboBox.SelectedItem = _lastFrosTxtWindow.language;
+                _lastFrosTxtWindow.baseComboBox.SelectionChanged += _lastFrosTxtWindow.BaseComboBox_SelectionChanged;
+                _lastFrosTxtWindow.Show();
+            } else
+            {
+                // Create new profile
+                EbxAssetEntry selectedLocalization = App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + switchToLanguage);
+                _mainWindowExplorer.SelectedAsset = selectedLocalization;
+                _currentLocalization = selectedLocalization;
+                FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
+                if (testTab != null && _mainWindowExplorer.SelectedAsset != null &&
+                    testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
+                {
+                    OpenFrosTxtWindow();
+                }
+                else
+                {
+                    _mainWindowExplorer.DoubleClickSelectedAsset();
+                    _openFrosTxt = true;
+                }
+            }
         }
 
         private static bool CompareByAssetEntryName(AssetEntry a)

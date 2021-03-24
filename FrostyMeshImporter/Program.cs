@@ -216,7 +216,7 @@ namespace FrostyMeshImporter
                     break;
                 case Toolkit.FrosTxt:
                     // FrosTxt tools
-                    items.Add(new ToolbarItem("FrosTxt", "Open FrosTxt text edit tool", "Images/Editlabel.png", new RelayCommand(_ => OnFrosTxtCommand(_mainWindow, null), _ => true)));
+                    items.Add(new ToolbarItem("Open FrosTxt", "Open FrosTxt text edit tool", "Images/Editlabel.png", new RelayCommand(_ => OnFrosTxtCommand(_mainWindow, null), _ => true)));
                     items.Add(new ToolbarItem("Revert", "Revert edits to localization files", "Images/Revert.png", new RelayCommand(_ => OnRevertFrosTxtCommand(_mainWindow, null), _ => true)));
                     items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
                     break;
