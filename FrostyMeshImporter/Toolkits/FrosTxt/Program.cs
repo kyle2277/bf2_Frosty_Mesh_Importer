@@ -24,87 +24,143 @@ using FrosTxtCore;
 
 namespace FrostyMeshImporter
 {
+    // Enumaration of all localization types
+    public enum Localizations
+    {
+        English,
+        BrazilianPortuguese,
+        French,
+        German,
+        Italian,
+        Japanese,
+        Polish,
+        Russian,
+        Spanish,
+        SpanishMex,
+        TraditionalChinese,
+        WorstCase,
+        Custom
+    }
+
     partial class Program
     {
-        private static List<FrosTxtWindow> _localizationProfiles;
-        private static EbxAssetEntry _currentLocalization;
+        internal class FrosTxtObj
+        {
+            public Localizations language;
+            public FsUITextDatabase localizationTextData;
+            public EbxAssetEntry localizationAsset;
+            public LocalizationMerger lm;
+
+            public FrosTxtObj(string language, FsUITextDatabase localizationTextData, EbxAssetEntry localizationAsset, LocalizationMerger lm)
+            {
+                this.language = (Localizations)Enum.Parse(typeof(Localizations), language);
+                this.localizationTextData = localizationTextData;
+                this.localizationAsset = localizationAsset;
+                this.lm = lm;
+            }
+        }
+
+        private static List<FrosTxtObj> _localizationProfiles;
+        private static EbxAssetEntry _currentLocalizationAsset;
         private static FsUITextDatabase _currentTextDatabase;
-        private static FrosTxtWindow _lastFrosTxtWindow;
+        private static FrosTxtObj _lastFrosTxtWindow;
         private static bool _openFrosTxt = false;
         private static string DEFAULT_LOCALIZATION_PATH = "Localization/WSLocalization_";
         private static string _tempChunk = ".\\FrosTxtTemp\\chunk.chunk";
 
-        // Setup FrosTxt window to be opened.
+        // Setup globals for FrosTxt window to be opened.
         public static void OnFrosTxtCommand(object sender, RoutedEventArgs e)
         {
             if(_localizationProfiles == null)
             {
-                _localizationProfiles = new List<FrosTxtWindow>();
+                _localizationProfiles = new List<FrosTxtObj>();
             }
             if(_mainWindowExplorer.SelectedAsset != null && 
                 _mainWindowExplorer.SelectedAsset.Type.Equals("FsUITextDatabase"))
             {
                 // Open FrosTxt window corresponding to current selected asset
-                _currentLocalization = (EbxAssetEntry)_mainWindowExplorer.SelectedAsset;
-                _lastFrosTxtWindow = null;
+                _currentLocalizationAsset = (EbxAssetEntry)_mainWindowExplorer.SelectedAsset;
             } else if(_lastFrosTxtWindow != null)
             {
                 // Open last FrosTxt window
-                _currentLocalization = null;
-                _mainWindowExplorer.SelectedAsset = _lastFrosTxtWindow.localizationAsset;
-            } else  // lastFrosTxtWindow is null
+                _currentLocalizationAsset = null;
+            } else  // lastFrosTxtWindow is null, open default english
             {
                 EbxAssetEntry englishLocalization = App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + "English");
                 _mainWindowExplorer.SelectedAsset = englishLocalization;
-                _currentLocalization = englishLocalization;
+                _currentLocalizationAsset = englishLocalization;
             }
-            FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
-            if(testTab != null && _mainWindowExplorer.SelectedAsset != null && 
-                testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
+            if(_currentLocalizationAsset == null)
             {
+                // Opening last window
                 OpenFrosTxtWindow();
+                return;
             } else
             {
-                _mainWindowExplorer.DoubleClickSelectedAsset();
-                _openFrosTxt = true;
+                // Example: data.Name = WSLocalization_English
+                // Using string.split to get "English"
+                string language = _mainWindowExplorer.SelectedAsset.Name.Split('_')[1];
+                // Check if window to open is same as last
+                if(_lastFrosTxtWindow?.language.ToString() == language)
+                {
+                    // Open last window
+                    _currentLocalizationAsset = null;
+                    OpenFrosTxtWindow();
+                    return;
+                }
+                // If not opening last window, check if profile has already been created
+                _searchTerm = language;
+                Predicate<FrosTxtObj> FrosTxtWindowPredicate = CompareByFrosTxtWindowLanguage;
+                FrosTxtObj searchResult = _localizationProfiles.Find(FrosTxtWindowPredicate);
+                if (searchResult != null)
+                {
+                    OpenFrosTxtWindow(searchResult);
+                    return;
+                }
+                // Create new profile
+                FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
+                if (testTab != null && _mainWindowExplorer.SelectedAsset != null &&
+                    testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
+                {
+                    OpenFrosTxtWindow();
+                    return;
+                }
+                else
+                {
+                    _mainWindowExplorer.DoubleClickSelectedAsset();
+                    _openFrosTxt = true;
+                }
             }
         }
 
-        // Opens FrosTxt window specified by lastFrosTxtWindow.
-        // Pre-condition: lastFrosTxtWindow != null and contains an initialized FrosTxtWindow reference.
-        private static void OpenFrosTxtWindow()
+        // Opens FrosTxt window specified by lastFrosTxtWindow unless given a specific FrosTxt profile to open.
+        private static void OpenFrosTxtWindow(FrosTxtObj windowToOpen = null)
         {
-            Predicate<FrosTxtWindow> FrosTxtWindowPredicate = CompareByFrosTxtWindowLanguage;
-            if (_currentLocalization != null)
+            if(windowToOpen != null)
+            {
+                // Open the given FrosTxt window instead of selected asset
+                _lastFrosTxtWindow = windowToOpen;
+            } else if (_currentLocalizationAsset != null)
             {
                 // Open FrosTxtWindow using the current open localization asset
+                // Create new window profile, add to localization profiles, and set as last opened window
+                // create base file with chunk stream
                 _currentTextDatabase = (FsUITextDatabase)_currentAssetEditor.RootObject;
-                // data.Name = WSLocalization_English
-                // Using string.split to get "English"
-                string language = _currentTextDatabase.Name.ToString().Split('_')[1];
-                if(!language.Equals(_lastFrosTxtWindow?.language))
-                {
-                    // Check if FrosTxtWindow already in localizationProfiles
-                    _searchTerm = language;
-                    FrosTxtWindow searchResult = _localizationProfiles.Find(FrosTxtWindowPredicate);
-                    if (searchResult != null)
-                    {
-                        // Set as last opened window
-                        _lastFrosTxtWindow = searchResult;
-                    }
-                    else
-                    {
-                        // Create new window profile, add to localization profiles, and set as last opened window
-                        // create base file with chunk stream
-                        LocalizationFile baseFile = LoadBaseChunk();
-                        FrosTxtWindow newWindow = new FrosTxtWindow(baseFile, language, _currentTextDatabase, _currentLocalization);
-                        _localizationProfiles.Add(newWindow);
-                        _lastFrosTxtWindow = newWindow;
-                    }
-                }
+                LocalizationFile baseFile = LoadBaseChunk();
+                LocalizationMerger lm = new LocalizationMerger(baseFile);
+                string language = _mainWindowExplorer.SelectedAsset.Name.Split('_')[1];
+                FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase, _currentLocalizationAsset, lm);
+                _localizationProfiles.Add(newWindow);
+                _lastFrosTxtWindow = newWindow;
             }
             // open last opened window
-            _lastFrosTxtWindow.Show();
+            FrosTxtWindow toOpen = new FrosTxtWindow(_lastFrosTxtWindow);
+            bool? result = toOpen.ShowDialog();
+            if(result != true)
+            {
+                App.Logger.Log($"Closed {toOpen.Title}.");
+                return;
+            }
         }
 
         // Creates a new localization base file for the currently selected localization asset.
@@ -122,20 +178,17 @@ namespace FrostyMeshImporter
         public static void SwitchFrosTxtProfile(string switchToLanguage)
         {
             _searchTerm = switchToLanguage;
-            FrosTxtWindow toOpen = _localizationProfiles.Find(CompareByFrosTxtWindowLanguage);
+            Predicate<FrosTxtObj> FrosTxtWindowPredicate = CompareByFrosTxtWindowLanguage;
+            FrosTxtObj toOpen = _localizationProfiles.Find(FrosTxtWindowPredicate);
             if(toOpen != null)
             {
-                _lastFrosTxtWindow = toOpen;
-                _lastFrosTxtWindow.baseComboBox.SelectionChanged -= _lastFrosTxtWindow.BaseComboBox_SelectionChanged;
-                _lastFrosTxtWindow.baseComboBox.SelectedItem = _lastFrosTxtWindow.language;
-                _lastFrosTxtWindow.baseComboBox.SelectionChanged += _lastFrosTxtWindow.BaseComboBox_SelectionChanged;
-                _lastFrosTxtWindow.Show();
+                OpenFrosTxtWindow(toOpen);
             } else
             {
                 // Create new profile
                 EbxAssetEntry selectedLocalization = App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + switchToLanguage);
                 _mainWindowExplorer.SelectedAsset = selectedLocalization;
-                _currentLocalization = selectedLocalization;
+                _currentLocalizationAsset = selectedLocalization;
                 FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
                 if (testTab != null && _mainWindowExplorer.SelectedAsset != null &&
                     testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
@@ -144,8 +197,8 @@ namespace FrostyMeshImporter
                 }
                 else
                 {
-                    _mainWindowExplorer.DoubleClickSelectedAsset();
                     _openFrosTxt = true;
+                    _mainWindowExplorer.DoubleClickSelectedAsset();
                 }
             }
         }
@@ -155,9 +208,9 @@ namespace FrostyMeshImporter
             return a.Name == _searchTerm;
         }
 
-        private static bool CompareByFrosTxtWindowLanguage(FrosTxtWindow f)
+        private static bool CompareByFrosTxtWindowLanguage(FrosTxtObj f)
         {
-            return f.language == _searchTerm;
+            return f.language.ToString() == _searchTerm;
         }
 
         // Open FrosTxt reversion window.

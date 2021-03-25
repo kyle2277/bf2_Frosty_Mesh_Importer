@@ -226,8 +226,8 @@ namespace FrostyMeshImporter
             // Check whether to open FrosTxt
             if(_openFrosTxt)
             {
-                OpenFrosTxtWindow();
                 _openFrosTxt = false;
+                OpenFrosTxtWindow();
             }
         }
 

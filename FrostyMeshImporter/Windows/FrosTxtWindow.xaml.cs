@@ -28,43 +28,21 @@ namespace FrostyMeshImporter.Windows
     /// </summary>
     public partial class FrosTxtWindow : FrostyDockableWindow
     {
-        // Enumaration of all localization types
-        public enum Localizations
-        {
-            English,
-            BrazilianPortuguese,
-            French,
-            German,
-            Italian,
-            Japanese,
-            Polish,
-            Russian,
-            Spanish,
-            SpanishMex,
-            TraditionalChinese,
-            WorstCase,
-            Custom
-        }
-
-        public string language;
-        public FsUITextDatabase localizationTextData;
-        public EbxAssetEntry localizationAsset;
+        public Localizations language;
         public LocalizationMerger lm;
-        public FrosTxtWindow(LocalizationFile baseFile, string language, FsUITextDatabase localizationTextData, EbxAssetEntry localizationAsset)
+        internal FrosTxtWindow(FrosTxtObj fObj)
         {
             InitializeComponent();
-            this.language = language;
-            this.localizationTextData = localizationTextData;
-            this.localizationAsset = localizationAsset;
-            lm = new LocalizationMerger(baseFile);
-            this.Title += " - " + language;
+            this.lm = fObj.lm;
+            this.language = fObj.language;
+            this.Title += " - " + language.ToString();
             baseComboBox.ItemsSource = Enum.GetNames(typeof(Localizations));
-            baseComboBox.SelectedItem = language;
+            baseComboBox.SelectedItem = language.ToString();
             SetItems(lm.GetGenericModifiedFiles());
             baseComboBox.SelectionChanged += BaseComboBox_SelectionChanged;
         }
 
-        internal void SetItems(List<object> files)
+        private void SetItems(List<object> files)
         {
             CheckCount(files);
             fileListBox.ItemsSource = files;
@@ -73,7 +51,7 @@ namespace FrostyMeshImporter.Windows
 
         public void BaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.Hide();
+            this.Close();
             SwitchFrosTxtProfile(baseComboBox.SelectedItem.ToString());
         }
 
