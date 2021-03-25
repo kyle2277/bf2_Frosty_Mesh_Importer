@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using Frosty.Controls;
+using FrostyEditor;
 using FrostySdk.Managers;
 using FrostySdk.Ebx;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -20,6 +21,8 @@ using System.Windows.Shapes;
 using System.Windows.Markup;
 using FrosTxtCore;
 using static FrostyMeshImporter.Program;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace FrostyMeshImporter.Windows
 {
@@ -141,11 +144,12 @@ namespace FrostyMeshImporter.Windows
             int index = files.IndexOf(selected);
             lm.RemoveModifiedFile((ModifiedLocalizationFile)selected);
             // Decrement selected index if deleted was at end of the list
+            SetItems(lm.GetGenericModifiedFiles());
+            files = GetSelectedAndList(out selected);
             if (index > 0 && index == files.Count)
             {
                 index -= 1;
             }
-            SetItems(lm.GetGenericModifiedFiles());
             if (files.Count > 0)
             {
                 fileListBox.SelectedItem = fileListBox.Items[index];
@@ -165,14 +169,15 @@ namespace FrostyMeshImporter.Windows
             ofd.Multiselect = true;
             if (ofd.ShowDialog(this) == true && ofd.FileNames.Length > 0)
             {
-                foreach (string newFilePath in ofd.FileNames)
+                FrostyTask.Begin($"Importing localization");
+                await Task.Run(() =>
                 {
-                    await Task.Run(() =>
+                    foreach (string newFilePath in ofd.FileNames)
                     {
                         lm.AddModifiedFile(newFilePath);
-                    });
-                }
-                string endStatus = "Imported " + ofd.FileNames.Length + " files";
+                    }
+                });
+                FrostyTask.End();
             }
             SetItems(lm.GetGenericModifiedFiles());
         }

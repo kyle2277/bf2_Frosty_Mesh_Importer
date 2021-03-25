@@ -6,26 +6,25 @@
                            xmlns:local="clr-namespace:FrostyMeshImporter.Windows"
                            xmlns:ctrl="clr-namespace:Frosty.Controls;assembly=FrostyControls"
                            FrostyLoaded="FrostyDockableWindow_FrostyLoaded" Height="400" Width="500" Title="FrosTxt"
-                           ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
-                           Topmost="True">
+                           ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Background="{StaticResource WindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="38"/>
         </Grid.RowDefinitions>
-        <StackPanel x:Name="PageOne" Visibility="Visible">
+        <StackPanel x:Name="PageOne" Visibility="Visible" Margin="0,0,0,4">
             <Border Background="{StaticResource ListBackground}" Margin="4">
                 <DockPanel LastChildFill="false" Height="40" Margin="0,0,-0.333,0">
                     <Label x:Name="label" Content="Base file:" Width="56" HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-                    <ComboBox x:Name="baseComboBox" Width="175" Height="25" VerticalAlignment="Center" IsReadOnly="True" DockPanel.Dock="Left" HorizontalAlignment="Left"/>
-                    <Button x:Name="selectBaseButton" Content="Open" Click="SelectBaseButton_Click" Height="25" Width="75" IsEnabled="False" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="baseComboBox" Width="175" Height="25" VerticalAlignment="Center" IsReadOnly="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                    <Button x:Name="selectBaseButton" Content="Open" Click="SelectBaseButton_Click" Height="25" Width="75" IsEnabled="False" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,0,0,0"/>
                 </DockPanel>
             </Border>
-            <Grid Margin="4,0,4,4" Background="{StaticResource ListBackground}" Height="278">
-                <TabControl>
+            <Grid Margin="4,0,3.667,4" Background="{StaticResource ListBackground}" Height="282">
+                <TabControl Background="{StaticResource WindowBackground}">
                     <TabItem Header="Basic">
                         <Grid>
-                            <ListBox Name="fileListBox" SelectionMode="Extended" SelectionChanged="FileSelection_Changed" Margin="0,0,167,0.333" VerticalContentAlignment="Center">
+                            <ListBox Name="fileListBox" SelectionMode="Single" SelectionChanged="FileSelection_Changed" Margin="0,0,167,0.333" VerticalContentAlignment="Center">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -34,18 +33,19 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
+                            <StackPanel x:Name="orderPanel" Margin="345,0,26,116.333" Background="{StaticResource WindowBackground}">
+                                <Button x:Name="moveUpButton" Click="MoveUpButton_Click" Content="Move Up" Margin="0,10,0,0"/>
+                                <Button x:Name="moveDownButton" Click="MoveDownButton_Click" Content="Move Down" Margin="0,10,0,0"/>
+                                <Button x:Name="removeButton" Click="RemoveButton_Click" Content="Remove" Margin="0,10,0,0"/>
+                                <Button x:Name="addButton" Click="AddButton_Click" Content="Add" Margin="0,10,0,0"/>
+                            </StackPanel>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Advanced">
 
                     </TabItem>
                 </TabControl>
-                <StackPanel x:Name="orderPanel" Margin="345,22,25.667,119" Background="{StaticResource ListBackground}">
-                    <Button x:Name="moveUpButton" Click="MoveUpButton_Click" Content="Move Up" Margin="0,10,0,0"/>
-                    <Button x:Name="moveDownButton" Click="MoveDownButton_Click" Content="Move Down" Margin="0,10,0,0"/>
-                    <Button x:Name="removeButton" Click="RemoveButton_Click" Content="Remove" Margin="0,10,0,0"/>
-                    <Button x:Name="addButton" Click="AddButton_Click" Content="Add" Margin="0,10,0,0"/>
-                </StackPanel>
+               
             </Grid>
         </StackPanel>
         <Border Grid.Row="1" Background="{StaticResource ListBackground}">

@@ -158,7 +158,6 @@ namespace FrostyMeshImporter
             bool? result = toOpen.ShowDialog();
             if(result != true)
             {
-                App.Logger.Log($"Closed {toOpen.Title}.");
                 return;
             }
         }
