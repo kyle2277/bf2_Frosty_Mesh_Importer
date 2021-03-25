@@ -13,6 +13,7 @@ using Frosty.Controls;
 using FrostyEditor;
 using FrostyEditor.Controls;
 using FrostySdk.Managers;
+using FrostySdk.IO;
 using Microsoft.Win32;
 using System.IO;
 using FrostySdk.Ebx;
@@ -66,7 +67,7 @@ namespace FrostyMeshImporter
         private static FrosTxtObj _lastFrosTxtWindow;
         private static bool _openFrosTxt = false;
         private static string DEFAULT_LOCALIZATION_PATH = "Localization/WSLocalization_";
-        private static string _tempChunk = ".\\FrosTxtTemp\\chunk.chunk";
+        private static string _tempPath= ".\\FrosTxtTemp";
 
         // Setup globals for FrosTxt window to be opened.
         public static void OnFrosTxtCommand(object sender, RoutedEventArgs e)
@@ -74,6 +75,10 @@ namespace FrostyMeshImporter
             if(_localizationProfiles == null)
             {
                 _localizationProfiles = new List<FrosTxtObj>();
+            }
+            if(!Directory.Exists(_tempPath))
+            {
+                Directory.CreateDirectory(_tempPath);
             }
             if(_mainWindowExplorer.SelectedAsset != null && 
                 _mainWindowExplorer.SelectedAsset.Type.Equals("FsUITextDatabase"))
@@ -169,9 +174,12 @@ namespace FrostyMeshImporter
             Guid chunkID = _currentTextDatabase.BinaryChunk;
             ChunkAssetEntry textChunk = App.AssetManager.GetChunkEntry(chunkID);
             Stream memStream = App.AssetManager.GetChunk(textChunk);
-            FileStream baseTextStream = new FileStream(_tempChunk, FileMode.OpenOrCreate);
+            FileStream baseTextStream = new FileStream(_tempPath + "\\chunk.chunk", FileMode.OpenOrCreate);
             memStream.CopyTo(baseTextStream);
-            return new LocalizationFile(baseTextStream, _currentTextDatabase.Language.ToString());
+            LocalizationFile baseFile = new LocalizationFile(baseTextStream, _currentTextDatabase.Language.ToString());
+            baseTextStream.Close();
+            File.Delete(_tempPath + "\\chunk.chunk");
+            return baseFile;
         }
 
         public static void SwitchFrosTxtProfile(string switchToLanguage)
@@ -200,6 +208,36 @@ namespace FrostyMeshImporter
                     _mainWindowExplorer.DoubleClickSelectedAsset();
                 }
             }
+        }
+
+        // Merges localization files stages for merge in the localization profile stored in _lastFrosTxtWindow
+        public static bool MergeCurrentProfile()
+        {
+            if(_lastFrosTxtWindow == null)
+            {
+                // Error failed to merge
+                return false;
+            }
+            Cursor.Current = Cursors.WaitCursor;
+            LocalizationMerger lm = _lastFrosTxtWindow.lm;
+            Guid chunkID = _currentTextDatabase.BinaryChunk;
+            // Merge files and write to disk
+            string outPath = $"{_tempPath}\\{chunkID}.chunk";
+            lm.MergeFiles(outPath);
+            // Read merged file from disk
+            FileInfo mergedFileInfo = new FileInfo(outPath);
+            long fileLen = mergedFileInfo.Length;
+            using (NativeReader nativeReader = new NativeReader(new FileStream(outPath, FileMode.Open, FileAccess.Read)))
+            {
+                byte[] chunkData = nativeReader.ReadToEnd();
+                App.AssetManager.ModifyChunk(chunkID, chunkData);
+            }
+            //_currentTextDatabase.BinaryChunkSize = Convert.ToUInt32(fileLen);
+            _currentTextDatabase.BinaryChunkSize = (uint)fileLen;
+            File.Delete(outPath);
+            Cursor.Current = Cursors.Default;
+            _mainWindowExplorer.RefreshAll();
+            return true;
         }
 
         private static bool CompareByAssetEntryName(AssetEntry a)

@@ -25,6 +25,7 @@ class CustomAssetContextMenu
         public int defaultCount;
         public int numAddedCommands;
         private FrostyDataExplorer dataExplorer;
+        // Context menu icons
         private static Image _editLabelIcon = new Image
         {
             Source = new BitmapImage(new Uri("/FrostyEditor;Component/Images/EditLabel.png", UriKind.Relative)),
