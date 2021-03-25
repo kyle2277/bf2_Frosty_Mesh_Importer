@@ -38,6 +38,7 @@ namespace FrostyMeshImporter.Windows
             this.Title += " - " + language.ToString();
             baseComboBox.ItemsSource = Enum.GetNames(typeof(Localizations));
             baseComboBox.SelectedItem = language.ToString();
+            List<object> files = lm.GetGenericModifiedFiles();
             SetItems(lm.GetGenericModifiedFiles());
             baseComboBox.SelectionChanged += BaseComboBox_SelectionChanged;
         }
@@ -45,6 +46,9 @@ namespace FrostyMeshImporter.Windows
         private void SetItems(List<object> files)
         {
             CheckCount(files);
+            LocalizationFile dummyFile = new LocalizationFile(null);
+            dummyFile.name = language.ToString() + " (base)";
+            files.Insert(0, dummyFile);
             fileListBox.ItemsSource = files;
             FileSelection_Changed(this);
         }
@@ -61,11 +65,11 @@ namespace FrostyMeshImporter.Windows
             moveDownButton.IsEnabled = true;
             removeButton.IsEnabled = true;
             mergeButton.IsEnabled = true;
-            if (files.Count <= 1)
+            if (files.Count <= 2)
             {
                 moveUpButton.IsEnabled = false;
                 moveDownButton.IsEnabled = false;
-                if (files.Count == 0)
+                if (files.Count == 1)
                 {
                     removeButton.IsEnabled = false;
                     mergeButton.IsEnabled = false;
@@ -85,7 +89,14 @@ namespace FrostyMeshImporter.Windows
                 return;
             }
             CheckCount(files);
-            if (files.IndexOf(selected) == 0)
+            int index = files.IndexOf(selected);
+            if(index == 0)
+            {
+                moveUpButton.IsEnabled = false;
+                moveDownButton.IsEnabled = false;
+                removeButton.IsEnabled = false;
+            }
+            else if (files.IndexOf(selected) == 1)
             {
                 moveUpButton.IsEnabled = false;
             }
@@ -103,14 +114,8 @@ namespace FrostyMeshImporter.Windows
             {
                 return;
             }
-            int index = files.IndexOf(selected);
-            int newIndex = index - 1;
-            if (newIndex >= 0)
-            {
-                files[index] = files[newIndex];
-                files[newIndex] = selected;
-            }
-            SetItems(files);
+            lm.FileMoveUp((ModifiedLocalizationFile)selected);
+            SetItems(lm.GetGenericModifiedFiles());
         }
 
         private void MoveDownButton_Click(object sender, RoutedEventArgs e)
@@ -121,33 +126,26 @@ namespace FrostyMeshImporter.Windows
             {
                 return;
             }
-            int index = files.IndexOf(selected);
-            int newIndex = index + 1;
-            if (newIndex < files.Count)
-            {
-                files[index] = files[newIndex];
-                files[newIndex] = selected;
-            }
-            SetItems(files);
+            lm.FileMoveDown((ModifiedLocalizationFile)selected);
+            SetItems(lm.GetGenericModifiedFiles());
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            object selected;
+            object selected = null;
             List<object> files = GetSelectedAndList(out selected);
             if (selected == null)
             {
                 return;
             }
             int index = files.IndexOf(selected);
-            files.Remove(selected);
             lm.RemoveModifiedFile((ModifiedLocalizationFile)selected);
             // Decrement selected index if deleted was at end of the list
             if (index > 0 && index == files.Count)
             {
                 index -= 1;
             }
-            SetItems(files);
+            SetItems(lm.GetGenericModifiedFiles());
             if (files.Count > 0)
             {
                 fileListBox.SelectedItem = fileListBox.Items[index];
@@ -228,7 +226,8 @@ namespace FrostyMeshImporter.Windows
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
+            this.DialogResult = new bool?(false);
+            this.Close();
         }
 
         private void SelectBaseButton_Click(object sender, RoutedEventArgs e)

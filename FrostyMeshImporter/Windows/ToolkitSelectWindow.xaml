@@ -10,7 +10,7 @@
     <Grid Background="{StaticResource WindowBackground}">
         <Border Background="{StaticResource ListBackground}" Margin="4">
             <Grid>
-                <ComboBox x:Name="selectionBox" Margin="10,17,106.667,18">
+                <ComboBox x:Name="selectionBox" Height="25" Margin="10,17,106.667,18">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -19,7 +19,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button x:Name="selectButton" Content="Select" Click="SelectButton_Click" Margin="285,17,9.667,0" Height="29" VerticalAlignment="Top"/>
+                <Button x:Name="selectButton" Content="Select" Click="SelectButton_Click" Margin="285,19,9.667,0" Height="25" VerticalAlignment="Top"/>
             </Grid>
         </Border>
     </Grid>
