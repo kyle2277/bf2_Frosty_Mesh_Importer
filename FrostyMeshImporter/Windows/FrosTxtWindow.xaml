@@ -15,9 +15,11 @@
         <StackPanel x:Name="PageOne" Visibility="Visible" Margin="0,0,0,4">
             <Border Background="{StaticResource ListBackground}" Margin="4">
                 <DockPanel LastChildFill="false" Height="40" Margin="0,0,-0.333,0">
-                    <Label x:Name="label" Content="Base file:" Width="56" HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-                    <ComboBox x:Name="baseComboBox" Width="175" Height="25" VerticalAlignment="Center" IsReadOnly="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-                    <Button x:Name="selectBaseButton" Content="Open" Click="SelectBaseButton_Click" Height="25" Width="75" IsEnabled="False" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    <Label x:Name="label" Content="Base language:" Width="90" HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="0,7"/>
+                    <ComboBox x:Name="baseComboBox" Width="133" Height="24" VerticalAlignment="Center" IsReadOnly="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="4,8,0,8"/>
+                    <Button x:Name="selectBaseButton" Content="Open" Visibility="Hidden" Click="SelectBaseButton_Click" Height="25" Width="50" IsEnabled="False" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    <Label x:Name="replacingLabel" Content="Replacing:" Visibility="Hidden" Width="65" HorizontalAlignment="Left" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="0,7"/>
+                    <ComboBox x:Name="replacingComboBox" Width="133" Height="24" Visibility="Hidden" VerticalAlignment="Center" IsReadOnly="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="4,8,0,8"/>
                 </DockPanel>
             </Border>
             <Grid Margin="4,0,3.667,4" Background="{StaticResource ListBackground}" Height="282">
@@ -45,7 +47,7 @@
 
                     </TabItem>
                 </TabControl>
-               
+
             </Grid>
         </StackPanel>
         <Border Grid.Row="1" Background="{StaticResource ListBackground}">

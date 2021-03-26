@@ -270,10 +270,5 @@ namespace FrostyMeshImporter.Windows
         {
 
         }
-
-        private void baseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

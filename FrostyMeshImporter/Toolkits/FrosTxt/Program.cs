@@ -149,7 +149,7 @@ namespace FrostyMeshImporter
         }
 
         // Opens FrosTxt window specified by lastFrosTxtWindow unless given a specific FrosTxt profile to open.
-        private static void OpenFrosTxtWindow(FrosTxtObj windowToOpen = null)
+        private static async void OpenFrosTxtWindow(FrosTxtObj windowToOpen = null)
         {
             if(windowToOpen != null)
             {
@@ -161,12 +161,17 @@ namespace FrostyMeshImporter
                 // Create new window profile, add to localization profiles, and set as last opened window
                 // create base file with chunk stream
                 _currentTextDatabase = (FsUITextDatabase)_currentAssetEditor.RootObject;
-                LocalizationFile baseFile = LoadBaseChunk();
-                LocalizationMerger lm = new LocalizationMerger(baseFile);
                 string language = _mainWindowExplorer.SelectedAsset.Name.Split('_')[1];
-                FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase, _currentLocalizationAsset, _currentAssetEditor, lm);
-                _localizationProfiles.Add(newWindow);
-                _lastFrosTxtWindow = newWindow;
+                FrostyTask.Begin($"Creating new FrosTxt profile");
+                await Task.Run(() =>
+                {
+                    LocalizationFile baseFile = LoadBaseChunk();
+                    LocalizationMerger lm = new LocalizationMerger(baseFile);
+                    FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase, _currentLocalizationAsset, _currentAssetEditor, lm);
+                    _localizationProfiles.Add(newWindow);
+                    _lastFrosTxtWindow = newWindow;
+                });
+                FrostyTask.End();
             }
             // open last opened window
             FrosTxtWindow toOpen = new FrosTxtWindow(_lastFrosTxtWindow);
