@@ -51,10 +51,10 @@
         <Border Grid.Row="1" Background="{StaticResource ListBackground}">
             <Grid Margin="8">
                 <DockPanel LastChildFill="false">
-                    <Button x:Name="cancelButton" Click="CancelButton_Click" Content="Cancel" DockPanel.Dock="Left" Width="75"/>
-                    <Button x:Name="saveButton" Content="Save" DockPanel.Dock="Right" Width="75"/>
+                    <Button x:Name="closeButton" Click="CloseButton_Click" Content="Close" DockPanel.Dock="Left" Width="75"/>
+                    <Button x:Name="saveButton" Click="SaveButton_Click" Content="Save" DockPanel.Dock="Right" Width="75" Margin="4,0,0,0"/>
                     <Button x:Name="mergeButton" Click="MergeButton_Click" Content="Merge" DockPanel.Dock="Right" Width="75"/>
-                    <Label x:Name="mergeStatus" Visibility="Hidden" Content="Already Merged" DockPanel.Dock="Right" Padding="5,3,5,0"/>
+                    <Label x:Name="mergeStatus" Visibility="Hidden" Content="Merge Complete" DockPanel.Dock="Right" Padding="5,3,5,0"/>
                 </DockPanel>
             </Grid>
         </Border>

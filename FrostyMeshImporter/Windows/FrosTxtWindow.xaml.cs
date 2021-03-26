@@ -48,19 +48,19 @@ namespace FrostyMeshImporter.Windows
 
         private void SetItems(List<object> files)
         {
-            if(lm.IsMergeValid())
+
+            mergeStatus.Visibility = Visibility.Hidden;
+            mergeButton.IsEnabled = true;
+            saveButton.IsEnabled = true;
+            if (lm.IsMergeValid())
             {
                 mergeStatus.Visibility = Visibility.Visible;
                 mergeButton.IsEnabled = false;
-            } else
-            {
-                mergeStatus.Visibility = Visibility.Hidden;
-                mergeButton.IsEnabled = true;
             }
-            CheckCount(files);
             LocalizationFile dummyFile = new LocalizationFile(null);
             dummyFile.name = language.ToString() + " (base)";
             files.Insert(0, dummyFile);
+            CheckCount(files);
             fileListBox.ItemsSource = files;
             FileSelection_Changed(this);
         }
@@ -76,7 +76,6 @@ namespace FrostyMeshImporter.Windows
             moveUpButton.IsEnabled = true;
             moveDownButton.IsEnabled = true;
             removeButton.IsEnabled = true;
-            mergeButton.IsEnabled = true;
             if (files.Count <= 2)
             {
                 moveUpButton.IsEnabled = false;
@@ -85,6 +84,7 @@ namespace FrostyMeshImporter.Windows
                 {
                     removeButton.IsEnabled = false;
                     mergeButton.IsEnabled = false;
+                    saveButton.IsEnabled = false;
                 }
             }
         }
@@ -193,17 +193,19 @@ namespace FrostyMeshImporter.Windows
 
         private void MergeButton_Click(object sender, RoutedEventArgs e)
         {
-            
             List<ModifiedLocalizationFile> files = lm.GetModifiedFiles();
             if (files.Count == 0)
             {
                 return;
             }
             // Merge localization files and write to chunk
-            MergeCurrentProfile();
+            bool result = MergeCurrentProfile();
+            if(!result)
+            {
+                return;
+            }
             SetItems(lm.GetGenericModifiedFiles());
-            //lm.MergeFiles(sfd.FileName);
-            //string file = sfd.FileName;
+            App.Logger.Log($"Merged {this.language} localization files");
             //string finalStatus = "Merged file saved as " + System.IO.Path.GetFileName(sfd.FileName);
         }
 
@@ -226,10 +228,9 @@ namespace FrostyMeshImporter.Windows
             {
                 return;
             }
-            // Merge localization files and write to disk
+            // Merge localization files and save to disk
             lm.MergeFiles(sfd.FileName);
-            string file = sfd.FileName;
-            string finalStatus = "Merged file saved as " + System.IO.Path.GetFileName(sfd.FileName);
+            App.Logger.Log($"Merged and saved {this.language} localization file to {sfd.SafeFileName}");
         }
 
         private List<object> GetSelectedAndList(out object selected)
@@ -254,7 +255,7 @@ namespace FrostyMeshImporter.Windows
             lm.outPath = ofd.FileName;
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = new bool?(false);
             this.Close();

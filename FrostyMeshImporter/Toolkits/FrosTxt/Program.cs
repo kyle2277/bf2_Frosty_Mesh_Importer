@@ -45,18 +45,28 @@ namespace FrostyMeshImporter
 
     partial class Program
     {
+        // Container for all the data required to create a FrosTxt window and modify a specific
+        // localization file.
         internal class FrosTxtObj
         {
+            // The localization's corresponding language.
             public Localizations language;
+            // The object that contains the asset's data fields, from current UI tab.
             public FsUITextDatabase localizationTextData;
+            // The selected asset in the main window explorer.
             public EbxAssetEntry localizationAsset;
+            // The object that controls editing of ebx assets.
+            public FrostyAssetEditor localizationAssetEditor;
+            // The FrosTxt object that facilitates merging localization files
             public LocalizationMerger lm;
 
-            public FrosTxtObj(string language, FsUITextDatabase localizationTextData, EbxAssetEntry localizationAsset, LocalizationMerger lm)
+            public FrosTxtObj(string language, FsUITextDatabase localizationTextData, EbxAssetEntry localizationAsset, 
+                FrostyAssetEditor localizationAssetEditor, LocalizationMerger lm)
             {
                 this.language = (Localizations)Enum.Parse(typeof(Localizations), language);
                 this.localizationTextData = localizationTextData;
                 this.localizationAsset = localizationAsset;
+                this.localizationAssetEditor = localizationAssetEditor;
                 this.lm = lm;
             }
         }
@@ -154,7 +164,7 @@ namespace FrostyMeshImporter
                 LocalizationFile baseFile = LoadBaseChunk();
                 LocalizationMerger lm = new LocalizationMerger(baseFile);
                 string language = _mainWindowExplorer.SelectedAsset.Name.Split('_')[1];
-                FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase, _currentLocalizationAsset, lm);
+                FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase, _currentLocalizationAsset, _currentAssetEditor, lm);
                 _localizationProfiles.Add(newWindow);
                 _lastFrosTxtWindow = newWindow;
             }
@@ -210,7 +220,7 @@ namespace FrostyMeshImporter
             }
         }
 
-        // Merges localization files stages for merge in the localization profile stored in _lastFrosTxtWindow
+        // Merges localization files staged for merge in the localization profile stored in _lastFrosTxtWindow
         public static bool MergeCurrentProfile()
         {
             if(_lastFrosTxtWindow == null)
@@ -220,6 +230,8 @@ namespace FrostyMeshImporter
             }
             Cursor.Current = Cursors.WaitCursor;
             LocalizationMerger lm = _lastFrosTxtWindow.lm;
+            _currentTextDatabase = _lastFrosTxtWindow.localizationTextData;
+            _currentAssetEditor = _lastFrosTxtWindow.localizationAssetEditor;
             Guid chunkID = _currentTextDatabase.BinaryChunk;
             // Merge files and write to disk
             string outPath = $"{_tempPath}\\{chunkID}.chunk";
@@ -232,11 +244,10 @@ namespace FrostyMeshImporter
                 byte[] chunkData = nativeReader.ReadToEnd();
                 App.AssetManager.ModifyChunk(chunkID, chunkData);
             }
-            //_currentTextDatabase.BinaryChunkSize = Convert.ToUInt32(fileLen);
             _currentTextDatabase.BinaryChunkSize = (uint)fileLen;
+            _currentAssetEditor.AssetModified = true;
             File.Delete(outPath);
             Cursor.Current = Cursors.Default;
-            _mainWindowExplorer.RefreshAll();
             return true;
         }
 
