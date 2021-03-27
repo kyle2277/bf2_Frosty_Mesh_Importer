@@ -19,13 +19,14 @@ using static FrostyMeshImporter.Program;
 
 namespace FrostyMeshImporter.Controls
 {
-
-class CustomAssetContextMenu
+    // Injects new functions into the context menu for AssetEntry items in the given FrostyDataExplorer.
+    class CustomAssetContextMenu
     {
-        public int defaultCount;
+        // Number of functions added to the context menu.
         public int numAddedCommands;
+        // The data explorer to inject functions into.
         private FrostyDataExplorer dataExplorer;
-        // Context menu icons
+        // Context menu icons.
         private static Image _editLabelIcon = new Image
         {
             Source = new BitmapImage(new Uri("/FrostyEditor;Component/Images/EditLabel.png", UriKind.Relative)),
@@ -45,10 +46,10 @@ class CustomAssetContextMenu
         public CustomAssetContextMenu(FrostyDataExplorer dataExplorer)
         {
             this.dataExplorer = dataExplorer;
-            defaultCount = dataExplorer.AssetContextMenu.Items.Count;
             numAddedCommands = 0;
         }
 
+        // Remove all added functons from context menu.
         public void ResetContextMenu()
         {
             var items = dataExplorer.AssetContextMenu.Items;
@@ -58,6 +59,8 @@ class CustomAssetContextMenu
                 numAddedCommands -= 1;
             }
         }
+
+        // Add functions to selected asset context menu depending on the type of asset.
         public void UpdateContextMenu(object sender, RoutedEventArgs e)
         {
             if(dataExplorer?.SelectedAsset is AssetEntry asset)

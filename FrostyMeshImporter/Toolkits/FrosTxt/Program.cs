@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Toolkits/FrosTxt/Program.cs - FrostyMeshImporter
+// Contributors:
+//      Copyright (C) 2021  Kyle Won
+// This file is subject to the terms and conditions defined in the 'LICENSE' file.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,10 +22,7 @@ using FrostySdk.IO;
 using Microsoft.Win32;
 using System.IO;
 using FrostySdk.Ebx;
-using System.Web.SessionState;
 using FrostyMeshImporter.Windows;
-using MeshSet = FrostyMeshImporter.Toolkits.MeshImport.ChunkResImporter.MeshSet;
-using FrostyMeshImporter.Toolkits.MeshImport;
 using FrosTxtCore;
 
 namespace FrostyMeshImporter
@@ -43,6 +45,7 @@ namespace FrostyMeshImporter
         //Custom
     }
 
+    // Partial class containing all Program functionality related to FrosTxt integration.
     partial class Program
     {
         // Container for all the data required to create a FrosTxt window and modify a specific
@@ -60,8 +63,9 @@ namespace FrostyMeshImporter
             // The FrosTxt object that facilitates merging localization files
             public LocalizationMerger lm;
 
-            public FrosTxtObj(string language, FsUITextDatabase localizationTextData, EbxAssetEntry localizationAsset, 
-                FrostyAssetEditor localizationAssetEditor, LocalizationMerger lm)
+            public FrosTxtObj(string language, FsUITextDatabase localizationTextData, 
+                EbxAssetEntry localizationAsset, FrostyAssetEditor localizationAssetEditor, 
+                LocalizationMerger lm)
             {
                 this.language = (Localizations)Enum.Parse(typeof(Localizations), language);
                 this.localizationTextData = localizationTextData;
@@ -69,7 +73,9 @@ namespace FrostyMeshImporter
                 this.localizationAssetEditor = localizationAssetEditor;
                 this.lm = lm;
             }
-
+            
+            // Indicates whether the FrosTxtObj contains files that have been merged or are 
+            // staged for merge.
             public bool IsModified()
             {
                 return this.lm.files.Count() > 0;
@@ -111,7 +117,8 @@ namespace FrostyMeshImporter
                 _currentLocalizationAsset = null;
             } else  // lastFrosTxtWindow is null, open default english
             {
-                EbxAssetEntry englishLocalization = App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + "English");
+                EbxAssetEntry englishLocalization = 
+                    App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + "English");
                 _mainWindowExplorer.SelectedAsset = englishLocalization;
                 _currentLocalizationAsset = englishLocalization;
             }
@@ -143,7 +150,8 @@ namespace FrostyMeshImporter
                 // Create new profile
                 FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
                 if (testTab != null && _mainWindowExplorer.SelectedAsset != null &&
-                    testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
+                    testTab.Language.ToString().Split('_')[1] == 
+                    _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
                 {
                     OpenFrosTxtWindow();
                     return;
@@ -156,7 +164,7 @@ namespace FrostyMeshImporter
             }
         }
 
-        // Opens FrosTxt window specified by lastFrosTxtWindow unless given a specific FrosTxt profile to open.
+        // Opens FrosTxt window specified by _lastFrosTxtWindow unless given a specific FrosTxt profile to open.
         private static async void OpenFrosTxtWindow(FrosTxtObj windowToOpen = null)
         {
             if(windowToOpen != null)
@@ -175,7 +183,8 @@ namespace FrostyMeshImporter
                 {
                     LocalizationFile baseFile = LoadBaseChunk();
                     LocalizationMerger lm = new LocalizationMerger(baseFile);
-                    FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase, _currentLocalizationAsset, _currentAssetEditor, lm);
+                    FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase,
+                        _currentLocalizationAsset, _currentAssetEditor, lm);
                     _localizationProfiles.Add(newWindow);
                     _lastFrosTxtWindow = newWindow;
                 });
@@ -199,12 +208,15 @@ namespace FrostyMeshImporter
             Stream memStream = App.AssetManager.GetChunk(textChunk);
             FileStream baseTextStream = new FileStream(_tempPath + "\\chunk.chunk", FileMode.OpenOrCreate);
             memStream.CopyTo(baseTextStream);
-            LocalizationFile baseFile = new LocalizationFile(baseTextStream, _currentTextDatabase.Language.ToString());
+            LocalizationFile baseFile = 
+                new LocalizationFile(baseTextStream, _currentTextDatabase.Language.ToString());
             baseTextStream.Close();
             File.Delete(_tempPath + "\\chunk.chunk");
             return baseFile;
         }
 
+        // Open the FrosTxt window corresponding with the given language. Creates new 
+        // localization profile if it does not exist.
         public static void SwitchFrosTxtProfile(string switchToLanguage)
         {
             FrosTxtObj toOpen = GetFrosTxtProfile(switchToLanguage);
@@ -214,12 +226,14 @@ namespace FrostyMeshImporter
             } else
             {
                 // Create new profile
-                EbxAssetEntry selectedLocalization = App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + switchToLanguage);
+                EbxAssetEntry selectedLocalization = 
+                    App.AssetManager.GetEbxEntry(DEFAULT_LOCALIZATION_PATH + switchToLanguage);
                 _mainWindowExplorer.SelectedAsset = selectedLocalization;
                 _currentLocalizationAsset = selectedLocalization;
                 FsUITextDatabase testTab = _currentAssetEditor?.RootObject as FsUITextDatabase;
                 if (testTab != null && _mainWindowExplorer.SelectedAsset != null &&
-                    testTab.Language.ToString().Split('_')[1] == _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
+                    testTab.Language.ToString().Split('_')[1] == 
+                    _mainWindowExplorer.SelectedAsset.Name.Split('_')[1])
                 {
                     OpenFrosTxtWindow();
                 }
@@ -231,7 +245,8 @@ namespace FrostyMeshImporter
             }
         }
 
-        // Merges localization files staged for merge in the localization profile stored in _lastFrosTxtWindow
+        // Merges localization files staged for merge in the localization profile 
+        // stored in _lastFrosTxtWindow
         public static bool MergeCurrentProfile()
         {
             if(_lastFrosTxtWindow == null)
@@ -250,7 +265,8 @@ namespace FrostyMeshImporter
             // Read merged file from disk
             FileInfo mergedFileInfo = new FileInfo(outPath);
             long fileLen = mergedFileInfo.Length;
-            using (NativeReader nativeReader = new NativeReader(new FileStream(outPath, FileMode.Open, FileAccess.Read)))
+            using (NativeReader nativeReader = 
+                new NativeReader(new FileStream(outPath, FileMode.Open, FileAccess.Read)))
             {
                 byte[] chunkData = nativeReader.ReadToEnd();
                 App.AssetManager.ModifyChunk(chunkID, chunkData);
@@ -289,14 +305,16 @@ namespace FrostyMeshImporter
             }
         }
 
-        // Returns the FrosTxtObj corresponding to the given language if it exists, otherwise returns null.
+        // Returns the FrosTxtObj corresponding to the given language if it exists, 
+        // otherwise returns null.
         internal static FrosTxtObj GetFrosTxtProfile(string language)
         {
             if(_localizationProfiles == null || _localizationProfiles.Count == 0)
             {
                 return null;
             }
-            Predicate<FrosTxtObj> CompareByFrosTxtObjLanguage = delegate(FrosTxtObj f) { return f.language.ToString() == language; };
+            Predicate<FrosTxtObj> CompareByFrosTxtObjLanguage = 
+                delegate(FrosTxtObj f) { return f.language.ToString() == language; };
             FrosTxtObj searchResult = _localizationProfiles.Find(CompareByFrosTxtObjLanguage);
             return searchResult;
         }
@@ -324,7 +342,8 @@ namespace FrostyMeshImporter
             }
             // Else show warning message
             string errMessage = "No localization files have been modified by FrosTxt.";
-            Log(errorState.NoModifiedFrosTxtProfiles.ToString(), errMessage, MessageBoxButton.OK, IMPORTER_MESSAGE);
+            Log(errorState.NoModifiedFrosTxtProfiles.ToString(), errMessage, 
+                MessageBoxButton.OK, IMPORTER_MESSAGE);
         }
     }
 }

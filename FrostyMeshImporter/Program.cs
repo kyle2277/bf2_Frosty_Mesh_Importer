@@ -62,22 +62,37 @@ namespace FrostyMeshImporter
         Default = 0,
         FrostMeshyImport = 1,
         FrosTxt = 2
-    } 
+    }
 
+    // Partial class containing all Program functionality related to application initialization, 
+    // reflection, and mesh importing.
     partial class Program
     {
+        // Frosty Editor main window.
         private static MainWindow _mainWindow;
+        // Editor for current asset.
         private static FrostyAssetEditor _currentAssetEditor;
+        // Current res/chunk explorer if opoen, otherwise null.
         private static FrostyChunkResExplorer _chunkResExplorer;
+        // Current res explorer if open, otherwise null.
         private static FrostyDataExplorer _resExplorer;
+        // UI controller used for settin the toolbar.
         private static FrostyTabControl _tabControl;
+        // Main asset explorer.
         private static FrostyDataExplorer _mainWindowExplorer;
+        // Invokable method to open the res/chunk explorer.
         private static MethodInfo _openChunkResExplorer;
+        // Frosty Editor app.
         private static App _app;
+        // The current selected toolkit dictates which button are shown on the toolbar.
         private static Toolkit _currentToolkit = 0;
+        // Version of Frosty Mesh Importer.
         private static string _version;
+        // Global search term used for List searching.
         private static string _searchTerm;
+        // Linked source directory for FrostMeshy.
         private static string _fMeshySrcDir;
+        // Frosty Mesh Imorter pop-up message box titles.
         public const string IMPORTER_ERROR = "Frosty Mesh Importer Error";
         public const string IMPORTER_WARNING = "Frosty Mesh Importer Warning";
         public const string IMPORTER_MESSAGE = "Frosty Mesh Importer Message";
@@ -247,7 +262,8 @@ namespace FrostyMeshImporter
         // Opens a new chunk/res explorer tab if one is not currently open.
         public static void CheckChunkResExplorerOpen()
         {
-            // refreshes and then retrieves the active res/chunk explorer. Return true if exists, otherwise, logs and return false.
+            // refreshes and then retrieves the active res/chunk explorer. 
+            // Return true if exists, otherwise, logs and return false.
             if (!SetChunkResExplorer())
             {
                 _openChunkResExplorer.Invoke(_mainWindow, new object[] { _mainWindow, null });
@@ -269,7 +285,8 @@ namespace FrostyMeshImporter
             Cursor.Current = Cursors.Default;
         }
         
-        // Sets global chunkResExplorer to the current open chunk/res explorer tab. Returns true if a chunk/res explorer tab exists in the current open tabs, false otherwise.
+        // Sets global chunkResExplorer to the current open chunk/res explorer tab. 
+        // Returns true if a chunk/res explorer tab exists in the current open tabs, false otherwise.
         private static bool SetChunkResExplorer()
         {
             // Reset explorer references
@@ -323,7 +340,8 @@ namespace FrostyMeshImporter
             //Check if the selected file is a directory, if not, log and exit operation
             if (!Directory.Exists(selectedPath))
             {
-                Log(errorState.SelectedFileIsNotFolder.ToString(), $"The selected output location must be a folder. Canceled {operation}.", 
+                Log(errorState.SelectedFileIsNotFolder.ToString(), 
+                    $"The selected output location must be a folder. Canceled {operation}.", 
                     MessageBoxButton.OK, IMPORTER_ERROR);
                 return;
             }
@@ -339,7 +357,8 @@ namespace FrostyMeshImporter
             ResAssetEntry meshSet = resFiles.Find(resAssetPredicate);
             if(meshSet == null)
             {
-                FrostyMessageBox.Show($"Mesh set \"{assetName}\" could not be found in the res explorer. Please export manually.", IMPORTER_ERROR, MessageBoxButton.OK);
+                FrostyMessageBox.Show($"Mesh set \"{assetName}\" could not be found in the res explorer. Please export manually.", 
+                    IMPORTER_ERROR, MessageBoxButton.OK);
                 App.Logger.Log($"ERROR: {errorState.FailedToFindResFile}");
                 return;
             }
@@ -387,7 +406,8 @@ namespace FrostyMeshImporter
             RefreshExplorers();
             if (failedResFiles > 0)
             {
-                FrostyMessageBox.Show($"{failedResFiles} Res files must be exported manually. See log for details.", IMPORTER_WARNING, MessageBoxButton.OK);
+                FrostyMessageBox.Show($"{failedResFiles} Res files must be exported manually. " +
+                    $"See log for details.", IMPORTER_WARNING, MessageBoxButton.OK);
             }
         }
 
@@ -398,7 +418,8 @@ namespace FrostyMeshImporter
         }
 
         // Generates mesh resource file paths to be retrieved from the res explorer.
-        private static void GenerateMeshResPaths(ref List<string> resFilePaths, string assetName, string assetPath)
+        private static void GenerateMeshResPaths(ref List<string> resFilePaths, 
+            string assetName, string assetPath)
         {
             // Generate blocks path
             string blocksPath = assetPath + "_mesh/blocks";
@@ -412,7 +433,8 @@ namespace FrostyMeshImporter
             string blocksPath = assetPath + "_mesh/blocks";
             resFilePaths.Add(blocksPath);
             // Generate ea cloth asset path
-            string eaClothPath = assetPath.Substring(0, assetPath.Length - assetName.Length) + $"cloth/{assetName.Substring(0, assetName.Length - "_mesh".Length)}_eacloth";
+            string eaClothPath = assetPath.Substring(0, assetPath.Length - assetName.Length) + 
+                $"cloth/{assetName.Substring(0, assetName.Length - "_mesh".Length)}_eacloth";
             resFilePaths.Add(eaClothPath);
         }
 
