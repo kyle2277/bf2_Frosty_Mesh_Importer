@@ -58,7 +58,7 @@ Before a mesh can be imported, its Compiled Resource (res) files must be exporte
 
 ### Basic Mesh Importing
 1. **Locate the mesh you want to replace in the main asset explorer**. Frosty Mesh Importer can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
-2. **Export the mesh's res files** ([How to export res files](#how-to-export-mesh-res-files)).
+2. **Export the mesh's res files** ([How To Export Res Files](#how-to-export-mesh-res-files)).
 3. **Run FrostMeshy.**
 4. **Click the "Import Mesh" button on the toolbar and navigate to the FrostMeshy output folder for your mesh**. Inside the folder, click the "Open" button in the open-file pop-up without selecting any of the files inside the folder. All the chunk files in the folder will be automatically imported into Frosty. The res files will be automatically imported if two conditions are satisfied: the res files were exporting using one of the two methods outlined in [How to Export Mesh Res Files](#how-to-export-mesh-res-files) and there's more than one mesh set in the FrostMeshy output folder. A message box will pop up if any res files need to be imported manually.
 5. **Refresh your mesh tab** to see changes.
@@ -77,7 +77,7 @@ The default "revert" function in the Frosty Editor is not designed to revert mes
 ### Importing From a FrostMeshy Output Folder
 The "Source Import" function directly references and pulls mesh sets from the path specified by "Link Source." Any updates to the linked folder will be reflected in the "Source Import" dialog.
 1. **Locate the mesh you want to replace in the main asset explorer**. Frosty Mesh Importer can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
-2. **Export the mesh's res files** ([How to export res files](#how-to-export-mesh-res-files)).
+2. **Export the mesh's res files** ([How To Export Res Files](#how-to-export-mesh-res-files)).
 3. **Run FrostMeshy**.
 4. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button, if not done so already.
 5. **Click the "Source Import" button**. Select one or more mesh set and click "Import."
@@ -92,8 +92,10 @@ A green check mark in the status column indicates that a mesh set's res files ca
 ## Merging Localization Files with FrosTxt
 
 ### FrosTxt Overview
+A localization file is a chunk file which contains the game's UI text. There exists a localization file for every language supported by the game. Previously, it was only possible to view the UI text-edits of one mod because Frosty Mod Manager can only apply one edited localization file. FrosTxt is a tool packaged with Frosty Mesh Importer that merges discrete localization files into one file that can be applied by Frosty Mod Manager. It operates on localization chunk files which can be obtained from the author of the mod.
 
 ### Opening FrosTxt
+
 
 ### Merging Localization Files
 
