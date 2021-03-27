@@ -53,7 +53,8 @@ namespace FrostyMeshImporter
         NoFrostMeshySourceLinked = -14,
         PathDoesNotExist = -15,
         VersionMismatch = - 16,
-        FailedToFindResFile = -17
+        FailedToFindResFile = -17,
+        NoModifiedFrosTxtProfiles = -18
     };
 
     public enum Toolkit
@@ -216,8 +217,8 @@ namespace FrostyMeshImporter
                     break;
                 case Toolkit.FrosTxt:
                     // FrosTxt tools
-                    items.Add(new ToolbarItem("Open FrosTxt", "Open FrosTxt text edit tool", "Images/Editlabel.png", new RelayCommand(_ => OnFrosTxtCommand(_mainWindow, null), _ => true)));
-                    items.Add(new ToolbarItem("Revert", "Revert edits to localization files", "Images/Revert.png", new RelayCommand(_ => OnRevertFrosTxtCommand(_mainWindow, null), _ => true)));
+                    items.Add(new ToolbarItem("Open FrosTxt", "Open FrosTxt, localization text editing tool", "Images/Editlabel.png", new RelayCommand(_ => OnFrosTxtCommand(_mainWindow, null), _ => true)));
+                    items.Add(new ToolbarItem("Revert FrosTxt", "Revert edits made by FrosTxt to localization files", "Images/Revert.png", new RelayCommand(_ => OnRevertFrosTxtCommand(_mainWindow, null), _ => true)));
                     items.Add(new ToolbarItem("   ", null, null, new RelayCommand((Action<object>)(state => { }), (Predicate<object>)(state => false))));
                     break;
             }
@@ -631,7 +632,7 @@ namespace FrostyMeshImporter
             //Check if the importer has any imported meshes saved, if not, log and exit
             if (ChunkResImporter.importedAssets == null || ChunkResImporter.importedAssets.Count == 0)
             {
-                Log(errorState.NoImportedAssets.ToString(), $"No imported mesh sets in history.", MessageBoxButton.OK, IMPORTER_ERROR);
+                Log(errorState.NoImportedAssets.ToString(), $"No imported mesh sets in history.", MessageBoxButton.OK, IMPORTER_MESSAGE);
                 return;
             }
             CheckChunkResExplorerOpen();
@@ -689,7 +690,7 @@ namespace FrostyMeshImporter
                             resCounter += status;
                         }
                     }
-                    App.Logger.Log($"Successfully {operation}ed assets!");
+                    App.Logger.Log($"Completed {operation}ing assets!");
                     if (resCounter > 0)
                     {
                         FrostyMessageBox.Show($"{resCounter} Res files need to be {operation}ed manually. See log for details.", Program.IMPORTER_WARNING, MessageBoxButton.OK);

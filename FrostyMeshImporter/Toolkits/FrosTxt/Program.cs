@@ -39,8 +39,8 @@ namespace FrostyMeshImporter
         Spanish,
         SpanishMex,
         TraditionalChinese,
-        WorstCase,
-        Custom
+        WorstCase//,
+        //Custom
     }
 
     partial class Program
@@ -68,6 +68,16 @@ namespace FrostyMeshImporter
                 this.localizationAsset = localizationAsset;
                 this.localizationAssetEditor = localizationAssetEditor;
                 this.lm = lm;
+            }
+
+            public bool IsModified()
+            {
+                return this.lm.files.Count() > 0;
+            }
+
+            public override string ToString()
+            {
+                return language.ToString();
             }
         }
 
@@ -253,6 +263,7 @@ namespace FrostyMeshImporter
         }
 
         // Reverts the profile corresponding with the given language to the initialized state
+        // Pre-condition: given profile object != null
         public static void RevertProfile(FrosTxtObj toRevert)
         {
             Guid chunkID = toRevert.localizationTextData.BinaryChunk;
@@ -262,8 +273,9 @@ namespace FrostyMeshImporter
             // Revert localization ebx file
             App.AssetManager.RevertAsset(toRevert.localizationAsset);
             // Remove all files from localization merger except the base file
-            _lastFrosTxtWindow.lm.ClearModifiedFiles();
+            toRevert.lm.ClearModifiedFiles();
             _mainWindowExplorer.RefreshAll();
+            App.Logger.Log($"Reverted {toRevert.language} localization files");
         }
 
         // On context menu revert click
@@ -271,14 +283,14 @@ namespace FrostyMeshImporter
         {
             string language = _mainWindowExplorer.SelectedAsset.Name.Split('_')[1];
             FrosTxtObj toRevert = GetFrosTxtProfile(language);
-            if(toRevert != null)
+            if(toRevert != null && toRevert.IsModified())
             {
                 RevertProfile(toRevert);
             }
         }
 
         // Returns the FrosTxtObj corresponding to the given language if it exists, otherwise returns null.
-        private static FrosTxtObj GetFrosTxtProfile(string language)
+        internal static FrosTxtObj GetFrosTxtProfile(string language)
         {
             if(_localizationProfiles == null || _localizationProfiles.Count == 0)
             {
@@ -289,15 +301,30 @@ namespace FrostyMeshImporter
             return searchResult;
         }
 
-        private static bool CompareByAssetEntryName(AssetEntry a)
-        {
-            return a.Name == _searchTerm;
-        }
-
         // Open FrosTxt reversion window.
         public static void OnRevertFrosTxtCommand(object sender, RoutedEventArgs e)
         {
-
+            if(_localizationProfiles != null && _localizationProfiles.Count != 0)
+            {
+                List<FrosTxtObj> modifiedProfiles = new List<FrosTxtObj>();
+                foreach (FrosTxtObj profile in _localizationProfiles)
+                {
+                    if(profile.IsModified())
+                    {
+                        modifiedProfiles.Add(profile);
+                    }
+                }
+                if(modifiedProfiles.Count > 0)
+                {
+                    // Open reversion window
+                    RevertFrosTxtWindow revertFrosTxt = new RevertFrosTxtWindow(modifiedProfiles);
+                    revertFrosTxt.ShowDialog();
+                    return;
+                }
+            }
+            // Else show warning message
+            string errMessage = "No localization files have been modified by FrosTxt.";
+            Log(errorState.NoModifiedFrosTxtProfiles.ToString(), errMessage, MessageBoxButton.OK, IMPORTER_MESSAGE);
         }
     }
 }
