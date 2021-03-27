@@ -10,23 +10,18 @@ Running this app creates an instance of Frosty Editor and injects the following 
 
 ## Documentation
 > [Requirements](#requirements)  
-> 
 > [Installation](#installation)  
-> 
 > [Selecting a Toolkit](#selecting-a-toolkit)  
-> 
 > [How to Mesh Import From File](#mesh-import-from-file)  
 > > [Mesh Import Overview](#mesh-import-overview)  
 > > [How to Export Mesh Res Files](#how-to-export-mesh-res-files)  
 > > [Basic Mesh Importing](#basic-mesh-importing)  
 > > [Basic Mesh Reversion](#basic-mesh-reversion)  
->
 > [How to Mesh Import From a Linked FrostMeshy Output](#mesh-import-from-linked-frostmeshy-output)    
 > > [Linking Frosty Mesh Importer and FrostMeshy](#linking-frosty-mesh-importer-to-a-frostmeshy-output-folder)  
 > > [Importing From a FrostMeshy Output Folder](#importing-from-a-frostmeshy-output-folder)  
 >
 > [Re-Importing and Reverting From History](#re-importing-and-reverting-via-history)  
-> 
 > [Merging Localization Files with FrosTxt](#merging-localization-files-with-frostxt)  
 > > [FrosTxt Overview](#frostxt-overview)  
 > > [Opening FrosTxt](#opening-frostxt)  
