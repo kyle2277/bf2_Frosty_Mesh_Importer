@@ -36,6 +36,11 @@ class CustomAssetContextMenu
             Source = new BitmapImage(new Uri("/FrostyEditor;Component/Images/Export.png", UriKind.Relative)),
             Opacity = 0.5
         };
+        private static Image _revertIcon = new Image
+        {
+            Source = new BitmapImage(new Uri("/FrostyEditor;Component/Images/Revert.png", UriKind.Relative)),
+            Opacity = 0.5
+        };
 
         public CustomAssetContextMenu(FrostyDataExplorer dataExplorer)
         {
@@ -71,12 +76,17 @@ class CustomAssetContextMenu
                 } else if(asset.Type.Equals("FsUITextDatabase"))
                 {
                     // Add FrosTxt to context menu
-                    MenuItem frosTxt = new MenuItem();
-                    frosTxt.Click += OnFrosTxtCommand;
-                    frosTxt.Header = "Open FrosTxt";
-                    frosTxt.Icon = _editLabelIcon;
-                    dataExplorer.AssetContextMenu.Items.Add(frosTxt);
-                    numAddedCommands += 1;
+                    MenuItem openFrosTxt = new MenuItem();
+                    openFrosTxt.Click += OnFrosTxtCommand;
+                    openFrosTxt.Header = "Open FrosTxt";
+                    openFrosTxt.Icon = _editLabelIcon;
+                    MenuItem revertLocalization = new MenuItem();
+                    revertLocalization.Click += ContextRevertProfile;
+                    revertLocalization.Header = "Revert FrosTxt";
+                    revertLocalization.Icon = _revertIcon;
+                    dataExplorer.AssetContextMenu.Items.Add(openFrosTxt);
+                    dataExplorer.AssetContextMenu.Items.Add(revertLocalization);
+                    numAddedCommands += 2;
                 }
             }
         }

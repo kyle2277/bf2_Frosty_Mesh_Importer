@@ -124,9 +124,7 @@ namespace FrostyMeshImporter
                     return;
                 }
                 // If not opening last window, check if profile has already been created
-                _searchTerm = language;
-                Predicate<FrosTxtObj> FrosTxtWindowPredicate = CompareByFrosTxtWindowLanguage;
-                FrosTxtObj searchResult = _localizationProfiles.Find(FrosTxtWindowPredicate);
+                FrosTxtObj searchResult = GetFrosTxtProfile(language);
                 if (searchResult != null)
                 {
                     OpenFrosTxtWindow(searchResult);
@@ -199,9 +197,7 @@ namespace FrostyMeshImporter
 
         public static void SwitchFrosTxtProfile(string switchToLanguage)
         {
-            _searchTerm = switchToLanguage;
-            Predicate<FrosTxtObj> FrosTxtWindowPredicate = CompareByFrosTxtWindowLanguage;
-            FrosTxtObj toOpen = _localizationProfiles.Find(FrosTxtWindowPredicate);
+            FrosTxtObj toOpen = GetFrosTxtProfile(switchToLanguage);
             if(toOpen != null)
             {
                 OpenFrosTxtWindow(toOpen);
@@ -256,14 +252,46 @@ namespace FrostyMeshImporter
             return true;
         }
 
+        // Reverts the profile corresponding with the given language to the initialized state
+        public static void RevertProfile(FrosTxtObj toRevert)
+        {
+            Guid chunkID = toRevert.localizationTextData.BinaryChunk;
+            ChunkAssetEntry revertChunk = App.AssetManager.GetChunkEntry(chunkID);
+            // Revert localization binary chunk
+            App.AssetManager.RevertAsset(revertChunk);
+            // Revert localization ebx file
+            App.AssetManager.RevertAsset(toRevert.localizationAsset);
+            // Remove all files from localization merger except the base file
+            _lastFrosTxtWindow.lm.ClearModifiedFiles();
+            _mainWindowExplorer.RefreshAll();
+        }
+
+        // On context menu revert click
+        public static void ContextRevertProfile(object sender, RoutedEventArgs e)
+        {
+            string language = _mainWindowExplorer.SelectedAsset.Name.Split('_')[1];
+            FrosTxtObj toRevert = GetFrosTxtProfile(language);
+            if(toRevert != null)
+            {
+                RevertProfile(toRevert);
+            }
+        }
+
+        // Returns the FrosTxtObj corresponding to the given language if it exists, otherwise returns null.
+        private static FrosTxtObj GetFrosTxtProfile(string language)
+        {
+            if(_localizationProfiles == null || _localizationProfiles.Count == 0)
+            {
+                return null;
+            }
+            Predicate<FrosTxtObj> CompareByFrosTxtObjLanguage = delegate(FrosTxtObj f) { return f.language.ToString() == language; };
+            FrosTxtObj searchResult = _localizationProfiles.Find(CompareByFrosTxtObjLanguage);
+            return searchResult;
+        }
+
         private static bool CompareByAssetEntryName(AssetEntry a)
         {
             return a.Name == _searchTerm;
-        }
-
-        private static bool CompareByFrosTxtWindowLanguage(FrosTxtObj f)
-        {
-            return f.language.ToString() == _searchTerm;
         }
 
         // Open FrosTxt reversion window.
