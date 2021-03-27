@@ -24,7 +24,7 @@
             </Border>
             <Grid Margin="4,0,3.667,4" Background="{StaticResource ListBackground}" Height="282">
                 <TabControl Background="{StaticResource WindowBackground}">
-                    <TabItem Header="Basic">
+                    <TabItem Header="Merge">
                         <Grid>
                             <ListBox Name="fileListBox" SelectionMode="Single" SelectionChanged="FileSelection_Changed" Margin="0,0,167,0.333" VerticalContentAlignment="Center">
                                 <ListBox.ItemTemplate>
@@ -42,8 +42,9 @@
                                 <Button x:Name="addButton" Click="AddButton_Click" Content="Add" Margin="0,10,0,0"/>
                             </StackPanel>
                         </Grid>
-                    </TabItem>
-                    <TabItem Header="Advanced">
+                    <!--</TabItem>
+                    <
+                    <TabItem Header="Advanced">-->
 
                     </TabItem>
                 </TabControl>
