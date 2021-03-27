@@ -5,7 +5,7 @@ ___
 ## Overview
 Running this app creates an instance of Frosty Editor and injects the following buttons to the toolbar: Import Mesh, Revert Mesh, Export Res, Link Source, Source Import, and History. This application streamlines the modding workflow by making importing and reverting one or multiple meshes in the Frosty Editor a one-click operation. It automates the handling of chunk and res files output by the mesh converter application, FrostMeshy.
 
-64-bit Windows 10 build download (v1.2.0.4): https://www.mediafire.com/file/pb3f9js8iq1xrjy/Frosty_Mesh_Importer_v1.2.0.4.zip/file \
+64-bit Windows 10 build download (v1.2.0.4): https://www.mediafire.com/file/pb3f9js8iq1xrjy/Frosty_Mesh_Importer_v1.2.0.4.zip/file  
 64-bit Windows 10 build download for Frosty Editor Alpha (v1.2.0.4): https://www.mediafire.com/file/13owebn4i7i1532/Frosty_Alpha_Mesh_Importer_v1.2.0.4.zip/file
 
 ## Documentation Table of Contents
