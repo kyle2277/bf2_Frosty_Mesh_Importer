@@ -22,7 +22,7 @@ Running this app creates an instance of Frosty Editor and injects the following 
 > > [Linking Frosty Mesh Importer and FrostMeshy](#linking-frosty-mesh-importer-to-a-frostmeshy-output-folder)  
 > > [Importing From a FrostMeshy Output Folder](#importing-from-a-frostmeshy-output-folder)  
 >
-> [Re-Importing and Reverting From History](#re-importing-and-reverting-via-history)  
+> [Re-Importing and Reverting From History](#re-importing-and-reverting-from-history)  
 > [Merging Localization Files with FrosTxt](#merging-localization-files-with-frostxt)  
 > > [FrosTxt Overview](#frostxt-overview)  
 > > [Opening FrosTxt](#opening-frostxt)  
