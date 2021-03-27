@@ -42,7 +42,7 @@ Install by placing `Frosty Mesh Importer.exe` and `FrosTxtCore.dll` in the same 
 The "Toolkit" button on the toolbar allows the user to choose what buttons are dislayed on the toolbar. Frosty Mesh Importer has three toolbar settings: 
 1. Mesh Import (Default) - The default toolkit for modifying mesh files. This setting displays all buttons related to mesh importing on the toolbar.
 2. FrostMeshy Import - A more concise toolkit for modifying mesh files. This setting only displays FrostMeshy related mesh importing buttons.
-3. FrosTxt - Newly integrated functionality for merging localization (UI text) files. This setting displays buttons for opening FrosTxt and reverting localization files. 
+3. FrosTxt - A utility for merging localization (UI text) files. This setting displays buttons for opening FrosTxt and reverting localization files. 
 
 ## Mesh Import From File
 
