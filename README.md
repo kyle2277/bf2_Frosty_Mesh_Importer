@@ -12,7 +12,8 @@ Running this app creates an instance of Frosty Editor and injects the following 
 * Frosty Mod Editor v1.0.5.9 - [download link](https://frostytoolsuite.com/downloads.html)
 * FrostMeshy v0.6.1.8 - [download link](https://www.mediafire.com/file/bmhr27uv2to2gmf/fmy-v0618-pre.zip/file)
 
-## Documentation
+## Documentation Table of Contents
+   [Installation](###Installation)
 ### Installation
 Install by placing `Frosty Mesh Importer.exe` in the same folder as your Frosty Editor installation.
 ### How to import a mesh using "Import Mesh" button
