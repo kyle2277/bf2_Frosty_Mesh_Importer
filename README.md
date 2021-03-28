@@ -110,9 +110,9 @@ Closing the FrosTxt window saves all imported localization files with the curren
 
 ### Reverting Localization Files
 The default Frosty Editor right-click > revert function does not revert all files corresponding to a specific localization asset. Use either of the two following methods for reverting localization files merged by FrosTxt:
-- Right-click on a localization asset in the main asset explorer and select `Revert FrosTxt`.  
+- Revert from the main asset explorer. Right-click on a localization asset in the main asset explorer and select `Revert FrosTxt`.  
 **OR**
-- Click `Revert FrosTxt` in the FrosTxt toolbar, prompting a window listing all localization assets that have been modified by FrosTxt. Select the localization file(s) to revert, and click `Revert`. 
+- Revert from the FrosTxt toolbar. Click `Revert FrosTxt` in the FrosTxt toolbar, prompting a window listing all localization assets that have been modified by FrosTxt. Select the localization file(s) to revert, and click `Revert`. 
 
 ## Troubleshooting Tips
 * The majority of functions of this program operate using the Res/Chunk explorer. Executing an import/export operation without having a Res/Chunk explorer tab open will automatically open a new explorer tab which freezes the UI for a few seconds.
