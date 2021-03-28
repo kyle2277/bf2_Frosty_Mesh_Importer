@@ -52,6 +52,7 @@ Mesh set data in the Frostbite game engine is stored in two types of files: Comp
 ### How to Export Mesh Res Files
 Before a mesh can be imported, its Compiled Resource (res) files must be exported for FrostMeshy. A mesh's res files can be exported either of the two following ways:  
 - Export from the main asset explorer. Right click on the mesh in the asset explorer and click `Export Mesh Files`. Use the file select pop-up to navigate into the                desired output folder and click `Open`. All the res files belonging to the selected mesh will be exported to this location.  
+**OR**
 - Export from the Res/Chunk explorer window. For the res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the `Export Res` button in the toolbar at the top of the window  
 
 **DO NOT use Frosty Editor's default right-click > export function** or the res file cannot be re-imported automatically.
@@ -109,7 +110,8 @@ Closing the FrosTxt window saves all imported localization files with the curren
 
 ### Reverting Localization Files
 The default Frosty Editor right-click > revert function does not revert all files corresponding to a specific localization asset. Use either of the two following methods for reverting localization files merged by FrosTxt:
-- Right-click on a localization asset in the main asset explorer and select `Revert FrosTxt`.
+- Right-click on a localization asset in the main asset explorer and select `Revert FrosTxt`.  
+**OR**
 - Click `Revert FrosTxt` in the FrosTxt toolbar, prompting a window listing all localization assets that have been modified by FrosTxt. Select the localization file(s) to revert, and click `Revert`. 
 
 ## Troubleshooting Tips
