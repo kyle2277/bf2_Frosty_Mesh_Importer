@@ -105,7 +105,7 @@ Open the FrosTxt window by left-click selecting a localization asset in the main
 3. **Click the `Merge` button.** FrosTxt will merge the staged files and automatically modify the game files corresponding to the base language.
 4. **Export the mod** and apply it as the last mod in Frosty Mod Manager. In the Frosty Mod Manager `Conflicts` tab, verify that the correct localization file is being applied.  
 
-At any point, the FrosTxt window `Save` button can be used to save the merged chunk file to disk. Closing the FrosTxt window saves all imported localization files with the current base file, meaning different sets of files can be imported for different languages and switching between them preserves their respective imported files regardless of whether they have been merged yet.
+Closing the FrosTxt window saves all imported localization files with the current base file, meaning different sets of files can be imported for different languages and switching between them preserves their respective imported files regardless of whether they have been merged yet. At any point, the FrosTxt window `Save` button can be used to save a specific language's merged chunk file to disk.
 
 ### Reverting Localization Files
 The default Frosty Editor right-click revert function does not revert the chunk file corresponding to a specific localization asset. Use of of the two following methods for reverting localization files merged by FrosTxt:
