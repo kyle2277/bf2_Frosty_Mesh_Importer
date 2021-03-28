@@ -3,7 +3,7 @@ ___
 # TigerVenom22's Frosty Mesh Importer for SWBF2
 *Formerly the Frosty Res/Chunk Importer*
 ## Overview
-Running this app creates an instance of Frosty Editor and injects mesh importing functionalities. The mesh import tools streamline the modding workflow by making importing and reverting one or multiple mesh sets in Frosty Editor a one-click operation. It automates the handling of chunk and res files output by the mesh converter application, FrostMeshy. This program also integrates FrosTxt, a utility for merging localization (UI text) files, into Frosty Editor.
+Running this app creates an instance of Frosty Editor and injects mesh importing functionalities. The added tools streamline the modding workflow by making importing and reverting one or multiple mesh sets in Frosty Editor a one-click operation. It automates the handling of chunk and res files output by the mesh converter application, FrostMeshy. This program also integrates FrosTxt, a utility for merging localization (UI text) files, into Frosty Editor.
 
 64-bit Windows 10 build download (v1.2.0.4): https://www.mediafire.com/file/pb3f9js8iq1xrjy/Frosty_Mesh_Importer_v1.2.0.4.zip/file  
 64-bit Windows 10 build download for Frosty Editor Alpha (v1.2.0.4): https://www.mediafire.com/file/13owebn4i7i1532/Frosty_Alpha_Mesh_Importer_v1.2.0.4.zip/file
