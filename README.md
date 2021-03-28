@@ -53,7 +53,7 @@ Mesh set data in the Frostbite game engine is stored in two types of files: Comp
 Before a mesh can be imported, its Compiled Resource (res) files must be exported for FrostMeshy. A mesh's res files can be exported either of the two following ways:  
 - Right-click on the mesh in the main asset explorer and click `Export Mesh Files`. Use the file select pop-up to navigate into the desired output folder. All the res files belonging to the selected mesh will be exported to this location.  
 **OR**
-- Export from the Res/Chunk explorer window. For the res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the `Export Res` button in the toolbar at the top of the window  
+- Export from the Res/Chunk explorer window. For the res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the `Export Res` button in the toolbar at the top of the window.  
 
 **DO NOT use Frosty Editor's default right-click > export function** or the res file cannot be re-imported automatically.
 
