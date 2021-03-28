@@ -23,7 +23,7 @@ Running this app creates an instance of Frosty Editor and injects mesh importing
 > > [Importing From a FrostMeshy Output Folder](#importing-from-a-frostmeshy-output-folder)  
 >
 > [Re-Importing and Reverting From History](#re-importing-and-reverting-from-history)  
-> [Merging Localization Files with FrosTxt](#merging-localization-files-with-frostxt)  
+> [FrosTxt: Merging Localization Files](#frostxt:-merging-localization-files)  
 > > [FrosTxt Overview](#frostxt-overview)  
 > > [Opening FrosTxt](#opening-frostxt)  
 > > [Merging Localization Files](#merging-localization-files)  
@@ -89,7 +89,7 @@ The `History` window allows you to manage all the mesh sets that have been impor
 
 A green check mark in the status column indicates that a mesh set's res files can be imported automatically. A red cross indicates that the mesh set's res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its res files will need to be imported manually. Closing the application clears the import history.
 
-## Merging Localization Files with FrosTxt
+## FrosTxt: Merging Localization Files
 
 ### FrosTxt Overview
 A localization file is a chunk file which contains the game's UI text. There exists a localization file for every language supported by the game. Previously, it was only possible to view the UI text-edits of one mod because Frosty Mod Manager can only apply one edited localization file. FrosTxt is a tool packaged with Frosty Mesh Importer that merges discrete localization files into one file that can be applied by Frosty Mod Manager. It operates on localization chunk files which can be obtained from the author of a mod.  
