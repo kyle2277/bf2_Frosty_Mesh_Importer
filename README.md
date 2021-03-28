@@ -101,7 +101,7 @@ Open the FrosTxt window by left-click selecting a localization asset in the main
 
 ### Merging Localization Files
 1. **Select a base localization asset and open FrosTxt.**
-2. **Import modified localization files to merge using the `Add`/`Remove` buttons.** The files are merged upwards in the order that they appear in the list, meaning files lower in the list take priority if there are conflicts. Using the `Move up` and `Move down` buttons, organize imported files accordingly.
+2. **Import modified localization files to merge using the `Add`/`Remove` buttons.** The files are merged upwards in the order that they appear in the list, meaning files lower in the list take priority if there are conflicts. Use the `Move up` and `Move down` buttons to change a file's place in the merge order.
 3. **Click the `Merge` button.** FrosTxt will merge the staged files and automatically modify the localization chunk and ebx files corresponding to the base language.
 4. **Export the mod** and apply it as the last mod in Frosty Mod Manager. In the Frosty Mod Manager `Conflicts` tab, verify that the correct localization file is being applied.  
 
