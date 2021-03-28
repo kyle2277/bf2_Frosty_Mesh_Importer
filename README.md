@@ -51,8 +51,8 @@ Mesh set data in the Frostbite game engine is stored in two types of files: Comp
 
 ### How to Export Mesh Res Files
 Before a mesh can be imported, its Compiled Resource (res) files must be exported for FrostMeshy. A mesh's res files can be exported either of the two following ways:  
-- Export from the main asset explorer. Right click on the mesh in the asset explorer and click "Export Mesh Files." Use the file select pop-up to navigate into the                desired output folder and click "Open." All the res files belonging to the selected mesh will be exported to this location.  
-- Export from the Res/Chunk explorer window. For the res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the "Export Res" button in the toolbar at the top of the window  
+- Export from the main asset explorer. Right click on the mesh in the asset explorer and click `Export Mesh Files`. Use the file select pop-up to navigate into the                desired output folder and click `Open`. All the res files belonging to the selected mesh will be exported to this location.  
+- Export from the Res/Chunk explorer window. For the res file associated with your mesh (blocks and \_mesh for a mesh. blocks, clothwrapping, \_mesh, and eacloth for              cloth), select the file in the res explorer and click the `Export Res` button in the toolbar at the top of the window  
 
 **DO NOT use Frosty Editor's default right-click > export function** or the res file cannot be re-imported automatically.
 
@@ -64,43 +64,53 @@ Before a mesh can be imported, its Compiled Resource (res) files must be exporte
 5. **Refresh your mesh tab** to see changes.
 
 ### Basic Mesh Reversion
-The default "revert" function in the Frosty Editor is not designed to revert meshes that have been imported using the FrostMeshy. The Frosty Mesh Importer "Revert Mesh" button restores a mesh by reverting all chunk and res files associated with said mesh. Reverting a mesh using this method requires the output files from FrostMeshy because the names of the output files are used to locate the files to revert in Frosty Editor.
-1. **Click the "Revert Mesh" button on the toolbar**. Navigate to the FrostMeshy output folder associated with the mesh you want to revert. Inside the folder, click the "Open" button in the open file pop-up without selecting any of the files inside the folder.
-2. **Check the Frosty Editor log** to determine which files were successfully reverted and whether you need to revert any manually.
+The default Frosty Editor revert function is not designed to revert meshes that have been imported using FrostMeshy. The Frosty Mesh Importer `Revert Mesh` button in the toolbar restores a mesh to its default state by reverting all associated chunk and res files. Reverting a mesh using this method requires the output files from FrostMeshy because the names of the output files are used to locate the mesh's respective files in Frosty Editor.
+1. **Click the `Revert Mesh` button on the toolbar**. Navigate to the FrostMeshy output folder associated with the mesh you want to revert. Inside the folder, click the `Open button in the open file pop-up without selecting any of the files inside the folder.
+2. **Check the Frosty Editor log** to determine which files were successfully reverted and whether any need to be reverted manually.
 3. **Refresh your mesh tab** to see changes.
 
 ## Mesh Import From Linked FrostMeshy Output
 
 ### Linking Frosty Mesh Importer to a FrostMeshy Output Folder
-**Click the "Link Source" button and navigate to your FrostMeshy project output folder**. Select the output folder, not any of the mesh set folders inside it. This is the path that will be referenced upon clicking the "Source Import" button. Closing the application will clear the linked source path.
+**Click the `Link Source` button and navigate to your FrostMeshy project output folder**. Select the output folder, not any of the mesh set folders inside it. This is the path that will be referenced upon clicking the `Source Import` button. Closing the application will clear the linked source path.
 
 ### Importing From a FrostMeshy Output Folder
-The "Source Import" function directly references and pulls mesh sets from the path specified by "Link Source." Any updates to the linked folder will be reflected in the "Source Import" dialog.
+The `Source Import` function directly references and pulls mesh sets from the path specified by `Link Source`. Any updates to the linked folder will be reflected in the `Source Import` dialog.
 1. **Locate the mesh you want to replace in the main asset explorer**. Frosty Mesh Importer can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
 2. **Export the mesh's res files** ([How To Export Res Files](#how-to-export-mesh-res-files)).
 3. **Run FrostMeshy**.
-4. **Link your FrostMeshy output folder to Frosty Editor** using the "Link Source" button, if not done so already.
-5. **Click the "Source Import" button**. Select one or more mesh set and click "Import."
+4. **Link your FrostMeshy output folder to Frosty Editor** using the `Link Source` button, if not done so already.
+5. **Click the `Source Import` button**. Select one or more mesh set and click `Import`.
 
 A green check mark in the status column indicates that a mesh set's res files can be imported automatically. A red cross indicates that the mesh set's res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its res files will need to be imported manually.
 
 ## Re-Importing and Reverting From History
-The "History" window allows you to manage all the mesh sets that have been imported during the current session, regardless of how they were imported ("Import Mesh" button, "Source Import" button, or "History" re-import) or whether they have been reverted. The "History" window can be used to re-import or revert multiple meshes. Selecting the "Remove reverted meshes from list" check box will remove the meshes selected for reversion from the import history.
+The `History` window allows you to manage all the mesh sets that have been imported during the current session, regardless of how they were imported (`Import Mesh` button, `Source Import` button, or `History` re-import) or whether they have been reverted. The `History` window can be used to re-import or revert multiple meshes. Checking the `Remove reverted meshes from list` check box will remove the meshes selected for reversion from the import history.
 
 A green check mark in the status column indicates that a mesh set's res files can be imported automatically. A red cross indicates that the mesh set's res files need to be exported in the current session before they can be automatically imported. A mesh set with a red status can be imported, but its res files will need to be imported manually. Closing the application clears the import history.
 
 ## Merging Localization Files with FrosTxt
 
 ### FrosTxt Overview
-A localization file is a chunk file which contains the game's UI text. There exists a localization file for every language supported by the game. Previously, it was only possible to view the UI text-edits of one mod because Frosty Mod Manager can only apply one edited localization file. FrosTxt is a tool packaged with Frosty Mesh Importer that merges discrete localization files into one file that can be applied by Frosty Mod Manager. It operates on localization chunk files which can be obtained from the author of a mod.
+A localization file is a chunk file which contains the game's UI text. There exists a localization file for every language supported by the game. Previously, it was only possible to view the UI text-edits of one mod because Frosty Mod Manager can only apply one edited localization file. FrosTxt is a tool packaged with Frosty Mesh Importer that merges discrete localization files into one file that can be applied by Frosty Mod Manager. It operates on localization chunk files which can be obtained from the author of a mod.  
+
+A FrosTxt merge operation involves a base localization file (the default localization file corresponding to a specific language that will be replaced) and a list of modified localization files (the localization files whose differences from the base file will be merged together to replace the base file).
 
 ### Opening FrosTxt
-Open the FrosTxt window by left-click selecting a localization file in the main asset explorer (i.e. WSLocalization_English) and then clicking the `Open FrosTxt` button on the FrosTxt toolbar ([Selecting a Toolkit](#selecting-a-toolkit)). Alternatively, FrosTxt can be opened by right-clicking on a localization file in the main asset explorer and selecting `Open FrosTxt`.  
+Open the FrosTxt window by left-click selecting a localization asset in the main asset explorer (Found at `Localization > WSLocalization_<language>`) and then clicking the `Open FrosTxt` button on the FrosTxt toolbar ([Selecting a Toolkit](#selecting-a-toolkit)). Alternatively, right-click on a localization asset in the main asset explorer and select `Open FrosTxt`. Both of these methods open a FrosTxt window with the selected localization file as the base file. The base language file can be switched via the `Base language` drop-down selector at the top of the window.
 
 ### Merging Localization Files
+1. **Select a localization file and open FrosTxt.**
+2. **Import modified localization files to merge using the `Add`/`Remove` buttons.** The files are merged upwards in the order that they appear in the list, meaning files lower in the list take priority if there are conflicts. Organize the added files accordingly using the `Move up` and `Move down` buttons.
+3. **Click the `Merge` button.** FrosTxt will merge the staged files and automatically modify the localization chunk and ebx files corresponding to the base language.
+4. **Export the mod** and apply it as the last mod in Frosty Mod Manager. In the Frosty Mod Manager `Conflicts` tab, verify that the correct localization file is being applied.  
 
+At any point, the FrosTxt window `Save` button can be used to save the merged chunk file to disk. Closing the FrosTxt window saves all imported localization files with the current base file, meaning different sets of files can be imported for different languages and switching between them preserves their respective imported files regardless of whether they have been merged yet.
 
 ### Reverting Localization Files
+The default Frosty Editor right-click revert function does not revert the chunk file corresponding to a specific localization asset. Use of of the two following methods for reverting localization files merged by FrosTxt:
+- Right-click on a localization asset in the main asset explorer and select `Revert FrosTxt`.
+- Click `Revert FrosTxt` in the FrosTxt toolbar, prompting a window listing all localization assets that have been modified by FrosTxt. Select the localization file(s) to revert, and click `Revert`. 
 
 ## Troubleshooting Tips
 * The majority of functions of this program operate using the Res/Chunk explorer. Executing an import/export operation without having a Res/Chunk explorer tab open will automatically open a new explorer tab which freezes the UI for a few seconds.
