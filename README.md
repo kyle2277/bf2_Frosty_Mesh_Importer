@@ -95,9 +95,10 @@ A green check mark in the status column indicates that a mesh set's res files ca
 A localization file is a chunk file which contains the game's UI text. There exists a localization file for every language supported by the game. Previously, it was only possible to view the UI text-edits of one mod because Frosty Mod Manager can only apply one edited localization file. FrosTxt is a tool packaged with Frosty Mesh Importer that merges discrete localization files into one file that can be applied by Frosty Mod Manager. It operates on localization chunk files which can be obtained from the author of a mod.
 
 ### Opening FrosTxt
-The FrosTxt window can be opened from the `FrosTxt` from the toolbar ([Selecting a Toolkit](#selecting-a-toolkit)).
+The FrosTxt window can be opened by clicking `Open FrosTxt` from the FrosTxt toolbar ([Selecting a Toolkit](#selecting-a-toolkit)) or by right-clicking on a localization file in the main asset explorer.
 
 ### Merging Localization Files
+
 
 ### Reverting Localization Files
 
