@@ -108,7 +108,7 @@ Open the FrosTxt window by left-click selecting a localization asset in the main
 Closing the FrosTxt window saves all imported localization files with the current base file, meaning different sets of files can be imported for different languages and switching between them preserves their respective imported files regardless of whether they have been merged yet. At any point, the FrosTxt window `Save` button can be used to save a specific language's merged chunk file to disk.
 
 ### Reverting Localization Files
-The default Frosty Editor right-click > revert function does not revert the chunk file corresponding to a specific localization asset. Use of of the two following methods for reverting localization files merged by FrosTxt:
+The default Frosty Editor right-click > revert function does not revert all files corresponding to a specific localization asset. Use of of the two following methods for reverting localization files merged by FrosTxt:
 - Right-click on a localization asset in the main asset explorer and select `Revert FrosTxt`.
 - Click `Revert FrosTxt` in the FrosTxt toolbar, prompting a window listing all localization assets that have been modified by FrosTxt. Select the localization file(s) to revert, and click `Revert`. 
 
