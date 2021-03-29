@@ -98,7 +98,7 @@ A localization file is a chunk file which contains the game's UI text. There exi
 A FrosTxt merge operation involves a base localization file (the default localization file corresponding to a specific language that will be replaced) and a list of modified localization files (the localization files whose differences from the base file will be merged together).
 
 ### Opening FrosTxt
-Open the FrosTxt window by left-click selecting a localization asset in the main asset explorer (Found at `Localization > WSLocalization_<language>`) and then clicking the `Open FrosTxt` button on the FrosTxt toolbar ([Selecting a Toolkit](#selecting-a-toolkit)). Alternatively, right-click on a localization asset in the main asset explorer and select `Open FrosTxt`. Both of these methods open a FrosTxt window with the selected localization file as the base file. The base language file can be switched via the `Base language` drop-down selector at the top of the window.
+Open the FrosTxt window by left-click selecting a localization asset in the main asset explorer (Found at `Localization > WSLocalization_<language>`) and then clicking the `Open FrosTxt` button on the FrosTxt toolbar ([Selecting a Toolkit](#selecting-a-toolkit)). Alternatively, right-click on a localization asset in the main asset explorer and select `Open FrosTxt`. Both of these methods opens a FrosTxt window with the selected localization file as the base file. The base language file can be switched via the `Base language` drop-down selector at the top of the window.
 
 ### Merging Localization Files
 1. **Select a base localization asset and open FrosTxt.**
