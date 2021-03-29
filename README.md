@@ -59,7 +59,7 @@ Before a mesh can be imported, its Compiled Resource (res) files must be exporte
 
 ### Basic Mesh Importing
 1. **Locate the mesh you want to replace in the main asset explorer**. Frosty Mesh Importer can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
-2. **Export the mesh's res files** ([How To Export Res Files](#how-to-export-mesh-res-files)).
+2. **Export the mesh's res files** ([How To Export Mesh Res Files](#how-to-export-mesh-res-files)).
 3. **Run FrostMeshy.**
 4. **Click the `Import Mesh` button on the toolbar and navigate to the FrostMeshy output folder for your mesh**. Inside the folder, click the `Open` button in the open-file pop-up without selecting any of the files inside the folder. All the chunk files in the folder will be automatically imported into Frosty. The res files will be automatically imported if two conditions are satisfied: the res files were exporting using one of the two methods outlined in [How to Export Mesh Res Files](#how-to-export-mesh-res-files) and there's more than one mesh set in the FrostMeshy output folder. A message box will pop up if any res files need to be imported manually.
 5. **Refresh your mesh tab** to see changes.
@@ -78,7 +78,7 @@ The default Frosty Editor revert function is not designed to revert meshes that 
 ### Importing From a FrostMeshy Output Folder
 The `Source Import` function directly references and pulls mesh sets from the path specified by `Link Source`. Any updates to the linked folder will be reflected in the `Source Import` dialog.
 1. **Locate the mesh you want to replace in the main asset explorer**. Frosty Mesh Importer can modify meshes of type SkinnedMeshAsset, RigidMeshAsset, and ComponentMeshAsset.
-2. **Export the mesh's res files** ([How To Export Res Files](#how-to-export-mesh-res-files)).
+2. **Export the mesh's res files** ([How To Export Mesh Res Files](#how-to-export-mesh-res-files)).
 3. **Run FrostMeshy**.
 4. **Link your FrostMeshy output folder to Frosty Editor** using the `Link Source` button, if not done so already.
 5. **Click the `Source Import` button**. Select one or more mesh set and click `Import`.
