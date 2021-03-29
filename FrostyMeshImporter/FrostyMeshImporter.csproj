@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -55,6 +55,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FrosTxtCore">
+      <HintPath>..\..\FrosTxt\FrosTxt\FrosTxtCore\bin\Release\netstandard2.0\FrosTxtCore.dll</HintPath>
+    </Reference>
     <Reference Include="FrostyControls">
       <HintPath>..\..\..\..\..\Desktop\FrostyEditor_v1.0.5.9\FrostyControls.dll</HintPath>
     </Reference>
@@ -85,6 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\CustomAssetContextMenu.cs" />
+    <Compile Include="Toolkits\FrosTxt\Program.cs" />
+    <Compile Include="Windows\FrosTxtWindow.xaml.cs">
+      <DependentUpon>FrosTxtWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\HistoryWindow.xaml.cs">
       <DependentUpon>HistoryWindow.xaml</DependentUpon>
     </Compile>
@@ -94,6 +101,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controls\ReflectionHelper.cs" />
+    <Compile Include="Windows\RevertFrosTxtWindow.xaml.cs">
+      <DependentUpon>RevertFrosTxtWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\SourceImportWindow.xaml.cs">
       <DependentUpon>SourceImportWindow.xaml</DependentUpon>
     </Compile>
@@ -109,9 +119,17 @@
     <Content Include="FrostyResChunkImportIcon.ico.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Windows\FrosTxtWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\HistoryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\RevertFrosTxtWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\SourceImportWindow.xaml">
       <SubType>Designer</SubType>

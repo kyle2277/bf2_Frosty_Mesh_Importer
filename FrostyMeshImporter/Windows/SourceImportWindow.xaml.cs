@@ -1,4 +1,4 @@
-﻿// BatchOperationWindow.xaml.cs - FrostyMeshImporter
+﻿// SourceImportWindow.xaml.cs - FrostyMeshImporter
 // Contributors:
 //      Copyright (C) 2021  Kyle Won
 // This file is subject to the terms and conditions defined in the 'LICENSE' file.
@@ -24,7 +24,7 @@ using MeshSet = FrostyMeshImporter.Toolkits.MeshImport.ChunkResImporter.MeshSet;
 namespace FrostyMeshImporter.Windows
 {
     /// <summary>
-    /// Interaction logic for BatchOperationWindow.xaml
+    /// Interaction logic for SourceImportWindow.xaml
     /// </summary>
     /// 
     public partial class SourceImportWindow : FrostyDockableWindow 
