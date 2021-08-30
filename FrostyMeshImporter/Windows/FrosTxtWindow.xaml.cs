@@ -51,7 +51,7 @@ namespace FrostyMeshImporter.Windows
             baseComboBox.SelectionChanged += BaseComboBox_SelectionChanged;
         }
 
-        private void SetItems(List<object> files)
+        public void SetItems(List<object> files)
         {
 
             mergeStatus.Visibility = Visibility.Hidden;

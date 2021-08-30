@@ -87,9 +87,12 @@ namespace FrostyMeshImporter
             }
         }
 
+        // List of localization profiles modified by FrosTxt actions
         private static List<FrosTxtObj> _localizationProfiles;
+        // Frosty Editor assets related to the current FrosTxt profile
         private static EbxAssetEntry _currentLocalizationAsset;
         private static FsUITextDatabase _currentTextDatabase;
+        // Last profile opened in the FrosTxt window
         private static FrosTxtObj _lastFrosTxtWindow;
         private static bool _openFrosTxt = false;
         private static string DEFAULT_LOCALIZATION_PATH = "Localization/WSLocalization_";
@@ -166,11 +169,13 @@ namespace FrostyMeshImporter
 
         // Opens FrosTxt window specified by _lastFrosTxtWindow unless given a specific FrosTxt profile to open.
         private static async void OpenFrosTxtWindow(FrosTxtObj windowToOpen = null)
-        {
-            if(windowToOpen != null)
+        {  
+            // Hack: reload base chunk every time FrosTxt window opens to prevent rollover of old merges into new project files
+            if (windowToOpen != null)
             {
                 // Open the given FrosTxt window instead of selected asset
                 _lastFrosTxtWindow = windowToOpen;
+                _lastFrosTxtWindow.lm.SetBaseFile(LoadBaseChunk(_lastFrosTxtWindow.language.ToString()));
             } else if (_currentLocalizationAsset != null)
             {
                 // Open FrosTxtWindow using the current open localization asset
@@ -181,7 +186,7 @@ namespace FrostyMeshImporter
                 FrostyTask.Begin($"Creating new FrosTxt profile");
                 await Task.Run(() =>
                 {
-                    LocalizationFile baseFile = LoadBaseChunk();
+                    LocalizationFile baseFile = LoadBaseChunk(language);
                     LocalizationMerger lm = new LocalizationMerger(baseFile);
                     FrosTxtObj newWindow = new FrosTxtObj(language, _currentTextDatabase,
                         _currentLocalizationAsset, _currentAssetEditor, lm);
@@ -189,9 +194,13 @@ namespace FrostyMeshImporter
                     _lastFrosTxtWindow = newWindow;
                 });
                 FrostyTask.End();
+            } else
+            {
+                _lastFrosTxtWindow.lm.SetBaseFile(LoadBaseChunk(_lastFrosTxtWindow.language.ToString()));
             }
             // open last opened window
             FrosTxtWindow toOpen = new FrosTxtWindow(_lastFrosTxtWindow);
+            toOpen.SetItems(toOpen.lm.GetGenericModifiedFiles());
             bool? result = toOpen.ShowDialog();
             if(result != true)
             {
@@ -201,8 +210,9 @@ namespace FrostyMeshImporter
 
         // Creates a new localization base file for the currently selected localization asset.
         // Pre-condition: the given FsUITextDatabase asset must be an open tab.
-        private static LocalizationFile LoadBaseChunk()
+        private static LocalizationFile LoadBaseChunk(string language)
         {
+            App.Logger.Log($"FrosTxt: Loading {language} language base chunk file");
             Guid chunkID = _currentTextDatabase.BinaryChunk;
             ChunkAssetEntry textChunk = App.AssetManager.GetChunkEntry(chunkID);
             Stream memStream = App.AssetManager.GetChunk(textChunk);
