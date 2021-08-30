@@ -138,7 +138,14 @@ namespace FrostyMeshImporter
         private static void OnMainWindowLaunch(MainWindow mainWindow)
         {
             _version = typeof(Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-            // Check the versions of Frosty Editor and Frosty Mesh Importer match
+            // Check that version of Frosty Editor is 1.0.5.9
+            string editorVersion = typeof(App).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+            if(!editorVersion.Equals("1.0.5.9"))
+            {
+                Log(errorState.VersionMismatch.ToString(), $"Detected Frosty Editor version {editorVersion}. Frosty Mesh Importer is only compatible with Frosty Editor version 1.0.5.9." +
+                    "Please exit the program and load Frosty Editor 1.0.5.9.", MessageBoxButton.OK, IMPORTER_WARNING);
+            }
+            // Check for alpha version mismatch between Frosty Editor and Frosty Mesh Importer
             bool frostyAlpha = false;
             if (Attribute.IsDefined(typeof(App).Assembly, typeof(XmlnsDefinitionAttribute)))
             {
@@ -175,16 +182,22 @@ namespace FrostyMeshImporter
 
             // Inject functionality
             // Get function to open res/chunk explorer
-            _openChunkResExplorer = _mainWindow.GetType().GetMethod("ResChunkExplorerMenuItem_Click", BindingFlags.NonPublic | BindingFlags.Instance);
+            _openChunkResExplorer = ReflectionHelper.GetMethodInfo(_mainWindow.GetType(), "ResChunkExplorerMenuItem_Click");
             // Get UI tab control
             _tabControl = mainWindow.GetFieldValue<FrostyTabControl>("tabControl");
             // Get data explorer control
             _mainWindowExplorer = mainWindow.currentExplorer;
+            
             // Add new asset context menu options
             Controls.CustomAssetContextMenu customContext = new Controls.CustomAssetContextMenu(_mainWindowExplorer);
             _mainWindowExplorer.SelectionChanged += customContext.UpdateContextMenu;
             SetToolbarItems(_mainWindow, null);
             _tabControl.SelectionChanged += SetToolbarItems;
+        }
+
+        public static void NewProjectClicked(object sender, RoutedEventArgs e)
+        {
+            Log("New Project", "You have clicked new project", MessageBoxButton.OK, IMPORTER_MESSAGE);
         }
 
         private static void SetToolbarItems(object sender, SelectionChangedEventArgs e)

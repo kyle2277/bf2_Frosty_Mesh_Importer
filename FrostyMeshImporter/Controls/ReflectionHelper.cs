@@ -54,7 +54,7 @@ namespace FrostyMeshImporter
             fieldInfo.SetValue(obj, val);
         }
 
-        private static MethodInfo GetMethodInfo(Type type, string methodName)
+        public static MethodInfo GetMethodInfo(Type type, string methodName)
         {
             MethodInfo methodInfo;
             do
